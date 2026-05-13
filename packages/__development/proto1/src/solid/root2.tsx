@@ -12,21 +12,43 @@ import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createStore, produce } from "solid-js/store";
 
 type UnitTemplate = {
+  templateId: string;
   pageUri: string;
+  type: UnitType;
   scaling?: number;
 };
 
-const unitTemplates: Record<string, UnitTemplate> = {
-  mu1: { pageUri: "/units/mu1-instrument.html", scaling: 0.6 },
-  mu2: { pageUri: "/units/mu2-sequencer.html" },
-  mu3: { pageUri: "/units/mu3-effect.html" },
-  mu4: { pageUri: "/units/mu4-keyboard.html" },
-  mu5: { pageUri: "/units/mu5-visualizer.html" },
-};
+const unitTemplates: UnitTemplate[] = [
+  {
+    templateId: "mu1",
+    pageUri: "/units/mu1-instrument.html",
+    type: "instrument",
+    scaling: 0.6,
+  },
+  {
+    templateId: "mu2",
+    pageUri: "/units/mu2-sequencer.html",
+    type: "sequencer",
+  },
+  {
+    templateId: "mu3",
+    pageUri: "/units/mu3-effect.html",
+    type: "effect",
+  },
+  {
+    templateId: "mu4",
+    pageUri: "/units/mu4-keyboard.html",
+    type: "sequencer",
+  },
+  {
+    templateId: "mu5",
+    pageUri: "/units/mu5-visualizer.html",
+    type: "effect",
+  },
+];
 
 type UnitAssignment = {
   unitId: string;
-  // pageUri: string;
   template: UnitTemplate;
 };
 
@@ -83,9 +105,11 @@ function createAppModel() {
   });
 
   const actions = {
-    assignUnit(slotId: string, unitTemplateId: string) {
+    assignUnit(slotId: string, templateId: string) {
       const unitId = generateRandomId(6);
-      const template = unitTemplates[unitTemplateId];
+      const template = unitTemplates.find(
+        (template) => template.templateId === templateId,
+      );
       if (!template) return;
       const laneId = slotId.split("-")[0];
       setState(
