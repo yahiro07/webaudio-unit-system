@@ -50,9 +50,15 @@ const UnitsSolid = () => {
   };
   return (
     <>
-      <UnitFrame
+      {/* <UnitFrame
         unitId="mu3"
         pageUri="/units/mu3-effect.html"
+        destUnitId="$output"
+        hostSystem={hostSystem}
+      /> */}
+      <UnitFrame
+        unitId="mu3"
+        pageUri="/units/mu5-visualizer.html"
         destUnitId="$output"
         hostSystem={hostSystem}
       />
