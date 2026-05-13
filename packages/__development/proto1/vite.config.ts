@@ -6,13 +6,10 @@ import solid from "vite-plugin-solid";
 export default defineConfig({
   plugins: [
     react({
-      include: [
-        /src\/root\/.*\.tsx$/,
-        /src\/.*-react\.tsx$/,
-      ],
+      include: [/src\/react\/.*\.tsx$/],
     }),
     solid({
-      include: [/src\/.*-solid\.tsx$/],
+      include: [/src\/solid\/.*\.tsx$/],
     }),
     tailwindcss(),
   ],
@@ -22,8 +19,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         root: "./index.html",
-        mu1: "./units/mu1.html",
-        mu2: "./units/mu2.html",
+        // mu1: "./units/mu1.html",
+        // mu2: "./units/mu2.html",
       },
     },
   },
