@@ -117,10 +117,31 @@ export function hostSystem_createHostInterfaceForUnit(
       return {
         outputPort: noteOutputPortImpl,
         setup(_unitAgent) {
+          if (!(_unitAgent.noteOn && _unitAgent.noteOff)) {
+            //route note outside if the unit doesn't handle input notes
+            _unitAgent.noteOn = noteOutputPortImpl.noteOn;
+            _unitAgent.noteOff = noteOutputPortImpl.noteOff;
+          }
           const unitAgent: UnitAgentInHostSide = {
             unitId,
             ..._unitAgent,
             unitType: "sequencer",
+            noteOutputPortImpl,
+            unitDestinationNode,
+            effectSourceNode,
+          };
+          registeredCallback(unitAgent);
+        },
+      };
+    },
+    createKeyboardUnit() {
+      return {
+        outputPort: noteOutputPortImpl,
+        setup(_unitAgent) {
+          const unitAgent: UnitAgentInHostSide = {
+            unitId,
+            ..._unitAgent,
+            unitType: "keyboard",
             noteOutputPortImpl,
             unitDestinationNode,
             effectSourceNode,
@@ -180,6 +201,9 @@ export function hostSystem_connectUnits(
       sourceUnit.unitDestinationNode.connect(destUnit.effectSourceNode);
       console.log(`connected: ${unitId} --> ${destUnitId}`);
     } else if (sourceType === "sequencer" && destType === "instrument") {
+      sourceUnit.noteOutputPortImpl.setDestinationAgent(destUnit);
+      console.log(`connected: ${unitId} --> ${destUnitId}`);
+    } else if (sourceType === "keyboard" && destType === "sequencer") {
       sourceUnit.noteOutputPortImpl.setDestinationAgent(destUnit);
       console.log(`connected: ${unitId} --> ${destUnitId}`);
     }

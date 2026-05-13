@@ -31,7 +31,7 @@ function App() {
   const mt = store.mutations;
   return (
     <div className="w-dvw h-dvh flex-vc gap-4 bg-green-200">
-      <div>ku3-effect</div>
+      <div>mu3-effect</div>
       <div className="flex-c gap-4">
         <FeKnob label="volume" value={st.gain} onChange={mt.setGain} />
       </div>

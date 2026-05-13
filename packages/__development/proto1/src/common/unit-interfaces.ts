@@ -5,7 +5,8 @@ export type UnitType =
   | "sequencer"
   | "effect"
   | "switcher"
-  | "tonePlayer";
+  | "tonePlayer"
+  | "keyboard";
 
 export type MetaAttributes = {
   key?: string; //C, Am, ... etc
@@ -98,10 +99,16 @@ export type SwitcherUnit = {
   setup(unitAgent: UnitAgent): void;
 };
 
+export type KeyboardUnit = {
+  outputPort: NoteOutputPort;
+  setup(unitAgent: UnitAgent): void;
+};
+
 export type HostInterface = {
   createInstrumentUnit(): InstrumentUnit;
   createSequencerUnit(): SequencerUnit;
   createEffectUnit(): EffectUnit;
+  createKeyboardUnit(): KeyboardUnit;
   // createDrumMachineUnit(): DrumMachineUnit;
   // createTonePlayerUnit(): TonePlayerUnit;
   // createSwitcherUnit(): SwitcherUnit;

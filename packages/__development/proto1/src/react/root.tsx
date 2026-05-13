@@ -86,6 +86,12 @@ function App() {
         ref={refSupplyHostSystem}
         dest-unit-id="mu1"
       />
+      <unit-frame
+        unit-id="mu4"
+        src="units/mu4-keyboard.html"
+        ref={refSupplyHostSystem}
+        dest-unit-id="mu2"
+      />
       <div>{JSON.stringify(state.notes)}</div>
       <div className="flex-ha gap-4">
         <Button

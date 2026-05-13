@@ -92,7 +92,7 @@ function App() {
   };
   return (
     <div class="w-dvw h-dvh flex-vc gap-4 bg-blue-200">
-      <div>ku2-sequencer</div>
+      <div>mu2-sequencer</div>
       <StepIndicator />
       <Button text="play" active={vm.playing()} onClick={vm.togglePlayState} />
     </div>
