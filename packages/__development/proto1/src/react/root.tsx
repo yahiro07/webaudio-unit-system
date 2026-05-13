@@ -5,12 +5,12 @@ import "../styles/tailwind-sources.css";
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
 import "@wus/host-system/web-components";
 import { createHostSystem } from "@wus/host-system/host";
+import { UnitFrame } from "@wus/host-system/react";
 import { setupMidiKeyboardInput } from "@wus/mo/midi-keyboard-input";
 import { Button } from "@wus/mo-react/components/button";
 import { FeNumberSliderBox } from "@wus/mo-react/components/number-slider-box";
 import { useCallback, useEffect } from "react";
 import { createStore } from "snap-store";
-import { UnitFrame } from "../../../host-system/react/UnitFrame";
 
 type StoreState = {
   bpm: number;
