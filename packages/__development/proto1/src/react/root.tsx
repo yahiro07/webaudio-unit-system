@@ -62,14 +62,22 @@ function App() {
       <unit-frame
         unit-id="mu3"
         src="/units/mu3-effect.html"
-        ref={(el) => (el.hostSystem = appModel.hostSystem)}
+        ref={(el) => {
+          if (el) {
+            el.hostSystem = appModel.hostSystem;
+          }
+        }}
         dest-unit-id="$output"
       />
       <unit-frame
         unit-id="mu1"
         src="/units/mu1-instrument.html"
         // input-notes={appModel.state.notes}
-        ref={(el) => (el.hostSystem = appModel.hostSystem)}
+        ref={(el) => {
+          if (el) {
+            el.hostSystem = appModel.hostSystem;
+          }
+        }}
         dest-unit-id="mu3"
       />
       <unit-frame
@@ -78,7 +86,11 @@ function App() {
         host-bpm={state.bpm}
         host-playing={state.playing}
         // input-notes={appModel.state.notes}
-        ref={(el) => (el.hostSystem = appModel.hostSystem)}
+        ref={(el) => {
+          if (el) {
+            el.hostSystem = appModel.hostSystem;
+          }
+        }}
         dest-unit-id="mu1"
       />
       <div>{JSON.stringify(state.notes)}</div>
