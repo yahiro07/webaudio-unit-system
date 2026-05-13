@@ -1,3 +1,4 @@
+import { arrayExclude } from "@wus/ax/array-utils";
 import { useEffect, useRef } from "react";
 import {
   HostSystem,
@@ -65,25 +66,17 @@ export const UnitFrame = ({
     }
   }, [hostPlaying]);
 
-  const prevInputNotes = usePrevious(inputNotes);
+  const currentNotes = usePrevious(inputNotes);
   useEffect(() => {
     const agent = unitAgentRef.current;
-    if (!(agent && inputNotes && prevInputNotes)) return;
-    const notesAdded = inputNotes.filter(
-      (note) => !prevInputNotes.includes(note),
-    );
-    const notesRemoved = prevInputNotes.filter(
-      (note) => !inputNotes.includes(note),
-    );
-    if (notesAdded.length > 0) {
-      for (const note of notesAdded) {
-        agent.noteOn?.(note, 1.0);
-      }
+    if (!(agent && inputNotes && currentNotes)) return;
+    const notesAdded = arrayExclude(inputNotes, currentNotes);
+    const notesRemoved = arrayExclude(currentNotes, inputNotes);
+    for (const note of notesAdded) {
+      agent.noteOn?.(note, 1.0);
     }
-    if (notesRemoved.length > 0) {
-      for (const note of notesRemoved) {
-        agent.noteOff?.(note);
-      }
+    for (const note of notesRemoved) {
+      agent.noteOff?.(note);
     }
   }, [inputNotes]);
 

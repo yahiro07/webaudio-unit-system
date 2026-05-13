@@ -4,6 +4,7 @@
   "exports": {
     "./host": "./host/index.ts",
     "./react": "./react/index.ts",
+    "./solid": "./solid/index.ts",
     "./web-components": "./web-components/index.ts",
     "./unit": "./unit/index.ts"
   }

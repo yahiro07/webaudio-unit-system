@@ -12,3 +12,7 @@ export function removeArrayItem<T>(items: T[], item: T) {
     items.splice(index, 1);
   }
 }
+
+export function arrayExclude<T>(a: T[], b: T[]): T[] {
+  return a.filter((it) => !b.includes(it));
+}

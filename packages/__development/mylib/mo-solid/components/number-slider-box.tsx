@@ -1,4 +1,4 @@
-import { mergeProps } from "solid-js";
+import { JSXElement, mergeProps } from "solid-js";
 import { CellFrame } from "./cell-frame";
 import { KnobFrame } from "./knob-frame";
 
@@ -21,7 +21,7 @@ export function FeNumberSliderBox(inputProps: {
   step?: number;
   fracDigits?: number;
   onChange: (value: number) => void;
-}) {
+}): JSXElement {
   const props = mergeProps(
     { min: 0, max: 1, step: 0.01, fracDigits: 2 },
     inputProps,
