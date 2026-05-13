@@ -7,6 +7,7 @@ import {
   hostSystem_wrapConnectUnits,
   UnitAgentInHostSide,
 } from "../host";
+import { HostInterface } from "../unit";
 
 @customElement("unit-frame")
 export default class UnitFrameElement extends LitElement {
@@ -61,7 +62,8 @@ export default class UnitFrameElement extends LitElement {
               }
             },
           );
-          (wc as any).hostInterface = hostInterface;
+          (wc as { hostInterface?: HostInterface }).hostInterface =
+            hostInterface;
         }
       }
       this.initialized = true;
