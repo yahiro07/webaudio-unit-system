@@ -10,6 +10,7 @@ import { Button } from "@wus/mo-react/components/button";
 import { FeNumberSliderBox } from "@wus/mo-react/components/number-slider-box";
 import { useCallback, useEffect } from "react";
 import { createStore } from "snap-store";
+import { UnitFrame } from "../../../host-system/react/UnitFrame";
 
 type StoreState = {
   bpm: number;
@@ -43,27 +44,13 @@ function createAppModel() {
 }
 const appModel = createAppModel();
 
-function App() {
+const UnitsWebComponents = () => {
   const state = appModel.store.useSnapshot();
-
-  useEffect(
-    () =>
-      setupMidiKeyboardInput({
-        noteCallback(noteNumber, velocity) {
-          if (velocity > 0) {
-            appModel.noteOn(noteNumber);
-          } else {
-            appModel.noteOff(noteNumber);
-          }
-        },
-      }),
-    [],
-  );
   const refSupplyHostSystem = useCallback((el: UnitFrameElement) => {
     el.hostSystem = appModel.hostSystem;
   }, []);
   return (
-    <div className="w-dvw h-dvh flex-vc">
+    <>
       <unit-frame
         unit-id="mu3"
         src="/units/mu3-effect.html"
@@ -73,7 +60,6 @@ function App() {
       <unit-frame
         unit-id="mu1"
         src="/units/mu1-instrument.html"
-        // input-notes={appModel.state.notes}
         ref={refSupplyHostSystem}
         dest-unit-id="mu3"
       />
@@ -82,7 +68,6 @@ function App() {
         src="units/mu2-sequencer.html"
         host-bpm={state.bpm}
         host-playing={state.playing}
-        // input-notes={appModel.state.notes}
         ref={refSupplyHostSystem}
         dest-unit-id="mu1"
       />
@@ -92,7 +77,57 @@ function App() {
         ref={refSupplyHostSystem}
         dest-unit-id="mu2"
       />
+    </>
+  );
+};
+
+const UnitsReact = () => {
+  const { hostSystem } = appModel;
+  const state = appModel.store.useSnapshot();
+  return (
+    <>
+      <UnitFrame
+        unitId="mu3"
+        pageUri="/units/mu3-effect.html"
+        destUnitId="$output"
+        hostSystem={hostSystem}
+      />
+      <UnitFrame
+        unitId="mu1"
+        pageUri="/units/mu1-instrument.html"
+        destUnitId="mu3"
+        hostSystem={hostSystem}
+      />
+      <UnitFrame
+        unitId="mu2"
+        pageUri="units/mu2-sequencer.html"
+        hostBpm={state.bpm}
+        hostPlaying={state.playing}
+        destUnitId="mu1"
+        hostSystem={hostSystem}
+      />
+      <UnitFrame
+        unitId="mu4"
+        pageUri="units/mu4-keyboard.html"
+        destUnitId="mu2"
+        hostSystem={hostSystem}
+        inputNotes={state.notes}
+      />
+    </>
+  );
+};
+
+const PageRoot = () => {
+  const state = appModel.store.useSnapshot();
+  return (
+    <div className="w-dvw h-dvh flex-vc">
       <div>{JSON.stringify(state.notes)}</div>
+      {0 && <UnitsWebComponents />}
+      {1 && (
+        <div className="flex-v gap-2">
+          <UnitsReact />
+        </div>
+      )}
       <div className="flex-ha gap-4">
         <Button
           text="play"
@@ -111,6 +146,23 @@ function App() {
       </div>
     </div>
   );
-}
+};
+
+const App = () => {
+  useEffect(
+    () =>
+      setupMidiKeyboardInput({
+        noteCallback(noteNumber, velocity) {
+          if (velocity > 0) {
+            appModel.noteOn(noteNumber);
+          } else {
+            appModel.noteOff(noteNumber);
+          }
+        },
+      }),
+    [],
+  );
+  return <PageRoot />;
+};
 
 mountAppRoot(<App />);

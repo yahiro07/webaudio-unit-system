@@ -44,8 +44,8 @@ export default class UnitFrameElement extends LitElement {
     if (iframe && hostSystem && !initialized) {
       const el = this.iframe;
       if (el) {
-        const wc = el?.contentWindow;
-        if (wc) {
+        const win = el?.contentWindow;
+        if (win) {
           const hostInterface = hostSystem_createHostInterfaceForUnit(
             hostSystem,
             this.unitId,
@@ -62,7 +62,7 @@ export default class UnitFrameElement extends LitElement {
               }
             },
           );
-          (wc as { hostInterface?: HostInterface }).hostInterface =
+          (win as { hostInterface?: HostInterface }).hostInterface =
             hostInterface;
         }
       }
