@@ -46,16 +46,18 @@ const appModel = createAppModel();
 function App() {
   const state = appModel.store.useSnapshot();
 
-  useEffect(() =>
-    setupMidiKeyboardInput({
-      noteCallback(noteNumber, velocity) {
-        if (velocity > 0) {
-          appModel.noteOn(noteNumber);
-        } else {
-          appModel.noteOff(noteNumber);
-        }
-      },
-    }),
+  useEffect(
+    () =>
+      setupMidiKeyboardInput({
+        noteCallback(noteNumber, velocity) {
+          if (velocity > 0) {
+            appModel.noteOn(noteNumber);
+          } else {
+            appModel.noteOff(noteNumber);
+          }
+        },
+      }),
+    [],
   );
   const refSupplyHostSystem = useCallback((el: UnitFrameElement) => {
     el.hostSystem = appModel.hostSystem;
