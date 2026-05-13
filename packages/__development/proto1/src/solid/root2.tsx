@@ -160,28 +160,40 @@ const UnitView = (props: { unitAssignment: UnitAssignment }) => {
   );
 };
 
-const BlankSlotView = (props: { slot: UnitSlot }) => {
-  return <div></div>;
+const BlankSlotView = (props: { slot: UnitSlot; canAdd: boolean }) => {
+  return <div class="w-full h-full flex-c">{props.canAdd ? "+" : ""}</div>;
 };
 
-const SlotView = (props: { slot: UnitSlot }) => {
+const SlotView = (props: { slot: UnitSlot; canAdd: boolean }) => {
   return (
     <div class="w-[200px] h-[120px] border border-[#888]">
       {props.slot.unitAssignment ? (
         <UnitView unitAssignment={props.slot.unitAssignment} />
       ) : (
-        <BlankSlotView slot={props.slot} />
+        <BlankSlotView slot={props.slot} canAdd={props.canAdd} />
       )}
     </div>
   );
 };
 
 const LaneView = (props: { lane: Lane }) => {
+  const vm = {
+    canAddEffect: () =>
+      !!props.lane.instrumentSlot.unitAssignment &&
+      !props.lane.effectSlot.unitAssignment,
+    canAddInstrument: () => !props.lane.instrumentSlot.unitAssignment,
+    canAddSequencer: () =>
+      !!props.lane.instrumentSlot.unitAssignment &&
+      !props.lane.sequencerSlot.unitAssignment,
+  };
   return (
-    <div>
-      <SlotView slot={props.lane.effectSlot} />
-      <SlotView slot={props.lane.instrumentSlot} />
-      <SlotView slot={props.lane.sequencerSlot} />
+    <div class="flex-v">
+      <SlotView slot={props.lane.effectSlot} canAdd={vm.canAddEffect()} />
+      <SlotView
+        slot={props.lane.instrumentSlot}
+        canAdd={vm.canAddInstrument()}
+      />
+      <SlotView slot={props.lane.sequencerSlot} canAdd={vm.canAddSequencer()} />
     </div>
   );
 };
