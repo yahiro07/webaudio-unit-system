@@ -8,6 +8,8 @@ import { createStore } from "solid-js/store";
 import { getHostInterface } from "@/common/unit-interfaces";
 import "../styles/page.css";
 import "../styles/utility-classes.css";
+import "../styles/tailwind-sources.css";
+import { Button } from "@wus/mo-solid/components/button";
 
 const sequencerUnit = getHostInterface()?.createSequencerUnit();
 
@@ -92,7 +94,7 @@ function App() {
     <div class="w-dvw h-dvh flex-vc gap-4 bg-blue-200">
       <div>ku2-sequencer</div>
       <StepIndicator />
-      {/* <Button text="play" active={vm.playing()} onClick={vm.togglePlayState} /> */}
+      <Button text="play" active={vm.playing()} onClick={vm.togglePlayState} />
     </div>
   );
 }

@@ -6,10 +6,10 @@ import solid from "vite-plugin-solid";
 export default defineConfig({
   plugins: [
     react({
-      include: [/src\/react\/.*\.tsx$/],
+      include: [/src\/react\/.*\.tsx$/, /mylib\/mo-react\/.*\.tsx$/],
     }),
     solid({
-      include: [/src\/solid\/.*\.tsx$/],
+      include: [/src\/solid\/.*\.tsx$/, /mylib\/mo-solid\/.*\.tsx$/],
     }),
     tailwindcss(),
   ],
