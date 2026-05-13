@@ -1,0 +1,8 @@
+{
+  "name": "webaudio-unit-system-root",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/**/*"
+  ]
+}
