@@ -4,7 +4,7 @@ import "../styles/tailwind-sources.css";
 import { FeKnob } from "@wus/mo-react/components/knob";
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
 import { createStore } from "snap-store";
-import { getHostInterface } from "../common/unit-interfaces";
+import { getHostInterface } from "@/common/unit-interfaces";
 
 const store = createStore({ gain: 0.5 });
 
