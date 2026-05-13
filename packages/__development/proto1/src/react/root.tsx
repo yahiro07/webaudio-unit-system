@@ -152,13 +152,8 @@ const App = () => {
   useEffect(
     () =>
       setupMidiKeyboardInput({
-        noteCallback(noteNumber, velocity) {
-          if (velocity > 0) {
-            appModel.noteOn(noteNumber);
-          } else {
-            appModel.noteOff(noteNumber);
-          }
-        },
+        noteOn: appModel.noteOn,
+        noteOff: appModel.noteOff,
       }),
     [],
   );

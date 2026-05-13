@@ -1,13 +1,15 @@
-export type MidiKeyboardInputEvent = {
-  type: "note";
-  noteNumber: number;
-  velocity: number; //0 for note off
-};
+// export type MidiKeyboardInputEvent = {
+//   type: "note";
+//   noteNumber: number;
+//   velocity: number; //0 for note off
+// };
 
 type MidiKeyboardInputOptions = {
   connectionStateCallback?: (connected: boolean) => void;
-  eventCallback?: (e: MidiKeyboardInputEvent) => void;
-  noteCallback?: (noteNumber: number, velocity: number) => void;
+  // eventCallback?: (e: MidiKeyboardInputEvent) => void;
+  // noteCallback?: (noteNumber: number, velocity: number) => void;
+  noteOn?: (noteNumber: number, velocity: number /* 0~1 */) => void;
+  noteOff?: (noteNumber: number) => void;
 };
 
 type MidiKeyboardInputCore = {
@@ -35,12 +37,12 @@ function createMidiKeyboardInputCore(
       const cmd = status & 0xf0;
       if (cmd === 0x90 && data2 > 0) {
         const [noteNumber, velocity] = [data1, data2];
-        options.noteCallback?.(noteNumber, velocity);
-        options.eventCallback?.({ type: "note", noteNumber, velocity });
+        options.noteOn?.(noteNumber, velocity / 127);
+        // options.eventCallback?.({ type: "note", noteNumber, velocity });
       } else if (cmd === 0x80 || (cmd === 0x90 && data2 === 0)) {
         const noteNumber = data1;
-        options.noteCallback?.(noteNumber, 0);
-        options.eventCallback?.({ type: "note", noteNumber, velocity: 0 });
+        options.noteOff?.(noteNumber);
+        // options.eventCallback?.({ type: "note", noteNumber, velocity: 0 });
       } else {
         console.log(status, data1, data2);
       }
