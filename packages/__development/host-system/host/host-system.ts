@@ -6,7 +6,7 @@ import {
   TonePlaybackInterface,
   UnitAgent,
   UnitType,
-} from "@/common/unit-interfaces";
+} from "../contract/unit-interfaces";
 
 export type HostSystem = {
   audioContext: AudioContext;

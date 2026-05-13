@@ -9,6 +9,7 @@
   },
   "include": [
     "./src/**/*",
-    "../mylib/**/*"
+    "../mylib/**/*",
+    "../host-system/**/*"
   ]
 }

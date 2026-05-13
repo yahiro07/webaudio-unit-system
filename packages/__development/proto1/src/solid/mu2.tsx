@@ -2,10 +2,10 @@
 /** biome-ignore-all lint/correctness/useJsxKeyInIterable: solid */
 
 import { seqNumbers } from "@wus/ax/array-utils";
+import { getHostInterface } from "@wus/host-system/unit";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createEffect } from "solid-js";
 import { createStore } from "solid-js/store";
-import { getHostInterface } from "@/common/unit-interfaces";
 import "../styles/page.css";
 import "../styles/utility-classes.css";
 import "../styles/tailwind-sources.css";

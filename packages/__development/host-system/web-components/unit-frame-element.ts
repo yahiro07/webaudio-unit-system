@@ -6,7 +6,7 @@ import {
   hostSystem_wrapAddUnitAgent,
   hostSystem_wrapConnectUnits,
   UnitAgentInHostSide,
-} from "@/core/host-system";
+} from "../host";
 
 @customElement("unit-frame")
 export default class UnitFrameElement extends LitElement {

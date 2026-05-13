@@ -1,5 +1,5 @@
+import { getHostInterface } from "@wus/host-system/unit";
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
-import { getHostInterface } from "@/common/unit-interfaces";
 import "../styles/page.css";
 import "../styles/utility-classes.css";
 import "../styles/tailwind-sources.css";

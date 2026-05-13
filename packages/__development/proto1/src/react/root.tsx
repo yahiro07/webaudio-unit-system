@@ -3,13 +3,13 @@ import "../styles/utility-classes.css";
 import "../styles/tailwind-sources.css";
 
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
-import "@/core/unit-frame-element";
+import "@wus/host-system/web-components";
+import { createHostSystem } from "@wus/host-system/host";
 import { setupMidiKeyboardInput } from "@wus/mo/midi-keyboard-input";
 import { Button } from "@wus/mo-react/components/button";
 import { FeNumberSliderBox } from "@wus/mo-react/components/number-slider-box";
 import { useCallback, useEffect } from "react";
 import { createStore } from "snap-store";
-import { createHostSystem } from "@/core/host-system";
 
 type StoreState = {
   bpm: number;
