@@ -73,10 +73,10 @@ export const UnitFrame = ({
     const notesAdded = arrayExclude(inputNotes, currentNotes);
     const notesRemoved = arrayExclude(currentNotes, inputNotes);
     for (const note of notesAdded) {
-      agent.noteOn?.(note, 1.0);
+      agent.noteInput?.noteOn?.(note, 1.0);
     }
     for (const note of notesRemoved) {
-      agent.noteOff?.(note);
+      agent.noteInput?.noteOff?.(note);
     }
   }, [inputNotes]);
 

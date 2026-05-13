@@ -1,12 +1,17 @@
 import { removeArrayItem } from "@wus/ax/array-utils";
 import {
   HostInterface,
-  InstrumentMultiChannelsInterface,
   NoteOutputPort,
-  TonePlaybackInterface,
   UnitAgent,
   UnitType,
 } from "../contract";
+
+export type UnitAgentInHostSide = UnitAgent & {
+  unitId: string;
+  unitDestinationNode: AudioNode;
+  noteOutputPortImpl: NoteOutputPortImpl;
+  effectSourceNode: AudioNode;
+};
 
 export type HostSystem = {
   audioContext: AudioContext;
@@ -26,25 +31,16 @@ export function createNoteOutputPortImpl(): NoteOutputPortImpl {
   let destinationAgent: UnitAgentInHostSide | undefined;
   return {
     noteOn(noteNumber, velocity) {
-      destinationAgent?.noteOn?.(noteNumber, velocity);
+      destinationAgent?.noteInput?.noteOn?.(noteNumber, velocity);
     },
     noteOff(noteNumber) {
-      destinationAgent?.noteOff?.(noteNumber);
+      destinationAgent?.noteInput?.noteOff?.(noteNumber);
     },
     setDestinationAgent(agent) {
       destinationAgent = agent;
     },
   };
 }
-export type UnitAgentInHostSide = UnitAgent & {
-  unitId: string;
-  unitType: UnitType;
-  instrumentMultiChannelsInterface?: InstrumentMultiChannelsInterface;
-  tonePlaybackInterface?: TonePlaybackInterface;
-  unitDestinationNode: AudioNode;
-  noteOutputPortImpl: NoteOutputPortImpl;
-  effectSourceNode: AudioNode;
-};
 
 export function createHostSystem(audioContext: AudioContext): HostSystem {
   const units: Map<string, UnitAgentInHostSide> = new Map();
@@ -95,77 +91,22 @@ export function hostSystem_createHostInterfaceForUnit(
   const effectSourceNode = hostSystem.audioContext.createGain();
   const noteOutputPortImpl = createNoteOutputPortImpl();
   const hostInterface: HostInterface = {
-    createInstrumentUnit() {
-      return {
-        audioContext: unitAudioContext,
-        setup(_unitAgent, additionalCapabilities) {
-          const unitAgent: UnitAgentInHostSide = {
-            unitId,
-            ..._unitAgent,
-            unitType: "instrument",
-            instrumentMultiChannelsInterface:
-              additionalCapabilities?.multiChannelsInterface,
-            unitDestinationNode,
-            noteOutputPortImpl,
-            effectSourceNode,
-          };
-          registeredCallback(unitAgent);
-        },
+    audioContext: unitAudioContext,
+    audioSourceNode: effectSourceNode,
+    noteOutputPort: noteOutputPortImpl,
+    setupUnitAgent(_unitAgent) {
+      if (_unitAgent.type === "sequencer" && !_unitAgent.noteInput) {
+        //route note outside if the unit doesn't handle input notes
+        _unitAgent.noteInput = noteOutputPortImpl;
+      }
+      const unitAgent: UnitAgentInHostSide = {
+        unitId,
+        ..._unitAgent,
+        unitDestinationNode,
+        noteOutputPortImpl,
+        effectSourceNode,
       };
-    },
-    createSequencerUnit() {
-      return {
-        outputPort: noteOutputPortImpl,
-        setup(_unitAgent) {
-          if (!(_unitAgent.noteOn && _unitAgent.noteOff)) {
-            //route note outside if the unit doesn't handle input notes
-            _unitAgent.noteOn = noteOutputPortImpl.noteOn;
-            _unitAgent.noteOff = noteOutputPortImpl.noteOff;
-          }
-          const unitAgent: UnitAgentInHostSide = {
-            unitId,
-            ..._unitAgent,
-            unitType: "sequencer",
-            noteOutputPortImpl,
-            unitDestinationNode,
-            effectSourceNode,
-          };
-          registeredCallback(unitAgent);
-        },
-      };
-    },
-    createKeyboardUnit() {
-      return {
-        outputPort: noteOutputPortImpl,
-        setup(_unitAgent) {
-          const unitAgent: UnitAgentInHostSide = {
-            unitId,
-            ..._unitAgent,
-            unitType: "keyboard",
-            noteOutputPortImpl,
-            unitDestinationNode,
-            effectSourceNode,
-          };
-          registeredCallback(unitAgent);
-        },
-      };
-    },
-    createEffectUnit() {
-      return {
-        audioContext: unitAudioContext,
-        sourceNode: effectSourceNode,
-        setup(_unitAgent) {
-          const unitAgent: UnitAgentInHostSide = {
-            unitId,
-            ..._unitAgent,
-            unitType: "effect",
-            unitDestinationNode,
-            noteOutputPortImpl,
-            effectSourceNode,
-          };
-          registeredCallback(unitAgent);
-        },
-      };
+      registeredCallback(unitAgent);
     },
   };
   return hostInterface;
@@ -179,11 +120,7 @@ export function hostSystem_connectUnits(
   const sourceUnit = hostSystem.getUnitAgent(unitId);
 
   if (sourceUnit && destUnitId === "$output") {
-    if (
-      (["instrument", "drumMachine", "effect"] as UnitType[]).includes(
-        sourceUnit.unitType,
-      )
-    ) {
+    if ((["instrument", "effect"] as UnitType[]).includes(sourceUnit.type)) {
       sourceUnit.unitDestinationNode.connect(
         hostSystem.audioContext.destination,
       );
@@ -195,15 +132,11 @@ export function hostSystem_connectUnits(
   const destUnit = hostSystem.getUnitAgent(destUnitId);
 
   if (sourceUnit && destUnit) {
-    const sourceType = sourceUnit.unitType;
-    const destType = destUnit.unitType;
-    if (sourceType === "instrument" && destType === "effect") {
+    const destType = destUnit.type;
+    if (destType === "effect") {
       sourceUnit.unitDestinationNode.connect(destUnit.effectSourceNode);
       console.log(`connected: ${unitId} --> ${destUnitId}`);
-    } else if (sourceType === "sequencer" && destType === "instrument") {
-      sourceUnit.noteOutputPortImpl.setDestinationAgent(destUnit);
-      console.log(`connected: ${unitId} --> ${destUnitId}`);
-    } else if (sourceType === "keyboard" && destType === "sequencer") {
+    } else if (destType === "instrument" || destType === "sequencer") {
       sourceUnit.noteOutputPortImpl.setDestinationAgent(destUnit);
       console.log(`connected: ${unitId} --> ${destUnitId}`);
     }

@@ -42,10 +42,10 @@ export const UnitFrame = (props: {
       const notesAdded = arrayExclude(inputNotes, currentNotes);
       const notesRemoved = arrayExclude(currentNotes, inputNotes);
       for (const note of notesAdded) {
-        unitAgent.noteOn?.(note, 1.0);
+        unitAgent.noteInput?.noteOn?.(note, 1.0);
       }
       for (const note of notesRemoved) {
-        unitAgent.noteOff?.(note);
+        unitAgent.noteInput?.noteOff?.(note);
       }
       currentNotes = inputNotes;
     }
