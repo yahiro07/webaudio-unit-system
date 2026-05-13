@@ -1,4 +1,4 @@
-import { HostInterface } from "../host";
+import { HostInterface } from "../contract/unit-interfaces";
 
 export * from "../contract/unit-interfaces";
 export function getHostInterface(): HostInterface | undefined {

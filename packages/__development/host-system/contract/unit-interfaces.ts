@@ -113,10 +113,3 @@ export type HostInterface = {
   // createTonePlayerUnit(): TonePlayerUnit;
   // createSwitcherUnit(): SwitcherUnit;
 };
-
-export function getHostInterface(): HostInterface | undefined {
-  type WindowWithHostInterface = {
-    hostInterface?: HostInterface;
-  };
-  return (window as WindowWithHostInterface)?.hostInterface;
-}
