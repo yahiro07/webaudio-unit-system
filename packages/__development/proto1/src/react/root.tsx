@@ -7,7 +7,7 @@ import "@/core/unit-frame-element";
 import { setupMidiKeyboardInput } from "@wus/mo/midi-keyboard-input";
 import { Button } from "@wus/mo-react/components/button";
 import { FeNumberSliderBox } from "@wus/mo-react/components/number-slider-box";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { createStore } from "snap-store";
 import { createHostSystem } from "@/core/host-system";
 
@@ -57,9 +57,9 @@ function App() {
       },
     }),
   );
-  const refSupplyHostSystem = (el: UnitFrameElement) => {
+  const refSupplyHostSystem = useCallback((el: UnitFrameElement) => {
     el.hostSystem = appModel.hostSystem;
-  };
+  }, []);
   return (
     <div className="w-dvw h-dvh flex-vc">
       <unit-frame
