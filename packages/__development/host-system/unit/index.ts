@@ -1,6 +1,6 @@
-import { HostInterface } from "../contract/unit-interfaces";
+import { HostInterface } from "../contract";
 
-export * from "../contract/unit-interfaces";
+export * from "../contract";
 export function getHostInterface(): HostInterface | undefined {
   type WindowWithHostInterface = {
     hostInterface?: HostInterface;
