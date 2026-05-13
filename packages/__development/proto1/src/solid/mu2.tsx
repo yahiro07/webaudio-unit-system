@@ -11,7 +11,7 @@ import "../styles/utility-classes.css";
 import "../styles/tailwind-sources.css";
 import { Button } from "@wus/mo-solid/components/button";
 
-const sequencerUnit = getHostInterface()?.createSequencerUnit();
+const hostInterface = getHostInterface();
 
 function createAppModel() {
   const [state, setState] = createStore({
@@ -23,10 +23,10 @@ function createAppModel() {
     const stepPos = (state.stepPos + 1) % 16;
     if (stepPos % 4 === 0) {
       console.log("note on");
-      sequencerUnit?.outputPort.noteOn(48, 0.8);
+      hostInterface?.noteOutputPort.noteOn(48, 0.8);
     } else if (stepPos % 4 === 2) {
       console.log("note off");
-      sequencerUnit?.outputPort.noteOff(48);
+      hostInterface?.noteOutputPort.noteOff(48);
     }
     setState({ stepPos });
   };
@@ -52,7 +52,8 @@ function createAppModel() {
 const appModel = createAppModel();
 
 function setupUnitInstance() {
-  sequencerUnit?.setup({
+  hostInterface?.setupUnitAgent({
+    type: "sequencer",
     setPlayState(playing) {
       appModel.setState({ playing });
     },

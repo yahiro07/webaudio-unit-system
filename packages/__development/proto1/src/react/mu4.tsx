@@ -6,25 +6,27 @@ import "../styles/tailwind-sources.css";
 import { seqNumbers } from "@wus/ax/array-utils";
 import { createStore } from "snap-store";
 
-const keyboardUnit = getHostInterface()?.createKeyboardUnit();
+const hostInterface = getHostInterface();
 
 const store = createStore<{ notes: number[] }>({ notes: [] });
 
 const actions = {
   noteOn(noteNumber: number, velocity: number) {
     store.mutations.setNotes((prev) => [...prev, noteNumber]);
-    keyboardUnit?.outputPort.noteOn(noteNumber, velocity);
+    hostInterface?.noteOutputPort.noteOn(noteNumber, velocity);
   },
   noteOff(noteNumber: number) {
     store.mutations.setNotes((prev) => prev.filter((n) => n !== noteNumber));
-    keyboardUnit?.outputPort.noteOff(noteNumber);
+    hostInterface?.noteOutputPort.noteOff(noteNumber);
   },
 };
 
 function setupUnitInstance() {
-  keyboardUnit?.setup({
-    noteOn: actions.noteOn,
-    noteOff: actions.noteOff,
+  hostInterface?.setupUnitAgent({
+    noteInput: {
+      noteOn: actions.noteOn,
+      noteOff: actions.noteOff,
+    },
   });
 }
 setupUnitInstance();

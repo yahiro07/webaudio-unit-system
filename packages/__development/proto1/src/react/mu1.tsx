@@ -5,8 +5,8 @@ import "../styles/tailwind-sources.css";
 import { getHostInterface } from "@wus/host-system/unit";
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
 
-const instrumentUnit = getHostInterface()?.createInstrumentUnit();
-const audioContext = instrumentUnit?.audioContext ?? new AudioContext();
+const hostInterface = getHostInterface();
+const audioContext = hostInterface?.audioContext ?? new AudioContext();
 
 function midiToFrequency(midiNote: number): number {
   return 440 * 2 ** ((midiNote - 69) / 12);
@@ -54,12 +54,15 @@ function ToneButton(props: { label: string; noteNumber: number }) {
 }
 
 function setupUnitInstance() {
-  instrumentUnit?.setup({
-    noteOn(noteNumber) {
-      appModel.noteOn(noteNumber);
-    },
-    noteOff(noteNumber) {
-      appModel.noteOff(noteNumber);
+  hostInterface?.setupUnitAgent({
+    type: "instrument",
+    noteInput: {
+      noteOn(noteNumber) {
+        appModel.noteOn(noteNumber);
+      },
+      noteOff(noteNumber) {
+        appModel.noteOff(noteNumber);
+      },
     },
   });
 }

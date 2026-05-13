@@ -19,9 +19,9 @@ const [state, setState] = createStore<{
 });
 
 function setupUnitInstance() {
-  const effectUnit = getHostInterface()?.createEffectUnit();
-  if (effectUnit) {
-    const audioContext = effectUnit.audioContext ?? new AudioContext();
+  const hostInterface = getHostInterface();
+  if (hostInterface) {
+    const audioContext = hostInterface.audioContext ?? new AudioContext();
     setState({ sampleRate: audioContext.sampleRate });
     const analyzer = audioContext.createAnalyser();
     analyzer.fftSize = 1024;
@@ -35,10 +35,10 @@ function setupUnitInstance() {
       setState({ fftData });
     }, 16);
 
-    effectUnit.sourceNode.connect(analyzer);
+    hostInterface.audioSourceNode.connect(analyzer);
     analyzer.connect(audioContext.destination);
 
-    effectUnit.setup({});
+    hostInterface.setupUnitAgent({ type: "effect" });
   }
 }
 setupUnitInstance();

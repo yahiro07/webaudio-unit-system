@@ -9,11 +9,11 @@ import { createStore } from "snap-store";
 const store = createStore({ gain: 0.5 });
 
 function setupUnitInstance() {
-  const effectUnit = getHostInterface()?.createEffectUnit();
-  if (effectUnit) {
-    const audioContext = effectUnit.audioContext ?? new AudioContext();
+  const hostInterface = getHostInterface();
+  if (hostInterface) {
+    const audioContext = hostInterface.audioContext ?? new AudioContext();
     const gainNode = audioContext.createGain();
-    effectUnit.sourceNode.connect(gainNode);
+    hostInterface.audioSourceNode.connect(gainNode);
     gainNode.connect(audioContext.destination);
 
     store.subscribe((attrs) => {
@@ -21,7 +21,9 @@ function setupUnitInstance() {
         gainNode.gain.value = attrs.gain;
       }
     });
-    effectUnit.setup({});
+    hostInterface.setupUnitAgent({
+      type: "effect",
+    });
   }
 }
 setupUnitInstance();
