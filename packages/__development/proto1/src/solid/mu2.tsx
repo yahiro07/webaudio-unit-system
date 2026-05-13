@@ -9,6 +9,7 @@ import { createStore } from "solid-js/store";
 import "../styles/page.css";
 import "../styles/utility-classes.css";
 import "../styles/tailwind-sources.css";
+import { createIntervalTimer } from "@wus/ax/timer-utils";
 import { Button } from "@wus/mo-solid/components/button";
 
 const hostInterface = getHostInterface();
@@ -30,19 +31,6 @@ function createAppModel() {
     }
     setState({ stepPos });
   };
-
-  let intervalId = null as number | null;
-  createEffect(() => {
-    if (state.playing) {
-      intervalId = setInterval(onStep, 200);
-    } else {
-      if (intervalId !== null) {
-        clearInterval(intervalId);
-        intervalId = null;
-      }
-    }
-  });
-
   return {
     state,
     onStep,
@@ -91,6 +79,16 @@ function App() {
       appModel.setState({ playing: !playing });
     },
   };
+
+  const intervalTimer = createIntervalTimer();
+  createEffect(() => {
+    if (appModel.state.playing) {
+      intervalTimer.start(appModel.onStep, 200);
+    } else {
+      intervalTimer.stop();
+    }
+  });
+
   return (
     <div class="w-dvw h-dvh flex-vc gap-4 bg-blue-200">
       <div>mu2-sequencer</div>
