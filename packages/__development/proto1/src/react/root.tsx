@@ -9,17 +9,17 @@ const App = () => {
       <div>root app</div>
       <div className="flex-c gap-4">
         <iframe
-          src="../units/mu1-instrument.html"
+          src="/units/mu1-instrument.html"
           title="unit"
           className="border border-[#888]"
         />
         <iframe
-          src="../units/mu2-sequencer.html"
+          src="/units/mu2-sequencer.html"
           title="unit"
           className="border border-[#888]"
         />
         <iframe
-          src="../units/mu3-effect.html"
+          src="/units/mu3-effect.html"
           title="unit"
           className="border border-[#888]"
         />
