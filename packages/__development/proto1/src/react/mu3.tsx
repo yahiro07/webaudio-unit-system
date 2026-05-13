@@ -1,23 +1,12 @@
 import "../styles/page.css";
 import "../styles/utility-classes.css";
 import "../styles/tailwind-sources.css";
-
+import { FeKnob } from "@wus/mo-react/components/knob";
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
-// import { FeKnob } from "@my/lib/mo-solid/synth-components";
-import { createEffect } from "solid-js";
-import { createStore } from "solid-js/store";
+import { createStore } from "snap-store";
 import { getHostInterface } from "../common/unit-interfaces";
 
-function createAppModel() {
-  const [state, setState] = createStore({
-    gain: 0.5,
-  });
-  return {
-    state,
-    setState,
-  };
-}
-const appModel = createAppModel();
+const store = createStore({ gain: 0.5 });
 
 function setupUnitInstance() {
   const effectUnit = getHostInterface()?.createEffectUnit();
@@ -27,8 +16,10 @@ function setupUnitInstance() {
     effectUnit.sourceNode.connect(gainNode);
     gainNode.connect(audioContext.destination);
 
-    createEffect(() => {
-      gainNode.gain.value = appModel.state.gain;
+    store.subscribe((attrs) => {
+      if (attrs.gain !== undefined) {
+        gainNode.gain.value = attrs.gain;
+      }
     });
     effectUnit.setup({});
   }
@@ -36,19 +27,13 @@ function setupUnitInstance() {
 setupUnitInstance();
 
 function App() {
-  const vm = {
-    gain() {
-      return appModel.state.gain;
-    },
-    setGain(v: number) {
-      appModel.setState({ gain: v });
-    },
-  };
+  const st = store.useSnapshot();
+  const mt = store.mutations;
   return (
     <div className="w-dvw h-dvh flex-vc gap-4 bg-green-300">
       <div>ku3-effect</div>
       <div className="flex-c gap-4">
-        {/* <FeKnob label="volume" value={vm.gain()} onChange={vm.setGain} /> */}
+        <FeKnob label="volume" value={st.gain} onChange={mt.setGain} />
       </div>
     </div>
   );
