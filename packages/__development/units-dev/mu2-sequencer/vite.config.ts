@@ -3,6 +3,8 @@ import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
+const outDir = process.env.WUS_OUT_DIR;
+
 export default defineConfig({
   base: "./",
   plugins: [
@@ -11,5 +13,5 @@ export default defineConfig({
     viteStaticCopy({ targets: [{ src: "unit-meta.json", dest: "./" }] }),
   ],
   resolve: { tsconfigPaths: true },
-  build: { outDir: "../dist/mu2-sequencer", emptyOutDir: true },
+  build: outDir ? { outDir, emptyOutDir: true } : undefined,
 });

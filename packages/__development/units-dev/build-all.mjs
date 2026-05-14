@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { $ } from "zx";
 
 const scriptName = process.argv.includes("--watch") ? "watch" : "build";
@@ -6,16 +7,22 @@ const scriptName = process.argv.includes("--watch") ? "watch" : "build";
 //   .filter((d) => d.isDirectory() && !["dist", "node_modules"].includes(d.name))
 //   .map((d) => `./${d.name}`);
 
-const dirs = [
-  "./mu1-instrument",
-  "./mu2-sequencer",
-  "./mu3-effect",
-  "./mu4-keyboard",
-  "./mu5-visualizer",
+const folders = [
+  "mu1-instrument",
+  "mu2-sequencer",
+  "mu3-effect",
+  "mu4-keyboard",
+  "mu5-visualizer",
 ];
 
 await Promise.all(
-  dirs.map(
-    (dir) => $({ stdio: "inherit" })`npm run ${scriptName} --prefix ${dir}`,
-  ),
+  folders.map((folder) => {
+    const outDir = fileURLToPath(
+      new URL(`../units/dev/${folder}`, import.meta.url),
+    );
+    return $({
+      stdio: "inherit",
+      env: { ...process.env, WUS_OUT_DIR: outDir },
+    })`npm run ${scriptName} --prefix ${folder}`;
+  }),
 );
