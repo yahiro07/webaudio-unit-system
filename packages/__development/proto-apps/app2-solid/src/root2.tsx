@@ -23,12 +23,13 @@ type UnitTemplate = {
   name: string;
   repositoryUrl: string;
   category?: UnitCategoryHint;
+  size?: [number, number];
   scaling?: number;
 };
 
 function createUnitTemplateEntry(
   unitPageId: string,
-  attrs: { scaling?: number },
+  attrs?: { scaling?: number; size?: [number, number] },
 ): UnitTemplate {
   const unitsSummary = _unitsSummary as UnitSummariesJson;
   const unit = unitsSummary.units.find(
@@ -44,7 +45,7 @@ function createUnitTemplateEntry(
     name: unit.name,
     repositoryUrl: unit.repositoryUrl,
     category: unit.category,
-    scaling: attrs.scaling,
+    ...attrs,
   };
 }
 
@@ -54,6 +55,15 @@ const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("mu3-effect", { scaling: 0.6 }),
   createUnitTemplateEntry("mu4-keyboard", { scaling: 0.6 }),
   createUnitTemplateEntry("mu5-visualizer", { scaling: 0.6 }),
+  createUnitTemplateEntry("du10-drum-machine", {
+    size: [800, 500],
+    scaling: 0.2,
+  }),
+  createUnitTemplateEntry("su11-webaudio-tinysynth", {
+    size: [520, 280],
+    scaling: 0.4,
+  }),
+  createUnitTemplateEntry("su12-wasyn-1", { size: [720, 360], scaling: 0.25 }),
 ];
 
 type UnitAssignment = {
@@ -163,6 +173,14 @@ const UnitView = (props: { unitAssignment: UnitAssignment }) => {
           pageUri={props.unitAssignment.template.pagePath}
           destUnitId="$output"
           hostSystem={appModel.hostSystem}
+          style={
+            props.unitAssignment.template.size
+              ? {
+                  width: `${props.unitAssignment.template.size[0]}px`,
+                  height: `${props.unitAssignment.template.size[1]}px`,
+                }
+              : undefined
+          }
         />
       </div>
     </div>
@@ -182,7 +200,7 @@ const UnitListingView = (props: {
     },
   };
   return (
-    <div class="flex-vl gap-2 h-full" onClick={() => props.closeListing()}>
+    <div class="flex-vl  h-full" onClick={() => props.closeListing()}>
       {vm.unitTemplatesForThisSlot.map((template) => (
         <div class="cursor-pointer" onClick={() => vm.addUnit(template)}>
           {template.name}

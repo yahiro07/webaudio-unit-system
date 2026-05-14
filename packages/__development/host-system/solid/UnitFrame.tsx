@@ -1,7 +1,7 @@
 /** @jsxImportSource solid-js */
 
 import { arrayExclude } from "@wus/ax/array-utils";
-import { createEffect, onMount } from "solid-js";
+import { createEffect, JSX, onMount } from "solid-js";
 import {
   HostSystem,
   hostSystem_createHostInterfaceForUnit,
@@ -19,6 +19,8 @@ export const UnitFrame = (props: {
   hostPlaying?: boolean;
   inputNotes?: number[];
   hostSystem: HostSystem;
+  className?: string;
+  style?: JSX.DOMAttributes<HTMLIFrameElement>["style"];
 }) => {
   let iframe: HTMLIFrameElement | undefined;
   let unitAgent: UnitAgentInHostSide | undefined;
@@ -80,5 +82,13 @@ export const UnitFrame = (props: {
       );
     }
   });
-  return <iframe ref={iframe} src={props.pageUri} title="unit" />;
+  return (
+    <iframe
+      class={props.className}
+      style={props.style}
+      ref={iframe}
+      src={props.pageUri}
+      title="unit"
+    />
+  );
 };
