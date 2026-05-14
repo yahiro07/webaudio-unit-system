@@ -21,5 +21,37 @@
         "useKeyWithClickEvents": "off"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "packages/__development/units-oss-js/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useExponentiationOperator": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noInnerDeclarations": "off",
+            "noSwitchDeclarations": "off"
+          },
+          "a11y": {
+            "useButtonType": "off"
+          },
+          "complexity": {
+            "useArrowFunction": "off",
+            "useOptionalChain": "off"
+          },
+          "suspicious": {
+            "noRedeclare": "off",
+            "useIterableCallbackReturn": "off",
+            "noDoubleEquals": "off",
+            "noAssignInExpressions": "off"
+          }
+        }
+      }
+    }
+  ]
 }
