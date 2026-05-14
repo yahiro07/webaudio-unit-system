@@ -8,6 +8,7 @@ export type UnitMetadata = {
 };
 
 export type HostUnitMetadata = {
+  unitPageId: string;
   pagePath: string;
 } & UnitMetadata;
 

@@ -3,46 +3,57 @@
 
 import "@wus/mo/styles";
 import { seqNumbers } from "@wus/ax/array-utils";
-import { createHostSystem, UnitType } from "@wus/host-system/host";
+import {
+  createHostSystem,
+  UnitCategoryHint,
+  UnitSummariesJson,
+  UnitType,
+} from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
 import { generateRandomId } from "@wus/mo/random-id-generator";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createStore, produce } from "solid-js/store";
 
+import _unitsSummary from "./units-summary.json";
+
 type UnitTemplate = {
   templateId: string;
-  pageUri: string;
-  type: UnitType;
+  pagePath: string;
+  unitType: UnitType;
+  name: string;
+  repositoryUrl: string;
+  category?: UnitCategoryHint;
   scaling?: number;
 };
 
+function createUnitTemplateEntry(
+  unitPageId: string,
+  attrs: { scaling?: number },
+): UnitTemplate {
+  const unitsSummary = _unitsSummary as UnitSummariesJson;
+  const unit = unitsSummary.units.find(
+    (unit) => unit.unitPageId === unitPageId,
+  );
+  if (!unit) {
+    throw new Error(`Unit not found: ${unitPageId}`);
+  }
+  return {
+    templateId: unit.unitPageId,
+    pagePath: unit.pagePath,
+    unitType: unit.unitType,
+    name: unit.name,
+    repositoryUrl: unit.repositoryUrl,
+    category: unit.category,
+    scaling: attrs.scaling,
+  };
+}
+
 const unitTemplates: UnitTemplate[] = [
-  {
-    templateId: "mu1",
-    pageUri: "/units-dev/mu1-instrument/index.html",
-    type: "instrument",
-    scaling: 0.6,
-  },
-  {
-    templateId: "mu2",
-    pageUri: "/units-dev/mu2-sequencer/index.html",
-    type: "sequencer",
-  },
-  {
-    templateId: "mu3",
-    pageUri: "/units-dev/mu3-effect/index.html",
-    type: "effect",
-  },
-  {
-    templateId: "mu4",
-    pageUri: "/units-dev/mu4-keyboard/index.html",
-    type: "sequencer",
-  },
-  {
-    templateId: "mu5",
-    pageUri: "/units-dev/mu5-visualizer/index.html",
-    type: "effect",
-  },
+  createUnitTemplateEntry("mu1-instrument", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu2-sequencer", {}),
+  createUnitTemplateEntry("mu3-effect", {}),
+  createUnitTemplateEntry("mu4-keyboard", {}),
+  createUnitTemplateEntry("mu5-visualizer", {}),
 ];
 
 type UnitAssignment = {
@@ -134,7 +145,7 @@ const appModel = createAppModel();
 
 const presetScenes = {
   setupScenePreset1() {
-    appModel.actions.assignUnit("lane0-instrument", "mu1");
+    appModel.actions.assignUnit("lane0-instrument", "mu1-instrument");
   },
 };
 
@@ -149,7 +160,7 @@ const UnitView = (props: { unitAssignment: UnitAssignment }) => {
       >
         <UnitFrame
           unitId={props.unitAssignment.unitId}
-          pageUri={props.unitAssignment.template.pageUri}
+          pageUri={props.unitAssignment.template.pagePath}
           destUnitId="$output"
           hostSystem={appModel.hostSystem}
         />
