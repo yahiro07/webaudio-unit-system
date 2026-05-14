@@ -85,6 +85,7 @@ async function writeUnitsSummaryFile(
   }
 
   await fs.writeFile(outputFilePath, nextContent, "utf8");
+  console.log(`generated public/units-summary.json`);
   return true;
 }
 

@@ -3,7 +3,6 @@
   "include": [
     "./src/**/*",
     "../../mylib/**/*",
-    "../../host-system/**/*",
-    "./vite.units-summary-plugin.ts"
+    "../../host-system/**/*"
   ]
 }
