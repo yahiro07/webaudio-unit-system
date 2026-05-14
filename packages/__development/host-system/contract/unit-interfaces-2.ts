@@ -2,7 +2,7 @@
 export type UnitType = "instrument" | "sequencer" | "effect";
 
 export type UnitCategoryHint =
-  | "instrument"
+  | "synthesizer"
   | "sequencer"
   | "effect"
   | "visualizer"
