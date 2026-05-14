@@ -81,7 +81,7 @@ var ui = {
         //ui.highlightPreset(presetID);
       });
 
-    window.hostInterface?.registerUnitAgent({
+    window.hostInterface?.setupUnitAgent({
       type: "instrument",
       noteInput: {
         noteOn(noteNumber, velocity) {
