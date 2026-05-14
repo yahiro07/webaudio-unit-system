@@ -12,8 +12,8 @@ import {
 import { UnitFrame } from "@wus/host-system/solid";
 import { generateRandomId } from "@wus/mo/random-id-generator";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
+import { createSignal, Show } from "solid-js";
 import { createStore, produce } from "solid-js/store";
-
 import _unitsSummary from "./units-summary.json";
 
 type UnitTemplate = {
@@ -50,10 +50,10 @@ function createUnitTemplateEntry(
 
 const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("mu1-instrument", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu2-sequencer", {}),
-  createUnitTemplateEntry("mu3-effect", {}),
-  createUnitTemplateEntry("mu4-keyboard", {}),
-  createUnitTemplateEntry("mu5-visualizer", {}),
+  createUnitTemplateEntry("mu2-sequencer", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu3-effect", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu4-keyboard", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu5-visualizer", { scaling: 0.6 }),
 ];
 
 type UnitAssignment = {
@@ -169,8 +169,51 @@ const UnitView = (props: { unitAssignment: UnitAssignment }) => {
   );
 };
 
-const BlankSlotView = (props: { slot: UnitSlot; canAdd: boolean }) => {
-  return <div class="w-full h-full flex-c">{props.canAdd ? "+" : ""}</div>;
+const UnitListingView = (props: {
+  slot: UnitSlot;
+  closeListing: () => void;
+}) => {
+  const vm = {
+    unitTemplatesForThisSlot: unitTemplates.filter(
+      (template) => template.unitType === props.slot.targetUnitType,
+    ),
+    addUnit(template: UnitTemplate) {
+      appModel.actions.assignUnit(props.slot.slotId, template.templateId);
+    },
+  };
+  return (
+    <div class="flex-vl gap-2 h-full" onClick={() => props.closeListing()}>
+      {vm.unitTemplatesForThisSlot.map((template) => (
+        <div class="cursor-pointer" onClick={() => vm.addUnit(template)}>
+          {template.name}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const AddableSlotView = (props: { slot: UnitSlot }) => {
+  const [isListing, setIsListing] = createSignal(false);
+  const vm = {
+    toggleListing: () => setIsListing(!isListing()),
+    closeListing: () => setIsListing(false),
+    openListing: () => setIsListing(true),
+  };
+  return (
+    <div class="h-full">
+      <Show when={!isListing()}>
+        <div
+          class="w-full h-full flex-c cursor-pointer"
+          onClick={vm.openListing}
+        >
+          +
+        </div>
+      </Show>
+      <Show when={isListing()}>
+        <UnitListingView slot={props.slot} closeListing={vm.closeListing} />
+      </Show>
+    </div>
+  );
 };
 
 const SlotView = (props: { slot: UnitSlot; canAdd: boolean }) => {
@@ -179,7 +222,7 @@ const SlotView = (props: { slot: UnitSlot; canAdd: boolean }) => {
       {props.slot.unitAssignment ? (
         <UnitView unitAssignment={props.slot.unitAssignment} />
       ) : (
-        <BlankSlotView slot={props.slot} canAdd={props.canAdd} />
+        props.canAdd && <AddableSlotView slot={props.slot} />
       )}
     </div>
   );
