@@ -6,3 +6,12 @@ export type UnitMetadata = {
   repositoryUrl: string;
   category?: UnitCategoryHint;
 };
+
+export type HostUnitMetadata = {
+  pagePath: string;
+} & UnitMetadata;
+
+export type UnitSummariesJson = {
+  generatedAt: string;
+  units: HostUnitMetadata[];
+};
