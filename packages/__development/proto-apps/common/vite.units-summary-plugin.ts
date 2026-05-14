@@ -8,9 +8,14 @@ type UnitsSummary = {
   generatedAt: string;
   units: Array<
     {
+      unitPageId: string;
       pagePath: string;
     } & UnitMeta
   >;
+};
+
+type UnitsSummaryPluginOptions = {
+  output?: string;
 };
 
 async function pathExists(targetPath: string) {
@@ -47,6 +52,7 @@ async function buildUnitsSummary(
       const meta = JSON.parse(raw) as UnitMeta;
 
       return {
+        unitPageId: unitId,
         pagePath: `/units-dev/${unitId}/index.html`,
         ...meta,
       };
@@ -62,11 +68,10 @@ async function buildUnitsSummary(
 }
 
 async function writeUnitsSummaryFile(
-  publicDir: string,
+  outputFilePath: string,
+  outputDisplayPath: string,
   unitsSummary: UnitsSummary | null,
 ) {
-  const outputFilePath = path.join(publicDir, "units-summary.json");
-
   if (unitsSummary === null) {
     if (await pathExists(outputFilePath)) {
       await fs.unlink(outputFilePath);
@@ -84,8 +89,9 @@ async function writeUnitsSummaryFile(
     return false;
   }
 
+  await fs.mkdir(path.dirname(outputFilePath), { recursive: true });
   await fs.writeFile(outputFilePath, nextContent, "utf8");
-  console.log(`generated public/units-summary.json`);
+  console.log(`generated ${outputDisplayPath}`);
   return true;
 }
 
@@ -99,8 +105,13 @@ async function resolveUnitsRootDir(publicDir: string) {
   return fs.realpath(unitsDir);
 }
 
-export function unitsSummaryPlugin(): Plugin {
+export function unitsSummaryPlugin(
+  options: UnitsSummaryPluginOptions = {},
+): Plugin {
   let configPublicDir = "";
+  let configRoot = "";
+  let outputFilePath = "";
+  let outputDisplayPath = "";
   let server: ViteDevServer | undefined;
   let lastUnitsRootDir: string | null = null;
   let generationTask: Promise<boolean> | null = null;
@@ -115,7 +126,11 @@ export function unitsSummaryPlugin(): Plugin {
       const summary = unitsRootDir
         ? await buildUnitsSummary(unitsRootDir)
         : null;
-      const didWrite = await writeUnitsSummaryFile(configPublicDir, summary);
+      const didWrite = await writeUnitsSummaryFile(
+        outputFilePath,
+        outputDisplayPath,
+        summary,
+      );
 
       if (lastUnitsRootDir !== unitsRootDir && unitsRootDir && server) {
         server.watcher.add(path.join(unitsRootDir, "**/unit-meta.json"));
@@ -142,7 +157,13 @@ export function unitsSummaryPlugin(): Plugin {
   return {
     name: "units-summary",
     configResolved(config) {
+      configRoot = config.root;
       configPublicDir = config.publicDir;
+      outputFilePath = path.resolve(
+        configRoot,
+        options.output ?? path.join("public", "units-summary.json"),
+      );
+      outputDisplayPath = path.relative(configRoot, outputFilePath);
     },
     async buildStart() {
       await generate();
