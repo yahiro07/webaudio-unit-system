@@ -715,6 +715,13 @@ ThreePiece.prototype.getMouseOverObj = function () {
   return this.mouseOverObj;
 };
 
+ThreePiece.prototype.setMouseCursor = function (cursor) {
+  var target = this.canvas || this.element;
+  if (target !== undefined) {
+    target.style.cursor = cursor;
+  }
+};
+
 ThreePiece.prototype.getObjectNameAtEvent = function (e) {
   if (this.projector == undefined) {
     this.projector = new THREE.Projector();
@@ -771,6 +778,11 @@ ThreePiece.prototype.checkMouseOver = function (e) {
       var obj = this.obj(this.mouseOverObj);
       this.mouseLeaveFunc[this.mouseOverObj](obj);
     }
+    this.setMouseCursor(
+      objname !== undefined && this.mouseEnterFunc[objname] !== undefined
+        ? "pointer"
+        : ""
+    );
     if (objname !== undefined && this.mouseEnterFunc[objname] !== undefined) {
       this.mouseEnterFunc[objname](target);
     }
