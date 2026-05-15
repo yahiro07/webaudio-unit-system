@@ -20,6 +20,7 @@ var Ctrl = function () {
   this.normalKnob = true;
   this.sensitivity = 2;
   this.infomode = 0;
+  this.playingNote = null;
 
   var self = this;
   document.body.onmousedown = function (e) {
@@ -318,11 +319,15 @@ Ctrl.prototype.keyUp = function (note) {
 
 Ctrl.prototype.note_on = function (note) {
   synth.play(note);
+  this.playingNote = note;
   ctrl.keyDown(note);
 };
 
 Ctrl.prototype.note_off = function (note) {
-  synth.stop();
+  if (note === this.playingNote) {
+    synth.stop();
+    this.playingNote = null;
+  }
   ctrl.keyUp(note);
 };
 
