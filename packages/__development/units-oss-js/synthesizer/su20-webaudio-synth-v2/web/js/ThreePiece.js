@@ -715,29 +715,20 @@ ThreePiece.prototype.getMouseOverObj = function () {
   return this.mouseOverObj;
 };
 
-var cmocnt = 0; // 毎回チェックすると重いのでカウント
-ThreePiece.prototype.checkMouseOver = function (e) {
-  cmocnt++;
-  if (cmocnt % 5 !== 0) return;
+ThreePiece.prototype.getObjectNameAtEvent = function (e) {
   if (this.projector == undefined) {
     this.projector = new THREE.Projector();
   }
-  var rect = e.target.getBoundingClientRect();
+  var rect = this.element.getBoundingClientRect();
   var mouseX = e.clientX - rect.left;
   var mouseY = e.clientY - rect.top;
   mouseX = (mouseX / this.width) * 2 - 1;
   mouseY = -(mouseY / this.height) * 2 + 1;
-  if (mouseX == this.mouse_ox && mouseY == this.mouse_oy) {
-    return;
-  }
-  this.mouse_ox = mouseX;
-  this.mouse_oy = mouseY;
-  var pos = new THREE.Vector3(mouseX, mouseY, 1);
-  this.projector.unprojectVector(pos, this.camera);
-  var ray = new THREE.Raycaster(
-    this.camera.position,
-    pos.sub(this.camera.position).normalize(),
-  );
+  var rayStart = new THREE.Vector3(mouseX, mouseY, -1);
+  var rayEnd = new THREE.Vector3(mouseX, mouseY, 1);
+  this.projector.unprojectVector(rayStart, this.camera);
+  this.projector.unprojectVector(rayEnd, this.camera);
+  var ray = new THREE.Raycaster(rayStart, rayEnd.sub(rayStart).normalize());
 
   var objname = undefined;
   var dist = 99999;
@@ -750,6 +741,27 @@ ThreePiece.prototype.checkMouseOver = function (e) {
       target = o[0].object;
     }
   }
+
+  return {
+    objname: objname,
+    target: target,
+    mouseX: mouseX,
+    mouseY: mouseY,
+  };
+};
+
+var cmocnt = 0; // 毎回チェックすると重いのでカウント
+ThreePiece.prototype.checkMouseOver = function (e) {
+  cmocnt++;
+  if (cmocnt % 5 !== 0) return;
+  var hit = this.getObjectNameAtEvent(e);
+  if (hit.mouseX == this.mouse_ox && hit.mouseY == this.mouse_oy) {
+    return;
+  }
+  this.mouse_ox = hit.mouseX;
+  this.mouse_oy = hit.mouseY;
+  var objname = hit.objname;
+  var target = hit.target;
 
   if (objname != this.mouseOverObj) {
     if (

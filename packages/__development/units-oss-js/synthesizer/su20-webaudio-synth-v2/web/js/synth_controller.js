@@ -23,6 +23,13 @@ var Ctrl = function () {
 
   var self = this;
   document.body.onmousedown = function (e) {
+    var hit = null;
+    if (typeof gui.getObjectNameAtEvent === "function") {
+      hit = gui.getObjectNameAtEvent(e);
+      if (hit.objname !== undefined && hit.objname !== self.focus) {
+        self.focus = hit.objname;
+      }
+    }
     if (self.mouseDown) return;
     if (self.focus.substring(0, 2) === "k_") {
       self.mouseDown = true;
