@@ -23,10 +23,21 @@
   <script type="text/javascript" src="js/synth_keyboard.js"></script>
   <script type="text/javascript" src="js/synth_sequencer.js"></script>
   <script type="text/javascript" src="js/synth_midi.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      overflow: hidden;
+      height: 100dvh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
 </head>
 
-<body style="background-color:#000;">
-  <div id="draw" style="margin:0 auto;"></div>
+<body>
+  <div id="draw"></div>
 
   <!-- =========================================================== -->
   <!-- <div id="buttons">
