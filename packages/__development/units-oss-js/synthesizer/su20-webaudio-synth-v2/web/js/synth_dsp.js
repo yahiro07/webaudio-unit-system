@@ -7,7 +7,10 @@
  */
 
 ///////////// BROWSER CHECK /////////////////////
-window.AudioContext = window.AudioContext || window.webkitAudioContext;
+window.AudioContext =
+  window.hostInterface?.audioContext ??
+  window.AudioContext ??
+  window.webkitAudioContext;
 window.addEventListener("load", init, false);
 function init() {
   try {
