@@ -202,6 +202,9 @@ ThreePiece.prototype.evalNode = function (json) {
     case "perspectivecamera":
       this.camera = this.PerspectiveCamera(o);
       return undefined;
+    case "orthographiccamera":
+      this.camera = this.OrthographicCamera(o);
+      return undefined;
 
     // Light
     case "ambientlight":
@@ -389,6 +392,54 @@ ThreePiece.prototype.PerspectiveCamera = function (o) {
   o.name = this.set(o.name, "camera");
 
   var camera = new THREE.PerspectiveCamera(o.fov, this.width / this.height);
+  camera.tpCameraType = "perspective";
+  camera.position.set(o.x, o.y, o.z);
+  camera.rotation.order = "ZXY";
+  if (useRotation) {
+    camera.rotation.set(o.rx, o.ry, o.rz);
+  } else {
+    camera.lookAt(new THREE.Vector3(o.tx, o.ty, o.tz));
+  }
+  this.objs[o.name] = camera;
+  this.scene.add(camera);
+
+  return camera;
+};
+
+ThreePiece.prototype.OrthographicCamera = function (o) {
+  this.cameraExist = true;
+
+  o.x = this.set(o.x, 0);
+  o.y = this.set(o.y, 0.5);
+  o.z = this.set(o.z, 3);
+  var useRotation;
+  if (o.rx === undefined) {
+    useRotation = false;
+    o.tx = this.set(o.tx, 0);
+    o.ty = this.set(o.ty, 0);
+    o.tz = this.set(o.tz, 0);
+  } else {
+    useRotation = true;
+    o.rx = this.set(o.rx, 0);
+    o.ry = this.set(o.ry, 0);
+    o.rz = this.set(o.rz, 0);
+  }
+  o.size = this.set(o.size, 10);
+  o.near = this.set(o.near, 0.1);
+  o.far = this.set(o.far, 2000);
+  o.name = this.set(o.name, "camera");
+
+  var aspect = this.width / this.height;
+  var camera = new THREE.OrthographicCamera(
+    -o.size * aspect,
+    o.size * aspect,
+    o.size,
+    -o.size,
+    o.near,
+    o.far,
+  );
+  camera.tpCameraType = "orthographic";
+  camera.tpSize = o.size;
   camera.position.set(o.x, o.y, o.z);
   camera.rotation.order = "ZXY";
   if (useRotation) {
@@ -611,7 +662,15 @@ ThreePiece.prototype.resize = function (width, height) {
   this.element.style.width = width + "px";
   this.element.style.height = height + "px";
   this.renderer.setSize(width, height);
-  this.camera.aspect = width / height;
+  if (this.camera.tpCameraType == "orthographic") {
+    var aspect = width / height;
+    this.camera.left = -this.camera.tpSize * aspect;
+    this.camera.right = this.camera.tpSize * aspect;
+    this.camera.top = this.camera.tpSize;
+    this.camera.bottom = -this.camera.tpSize;
+  } else {
+    this.camera.aspect = width / height;
+  }
   this.camera.updateProjectionMatrix();
 };
 

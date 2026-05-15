@@ -235,22 +235,12 @@ $(function () {
       { obj: "texture", name: "logo", file: "images/logoplate.jpg" },
 
       // camera
-      { obj: "perspectivecamera", y: 2, fov: 50 },
+      { obj: "orthographiccamera", y: 30, z: 0, rx: -Math.PI / 2, size: 1.2 },
 
       // light
       { obj: "directionalLight", intensity: 0, name: "dlight" },
-      { obj: "hemisphereLight", intensity: 0.1 },
-      {
-        obj: "spotLight",
-        col: 0xfffff8,
-        intensity: 1.5,
-        x: 10,
-        y: 10,
-        z: -5,
-        tx: 0,
-        ty: 0,
-        tz: 0,
-      },
+      { obj: "hemisphereLight", intensity: 0.3 },
+      // {obj:'spotLight', col:0xFFFFF8, intensity:1.5, x:10, y:10, z:-5, tx:0, ty:0, tz:0},
 
       // bottom board
       {
@@ -613,7 +603,7 @@ $(function () {
   gui.enableMouseEvent(true);
 
   // panel raise animation
-  if (true) {
+  if (false) {
     gui.addHook(function (msec) {
       if (gui.obj("panel").rotation.x < 0.9) {
         gui.obj("panel").rotation.x += 0.01;
@@ -625,13 +615,9 @@ $(function () {
       }
     });
   } else {
-    gui.obj("panel").rotation.x = 1.0;
+    gui.obj("panel").rotation.x = 0;
     gui.obj("dlight").intensity = 0.8;
   }
-
-  gui.obj("camera").position.y += 0.6;
-  gui.obj("camera").position.z -= 0.4;
-  gui.obj("camera").rotation.x -= 0.15;
 
   ctrl.setDefaultValues();
 
