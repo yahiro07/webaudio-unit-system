@@ -563,7 +563,7 @@ $(function () {
     (function (name) {
       gui.setMouseEnterCallback(name, function (o) {
         if (ctrl.mouseDown) return;
-        o.parent.children[0].intensity = 5;
+        o.parent.children[0].intensity = 2;
         ctrl.focus = name;
         gui.setDirty();
       });
