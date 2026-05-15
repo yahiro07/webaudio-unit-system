@@ -362,78 +362,40 @@ Ctrl.prototype.stop_demo = function (wait_release) {
 };
 
 Ctrl.prototype.setDefaultValues = function () {
-  this.setSwitchValue(gui.obj("s_glide"), 100);
-  this.setDspParam("s_glide", 100);
-
-  this.setKnobValue(gui.obj("k_glide"), 20);
-  this.setDspParam("s_glide", 20);
-
-  this.normalKnob = false;
-  this.setKnobValue(gui.obj("c_freq1"), 0);
-  this.setDspParam("c_freq1", 0);
-
-  this.setKnobValue(gui.obj("c_freq2"), 50);
-  this.setDspParam("c_freq2", 50);
-
-  this.normalKnob = true;
-  this.setKnobValue(gui.obj("k_fine1"), 50);
-  this.setDspParam("k_fine1", 50);
-
-  this.setKnobValue(gui.obj("k_fine2"), 50);
-  this.setDspParam("k_fine2", 50);
-
-  this.normalKnob = false;
-  this.setKnobValue(gui.obj("c_wave1"), 50);
-  this.setDspParam("c_wave1", 50);
-
-  this.setKnobValue(gui.obj("c_wave2"), 50);
-  this.setDspParam("c_wave2", 50);
-
-  this.normalKnob = true;
-  this.setKnobValue(gui.obj("k_vol1"), 50);
-  this.setDspParam("k_vol1", 50);
-
-  this.setKnobValue(gui.obj("k_vol2"), 50);
-  this.setDspParam("k_vol2", 50);
-
-  this.setSwitchValue(gui.obj("s_osc1"), 100);
-  this.setDspParam("s_osc1", 100);
-
-  this.setSwitchValue(gui.obj("s_osc2"), 100);
-  this.setDspParam("s_osc2", 100);
-
-  this.setKnobValue(gui.obj("k_cut"), 50);
-  this.setDspParam("k_cut", 50);
-
-  this.setKnobValue(gui.obj("k_emp"), 50);
-  this.setDspParam("k_emp", 50);
-
-  this.setKnobValue(gui.obj("k_amo"), 50);
-  this.setDspParam("k_amo", 50);
-
-  this.setKnobValue(gui.obj("k_fa"), 20);
-  this.setDspParam("k_fa", 20);
-
-  this.setKnobValue(gui.obj("k_fd"), 10);
-  this.setDspParam("k_fd", 10);
-
-  this.setKnobValue(gui.obj("k_fs"), 50);
-  this.setDspParam("k_fs", 50);
-
-  this.setKnobValue(gui.obj("k_la"), 10);
-  this.setDspParam("k_la", 10);
-
-  this.setKnobValue(gui.obj("k_ld"), 20);
-  this.setDspParam("k_ld", 20);
-
-  this.setKnobValue(gui.obj("k_ls"), 100);
-  this.setDspParam("k_ls", 100);
-
-  this.setKnobValue(gui.obj("k_vol"), 50);
-  this.setDspParam("k_vol", 50);
-
-  this.setKnobValue(gui.obj("k_dly"), 40);
-  this.setDspParam("k_dly", 40);
+  const wrapSetSwitchValue = (id, enabled) => {
+    const value = enabled ? 100 : 0;
+    this.setSwitchValue(gui.obj(id), value);
+    this.setDspParam(id, value);
+  };
+  const wrapSetKnobValue = (id, value, isThreeStep) => {
+    this.normalKnob = !isThreeStep;
+    this.setKnobValue(gui.obj(id), value);
+    this.setDspParam(value);
+  };
+  wrapSetSwitchValue("s_glide", 100);
+  wrapSetKnobValue("k_glide", 20);
+  wrapSetKnobValue("c_freq1", 0, true);
+  wrapSetKnobValue("c_freq2", 50, true);
+  wrapSetKnobValue("k_fine1", 50);
+  wrapSetKnobValue("k_fine2", 50);
+  wrapSetKnobValue("c_wave1", 50, true);
+  wrapSetKnobValue("c_wave2", 50, true);
+  wrapSetKnobValue("k_fine1", 50);
+  wrapSetKnobValue("k_vol1", 50);
+  wrapSetKnobValue("k_vol2", 50);
+  wrapSetSwitchValue("s_osc1", 100);
+  wrapSetSwitchValue("s_osc2", 100);
+  wrapSetKnobValue("k_cut", 50);
+  wrapSetKnobValue("k_emp", 50);
+  wrapSetKnobValue("k_amo", 50);
+  wrapSetKnobValue("k_fa", 20);
+  wrapSetKnobValue("k_fd", 10);
+  wrapSetKnobValue("k_fs", 50);
+  wrapSetKnobValue("k_la", 10);
+  wrapSetKnobValue("k_ld", 20);
+  wrapSetKnobValue("k_ls", 100);
+  wrapSetKnobValue("k_vol", 50);
+  wrapSetKnobValue("k_dly", 40);
 };
 
 $(function () {
