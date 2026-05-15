@@ -10,6 +10,9 @@ var gui;
 var stats;
 
 $(function () {
+  const flatMode =
+    localStorage.getItem("wus_unit_synthesizer_v2_flat_view") === "1";
+
   document.body.style.cursor = "default";
 
   gui = new ThreePiece("draw", 1100, 600, true);
@@ -235,7 +238,15 @@ $(function () {
       { obj: "texture", name: "logo", file: "images/logoplate.jpg" },
 
       // camera
-      { obj: "orthographiccamera", y: 30, z: 0, rx: -Math.PI / 2, size: 1.2 },
+      flatMode
+        ? {
+            obj: "orthographiccamera",
+            y: 30,
+            z: 0,
+            rx: -Math.PI / 2,
+            size: 1.2,
+          }
+        : { obj: "perspectivecamera", y: 2, fov: 50 },
 
       // light
       { obj: "directionalLight", intensity: 0, name: "dlight" },
@@ -603,7 +614,7 @@ $(function () {
   gui.enableMouseEvent(true);
 
   // panel raise animation
-  if (false) {
+  if (!flatMode) {
     gui.addHook(function (msec) {
       if (gui.obj("panel").rotation.x < 0.9) {
         gui.obj("panel").rotation.x += 0.01;
@@ -617,6 +628,14 @@ $(function () {
   } else {
     gui.obj("panel").rotation.x = 0;
     gui.obj("dlight").intensity = 0.8;
+  }
+
+  if (!flatMode) {
+    gui.obj("camera").position.y += 0.6;
+    gui.obj("camera").position.z -= 0.4;
+    gui.obj("camera").rotation.x -= 0.15;
+
+    document.body.style.background = "#000";
   }
 
   ctrl.setDefaultValues();

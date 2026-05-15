@@ -34,11 +34,52 @@
       justify-content: center;
       align-items: center;
     }
+
+    .switcher {
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+      gap: 2px;
+    }
+
+    .switcher>button {
+      font-size: 30px;
+      padding: 5px 10px;
+    }
+
+    .switcher>button.active {
+      background-color: #48f;
+      color: white;
+    }
   </style>
+  <script>
+    const flatMode =
+      localStorage.getItem("wus_unit_synthesizer_v2_flat_view") === "1";
+
+    function setFlatMode(flag) {
+      localStorage.setItem("wus_unit_synthesizer_v2_flat_view", flag ? "1" : "0");
+      location.reload();
+    }
+
+    $(() => {
+      if (flatMode) {
+        $("#btn-2d-view").addClass("active");
+      } else {
+        $("#btn-3d-view").addClass("active");
+      }
+    })
+  </script>
 </head>
 
 <body>
   <div id="draw"></div>
+  <div class="switcher">
+    <button id="btn-3d-view" onclick="setFlatMode(false)">3D</button>
+    <button id="btn-2d-view" onclick="setFlatMode(true)">2D</button>
+  </div>
 
   <!-- =========================================================== -->
   <!-- <div id="buttons">
