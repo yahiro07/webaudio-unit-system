@@ -370,32 +370,32 @@ Ctrl.prototype.setDefaultValues = function () {
   const wrapSetKnobValue = (id, value, isThreeStep) => {
     this.normalKnob = !isThreeStep;
     this.setKnobValue(gui.obj(id), value);
-    this.setDspParam(value);
+    this.setDspParam(id, value);
   };
-  wrapSetSwitchValue("s_glide", 100);
+  wrapSetSwitchValue("s_glide", false);
   wrapSetKnobValue("k_glide", 20);
-  wrapSetKnobValue("c_freq1", 0, true);
+  wrapSetKnobValue("c_freq1", 50, true);
   wrapSetKnobValue("c_freq2", 50, true);
   wrapSetKnobValue("k_fine1", 50);
   wrapSetKnobValue("k_fine2", 50);
   wrapSetKnobValue("c_wave1", 50, true);
-  wrapSetKnobValue("c_wave2", 50, true);
+  wrapSetKnobValue("c_wave2", 100, true);
   wrapSetKnobValue("k_fine1", 50);
   wrapSetKnobValue("k_vol1", 50);
   wrapSetKnobValue("k_vol2", 50);
-  wrapSetSwitchValue("s_osc1", 100);
-  wrapSetSwitchValue("s_osc2", 100);
-  wrapSetKnobValue("k_cut", 50);
-  wrapSetKnobValue("k_emp", 50);
+  wrapSetSwitchValue("s_osc1", true);
+  wrapSetSwitchValue("s_osc2", false);
+  wrapSetKnobValue("k_cut", 100);
+  wrapSetKnobValue("k_emp", 0);
   wrapSetKnobValue("k_amo", 50);
-  wrapSetKnobValue("k_fa", 20);
-  wrapSetKnobValue("k_fd", 10);
-  wrapSetKnobValue("k_fs", 50);
-  wrapSetKnobValue("k_la", 10);
-  wrapSetKnobValue("k_ld", 20);
+  wrapSetKnobValue("k_fa", 0);
+  wrapSetKnobValue("k_fd", 0);
+  wrapSetKnobValue("k_fs", 100);
+  wrapSetKnobValue("k_la", 0);
+  wrapSetKnobValue("k_ld", 0);
   wrapSetKnobValue("k_ls", 100);
   wrapSetKnobValue("k_vol", 50);
-  wrapSetKnobValue("k_dly", 40);
+  wrapSetKnobValue("k_dly", 0);
 };
 
 $(function () {
