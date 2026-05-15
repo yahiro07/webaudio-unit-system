@@ -6,7 +6,7 @@ Web browser based synthesizer application
 WebAudioSynth v2 is new version of WebAudioSynth.  
 (old version: https://aikelab.net/websynth/ )   
 It is an analog style synthesizer application which all written in JavaScript using Web Audio API.  
-
+![image](web/images/thumb2.png)
 
 ## NEW FEATURES
 - Web GL 3DCG view using three.js and ThreePiece.js
@@ -32,4 +32,4 @@ ThreePiece.js by aike https://github.com/aike/ThreePiece.js
 Contact: twitter @aike1000
 
 ## MODIFICATION
-In this fork, the GUI has been updated to a flat panel to make it easier to use as a sound module within the unit system. This modification was done by yahiro.
+In this fork, in addition to supporting the unit-system, we've added a Flat View mode that displays GUI in the classic 2D way. You can switch between 3D or 2D view with top-left buttons. yahiro did this work.
