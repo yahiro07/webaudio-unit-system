@@ -344,6 +344,9 @@ var WebSynth = function() {
 	this.filter = new CTL_Filter(this.context);
 	this.volume = new CTL_Volume(this.context);
 	this.delay = new FX_Delay(this.context);
+	this.current_note = null;
+	this.goal_pitch1 = this.vco1.pitch;
+	this.goal_pitch2 = this.vco2.pitch;
 
 	// vco1 -> mixer -> filter -> volume -> delay -> dest
 	// vco2 ->
@@ -377,19 +380,36 @@ var WebSynth = function() {
 
 };
 
-WebSynth.prototype.play = function(n) {
-	if(this.context.state === 'suspended') {
-		this.context.resume();
+WebSynth.prototype.update_goal_pitch = function() {
+	if (this.current_note === null) {
+		return;
 	}
-	this.eg.note_on();
-	this.feg.note_on();
-	var f1 = 440 * Math.pow(2.0, (this.vco1.oct + n + this.vco1.fine - 81.0) / 12.0);
-	var f2 = 440 * Math.pow(2.0, (this.vco2.oct + n + this.vco2.fine - 81.0) / 12.0);
+
+	var f1 = 440 * Math.pow(2.0, (this.vco1.oct + this.current_note + this.vco1.fine - 81.0) / 12.0);
+	var f2 = 440 * Math.pow(2.0, (this.vco2.oct + this.current_note + this.vco2.fine - 81.0) / 12.0);
 	if (f1 === f2) {
 		f2 *= 1.002;
 	}
 	this.goal_pitch1 = f1;
 	this.goal_pitch2 = f2;
+};
+
+WebSynth.prototype.refresh_pitch = function() {
+	this.update_goal_pitch();
+	if (this.eg.mode !== EGM.Idle) {
+		this.vco1.set_goal_pitch(this.goal_pitch1);
+		this.vco2.set_goal_pitch(this.goal_pitch2);
+	}
+};
+
+WebSynth.prototype.play = function(n) {
+	if(this.context.state === 'suspended') {
+		this.context.resume();
+	}
+	this.current_note = n;
+	this.update_goal_pitch();
+	this.eg.note_on();
+	this.feg.note_on();
 };
 
 WebSynth.prototype.stop = function() {

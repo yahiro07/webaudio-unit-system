@@ -122,15 +122,19 @@ Ctrl.prototype.setDspParam = function (key, val) {
 
     case "c_freq1":
       synth.vco1.set_pitch(val);
+      synth.refresh_pitch();
       break;
     case "c_freq2":
       synth.vco2.set_pitch(val);
+      synth.refresh_pitch();
       break;
     case "k_fine1":
       synth.vco1.set_fine(val);
+      synth.refresh_pitch();
       break;
     case "k_fine2":
       synth.vco2.set_fine(val);
+      synth.refresh_pitch();
       break;
     case "c_wave1":
       synth.vco1.set_wave(val);
