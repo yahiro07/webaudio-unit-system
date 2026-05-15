@@ -7,10 +7,7 @@
  */
 
 ///////////// BROWSER CHECK /////////////////////
-window.AudioContext =
-  window.hostInterface?.audioContext ??
-  window.AudioContext ??
-  window.webkitAudioContext;
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
 window.addEventListener("load", init, false);
 function init() {
   try {
@@ -332,7 +329,7 @@ CTL_Filter.prototype.getnode = function () {
 var WebSynth = function () {
   var self = this;
 
-  this.context = new AudioContext();
+  this.context = window.hostInterface?.audioContext ?? new AudioContext();
   this.vco1 = new VCO(this.context);
   this.vco2 = new VCO(this.context);
   this.mixer = this.context.createScriptProcessor(stream_length, 1, 2);
