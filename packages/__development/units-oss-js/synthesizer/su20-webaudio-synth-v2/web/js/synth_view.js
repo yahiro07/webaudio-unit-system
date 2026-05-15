@@ -625,10 +625,11 @@ $(function () {
   var fitToWindow = function () {
     var w = window.innerWidth;
     var h = window.innerHeight;
-    if (w / h > 11 / 6) {
-      w = Math.floor((h * 11) / 6);
+    const asr = 10.5 / 6;
+    if (w / h > asr) {
+      w = Math.floor(h * asr);
     } else {
-      h = Math.floor((w * 6) / 11);
+      h = Math.floor(w / asr);
     }
     gui.resize(w, h);
     gui.setDirty();
