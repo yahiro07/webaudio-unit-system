@@ -656,6 +656,24 @@ ThreePiece.prototype.obj = function (name) {
   return this.objs[name];
 };
 
+ThreePiece.prototype.setCamera = function (o) {
+  var currentCamera = this.camera;
+  if (currentCamera !== undefined) {
+    this.scene.remove(currentCamera);
+    if ("camera" in this.objs) {
+      delete this.objs["camera"];
+    }
+  }
+  this.cameraExist = false;
+  if (o.obj.toLowerCase() === "orthographiccamera") {
+    this.camera = this.OrthographicCamera(o);
+  } else {
+    this.camera = this.PerspectiveCamera(o);
+  }
+  this.resize(this.width, this.height);
+  this.setDirty();
+};
+
 ThreePiece.prototype.resize = function (width, height) {
   this.width = width;
   this.height = height;

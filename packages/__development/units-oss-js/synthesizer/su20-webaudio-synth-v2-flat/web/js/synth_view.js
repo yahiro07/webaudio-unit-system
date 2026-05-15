@@ -10,12 +10,30 @@ var gui;
 var stats;
 
 $(function () {
-  const flatMode =
-    localStorage.getItem("wus_unit_synthesizer_v2_flat_view") === "1";
-
   document.body.style.cursor = "default";
 
   gui = new ThreePiece("draw", 1100, 600, true);
+
+  var getFlatMode = function () {
+    return window.flatMode === true;
+  };
+  var getCameraConfig = function (flatMode) {
+    if (flatMode) {
+      return {
+        obj: "orthographiccamera",
+        y: 30,
+        z: 0,
+        rx: -Math.PI / 2,
+        size: 1.2,
+      };
+    }
+    return { obj: "perspectivecamera", y: 2.6, z: 2.6, rx: -0.75, fov: 47 };
+  };
+  var applyViewMode = function (flatMode) {
+    gui.setCamera(getCameraConfig(flatMode));
+    document.body.style.background = flatMode ? "#c2c2cd" : "#000";
+    gui.setDirty();
+  };
 
   ///////// Define Macros
   // screw
@@ -238,15 +256,7 @@ $(function () {
       { obj: "texture", name: "logo", file: "images/logoplate.jpg" },
 
       // camera
-      flatMode
-        ? {
-            obj: "orthographiccamera",
-            y: 30,
-            z: 0,
-            rx: -Math.PI / 2,
-            size: 1.2,
-          }
-        : { obj: "perspectivecamera", y: 2, fov: 50 },
+      getCameraConfig(getFlatMode()),
 
       // light
       { obj: "directionalLight", intensity: 0, name: "dlight" },
@@ -613,30 +623,31 @@ $(function () {
 
   gui.enableMouseEvent(true);
 
-  // panel raise animation
-  if (!flatMode) {
-    gui.addHook(function (msec) {
-      if (gui.obj("panel").rotation.x < 0.9) {
-        gui.obj("panel").rotation.x += 0.01;
-        gui.setDirty();
-      }
-      if (gui.obj("dlight").intensity < 0.8) {
-        gui.obj("dlight").intensity += 0.01;
-        gui.setDirty();
-      }
-    });
-  } else {
-    gui.obj("panel").rotation.x = 0;
-    gui.obj("dlight").intensity = 0.8;
-  }
+  gui.addHook(function () {
+    var targetRotation = getFlatMode() ? 0 : 0.9;
+    var targetLight = 0.8;
+    var panel = gui.obj("panel");
+    var dlight = gui.obj("dlight");
 
-  if (!flatMode) {
-    gui.obj("camera").position.y += 0.6;
-    gui.obj("camera").position.z -= 0.4;
-    gui.obj("camera").rotation.x -= 0.15;
+    if (Math.abs(panel.rotation.x - targetRotation) > 0.01) {
+      panel.rotation.x += panel.rotation.x < targetRotation ? 0.01 : -0.01;
+      gui.setDirty();
+    } else if (panel.rotation.x !== targetRotation) {
+      panel.rotation.x = targetRotation;
+      gui.setDirty();
+    }
 
-    document.body.style.background = "#000";
-  }
+    if (Math.abs(dlight.intensity - targetLight) > 0.01) {
+      dlight.intensity += dlight.intensity < targetLight ? 0.01 : -0.01;
+      gui.setDirty();
+    } else if (dlight.intensity !== targetLight) {
+      dlight.intensity = targetLight;
+      gui.setDirty();
+    }
+  });
+
+  applyViewMode(getFlatMode());
+  window.applySynthViewMode = applyViewMode;
 
   ctrl.setDefaultValues();
 
