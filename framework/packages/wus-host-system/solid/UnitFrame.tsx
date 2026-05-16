@@ -26,6 +26,8 @@ export const UnitFrame = (props: {
   const [unitAgent, setUnitAgent] = createSignal<UnitAgentInHostSide>();
   let currentNotes: number[] = [];
 
+  let startTime = Date.now();
+
   createEffect(() => {
     const bpm = props.hostBpm;
     const agent = unitAgent();
@@ -90,6 +92,8 @@ export const UnitFrame = (props: {
           }
         },
       );
+      const completeTime = Date.now();
+      console.log(`${props.unitId} loaded in ${completeTime - startTime} ms`);
     }
   });
   return (
