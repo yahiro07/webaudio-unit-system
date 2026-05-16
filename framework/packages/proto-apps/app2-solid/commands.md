@@ -1,4 +1,4 @@
 create symlink
 ```
-ln -s ../../../units public/units
+ln -s ../../../../../units/dist public/units
 ```

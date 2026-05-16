@@ -1,7 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import { unitsSummaryPlugin } from "@wus/host-system/vite-plugins";
 import { defineConfig } from "vite";
-import { unitsSummaryPlugin } from "../../summary-builder/vite-units-summary-plugin";
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), unitsSummaryPlugin()],

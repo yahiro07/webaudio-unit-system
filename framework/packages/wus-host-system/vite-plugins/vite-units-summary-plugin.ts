@@ -1,12 +1,25 @@
 import * as fs from "node:fs";
 import { globSync } from "node:fs";
 import path from "node:path";
-import {
-  HostUnitMetadata,
-  UnitMetadata,
-  UnitSummariesJson,
-} from "@wus/host-system/host";
 import type { Plugin, ResolvedConfig } from "vite";
+
+type UnitType = string;
+type UnitCategoryHint = string;
+type UnitMetadata = {
+  unitType: UnitType;
+  name: string;
+  repositoryUrl: string;
+  category?: UnitCategoryHint;
+};
+type HostUnitMetadata = {
+  unitPageId: string;
+  pagePath: string;
+} & UnitMetadata;
+
+type UnitSummariesJson = {
+  generatedAt: string;
+  units: HostUnitMetadata[];
+};
 
 function buildSummaryJson(
   entries: {
