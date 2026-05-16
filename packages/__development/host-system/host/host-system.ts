@@ -60,7 +60,7 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
   };
 }
 
-function createAudioContextDestinationProxied(
+export function createAudioContextDestinationProxied(
   audioContext: AudioContext,
   unitDestinationNode: AudioNode,
 ): AudioContext {
