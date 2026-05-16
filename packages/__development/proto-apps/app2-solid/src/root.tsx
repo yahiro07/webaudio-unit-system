@@ -1,5 +1,3 @@
-/** @jsxImportSource solid-js */
-
 import "@wus/mo/styles";
 import { createHostSystem } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
