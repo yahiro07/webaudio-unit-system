@@ -1,7 +1,7 @@
 /** @jsxImportSource solid-js */
 
 import { arrayExclude } from "@wus/ax/array-utils";
-import { createEffect, createSignal, JSX, onMount } from "solid-js";
+import { createEffect, createSignal, JSX, onCleanup, onMount } from "solid-js";
 import { HostInterface } from "../contract";
 import {
   HostSystem,
@@ -10,6 +10,8 @@ import {
   hostSystem_wrapAddUnitAgent,
   UnitAgentInHostSide,
 } from "../host";
+
+const HOST_INTERFACE_REGISTRY_KEY = "__wusHostInterfaceRegistry";
 
 export const UnitFrame = (props: {
   unitId: string;
@@ -69,44 +71,56 @@ export const UnitFrame = (props: {
 
   onMount(async () => {
     if (!iframe) return;
+
+    const onUnitAgentLoaded = (_unitAgent: UnitAgentInHostSide) => {
+      setUnitAgent(_unitAgent);
+      hostSystem_wrapAddUnitAgent(props.hostSystem, _unitAgent);
+      console.log(`unitAgent loaded for ${props.unitId}`);
+      hostSystem_setUnitDestination(
+        props.hostSystem,
+        props.unitId,
+        props.destUnitId,
+      );
+      if (props.hostBpm !== undefined) {
+        _unitAgent.setBpm?.(props.hostBpm);
+      }
+      if (props.hostPlaying !== undefined) {
+        _unitAgent.setPlayState?.(props.hostPlaying);
+      }
+      const completeTime = Date.now();
+      console.log(`${props.unitId} loaded in ${completeTime - startTime} ms`);
+    };
+
+    const hostInterface = hostSystem_createHostInterfaceForUnit(
+      props.hostSystem,
+      props.unitId,
+      onUnitAgentLoaded,
+    );
+
+    const parentWindow = window as Window & {
+      [HOST_INTERFACE_REGISTRY_KEY]?: Record<string, HostInterface>;
+    };
+    const registry = (parentWindow[HOST_INTERFACE_REGISTRY_KEY] ??=
+      Object.create(null));
+    registry[props.unitId] = hostInterface;
+    onCleanup(() => {
+      delete registry[props.unitId];
+    });
+
     const baseUrl =
       props.pageUrl.slice(0, props.pageUrl.lastIndexOf("/")) + "/";
 
-    const content = await fetch(props.pageUrl).then((res) => res.text());
-    iframe.srcdoc = `<base href="${baseUrl}">${content}`;
-
-    const win = iframe?.contentWindow as {
-      hostInterface?: HostInterface;
-    };
-    if (win) {
-      const hostInterface = hostSystem_createHostInterfaceForUnit(
-        props.hostSystem,
-        props.unitId,
-        (_unitAgent) => {
-          setUnitAgent(_unitAgent);
-          hostSystem_wrapAddUnitAgent(props.hostSystem, _unitAgent);
-          console.log(`unitAgent loaded for ${props.unitId}`);
-          hostSystem_setUnitDestination(
-            props.hostSystem,
-            props.unitId,
-            props.destUnitId,
-          );
-          if (props.hostBpm !== undefined) {
-            _unitAgent.setBpm?.(props.hostBpm);
-          }
-          if (props.hostPlaying !== undefined) {
-            _unitAgent.setPlayState?.(props.hostPlaying);
-          }
-          const completeTime = Date.now();
-          console.log(
-            `${props.unitId} loaded in ${completeTime - startTime} ms`,
-          );
-        },
-      );
-      setTimeout(() => {
-        win.hostInterface = hostInterface;
-      }, 1);
-    }
+    const html = await fetch(props.pageUrl).then((res) => res.text());
+    const bootstrap = [
+      `<base href="${baseUrl}">`,
+      "<script>",
+      `window.hostInterface = window.parent.${HOST_INTERFACE_REGISTRY_KEY}[${JSON.stringify(props.unitId)}];`,
+      "</script>",
+    ].join("");
+    const content = html.includes("<head>")
+      ? html.replace("<head>", `<head>${bootstrap}`)
+      : `${bootstrap}${html}`;
+    iframe.srcdoc = content;
   });
   return <iframe class={props.className} style={props.style} ref={iframe} />;
 };
