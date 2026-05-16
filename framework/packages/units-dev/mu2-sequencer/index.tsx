@@ -2,8 +2,8 @@
 /** biome-ignore-all lint/correctness/useJsxKeyInIterable: solid */
 
 import { seqNumbers } from "@wus/ax/array-utils";
-import { getHostInterface } from "@wus/host-system/unit";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
+import { getHostInterface } from "@wus/unit-types";
 import { createEffect } from "solid-js";
 import { createStore } from "solid-js/store";
 import "@wus/mo/styles";

@@ -1,7 +1,7 @@
 import "@wus/mo/styles";
-import { getHostInterface } from "@wus/host-system/unit";
 import { FeKnob } from "@wus/mo-react/components/knob";
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
+import { getHostInterface } from "@wus/unit-types";
 import { createStore } from "snap-store";
 
 const store = createStore({ gain: 0.5 });

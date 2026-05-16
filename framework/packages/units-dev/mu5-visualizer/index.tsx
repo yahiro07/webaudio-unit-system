@@ -1,8 +1,8 @@
 /** @jsxImportSource solid-js */
 /** biome-ignore-all lint/correctness/useJsxKeyInIterable: solid */
 
-import { getHostInterface } from "@wus/host-system/unit";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
+import { getHostInterface } from "@wus/unit-types";
 import { createStore } from "solid-js/store";
 import "@wus/mo/styles";
 import { mapUnaryFrom, mapUnaryTo } from "@wus/ax/number-utils";
