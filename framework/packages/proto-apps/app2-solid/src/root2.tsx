@@ -338,7 +338,7 @@ const App = () => {
   presetScenes.setupScenePreset1();
   return (
     <div class="w-dvw h-dvh flex-vc gap-4">
-      <div>app2-solid 2010</div>
+      <div>app2-solid 2020</div>
       <div class="flex-h gap-4">
         {appModel.state.scene.lanes.map((lane) => (
           <LaneView lane={lane} />

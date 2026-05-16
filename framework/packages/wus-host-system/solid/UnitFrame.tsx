@@ -26,7 +26,7 @@ export const UnitFrame = (props: {
   const [unitAgent, setUnitAgent] = createSignal<UnitAgentInHostSide>();
   let currentNotes: number[] = [];
 
-  let startTime = Date.now();
+  const startTime = Date.now();
 
   createEffect(() => {
     const bpm = props.hostBpm;
@@ -103,6 +103,9 @@ export const UnitFrame = (props: {
           );
         },
       );
+      setTimeout(() => {
+        win.hostInterface = hostInterface;
+      }, 1);
     }
   });
   return <iframe class={props.className} style={props.style} ref={iframe} />;
