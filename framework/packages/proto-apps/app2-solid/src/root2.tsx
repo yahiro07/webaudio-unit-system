@@ -10,6 +10,7 @@ import {
 } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
 import { generateRandomId } from "@wus/mo/random-id-generator";
+import { Button } from "@wus/mo-solid/components/button";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createSignal, Show } from "solid-js";
 import { createStore, produce } from "solid-js/store";
@@ -150,6 +151,17 @@ function createAppModel() {
           };
         }),
       );
+    },
+    async resumeAudioContext() {
+      await audioContext.resume();
+      const osc = audioContext.createOscillator();
+      osc.frequency.value = 440;
+      osc.type = "triangle";
+      osc.connect(audioContext.destination);
+      osc.start();
+      setTimeout(() => {
+        osc.stop();
+      }, 500);
     },
   };
   return { hostSystem, state, actions };
@@ -324,6 +336,12 @@ const App = () => {
         {appModel.state.scene.lanes.map((lane) => (
           <LaneView lane={lane} />
         ))}
+      </div>
+      <div>
+        <Button
+          text="resume"
+          onClick={() => appModel.actions.resumeAudioContext()}
+        />
       </div>
     </div>
   );
