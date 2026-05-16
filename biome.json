@@ -29,7 +29,7 @@
   "overrides": [
     {
       "includes": [
-        "packages/__development/units-oss-js/**"
+        "packages/units-oss-js/**"
       ],
       "linter": {
         "rules": {

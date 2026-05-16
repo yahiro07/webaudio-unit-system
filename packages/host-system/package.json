@@ -1,0 +1,14 @@
+{
+  "name": "@wus/host-system",
+  "type": "module",
+  "exports": {
+    "./host": "./host/index.ts",
+    "./react": "./react/index.ts",
+    "./solid": "./solid/index.ts",
+    "./web-components": "./web-components/index.ts",
+    "./unit": "./unit/index.ts"
+  },
+  "devDependencies": {
+    "lit": "^3.3.3"
+  }
+}
