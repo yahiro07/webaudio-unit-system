@@ -10,7 +10,8 @@
       "recommended": true,
       "style": {
         "useImportType": "off",
-        "noNonNullAssertion": "off"
+        "noNonNullAssertion": "off",
+        "useTemplate": "off"
       },
       "correctness": {
         "noConstantCondition": "off"
