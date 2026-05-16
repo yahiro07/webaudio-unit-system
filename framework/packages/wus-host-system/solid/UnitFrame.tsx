@@ -90,10 +90,12 @@ export const UnitFrame = (props: {
           if (props.hostPlaying !== undefined) {
             _unitAgent.setPlayState?.(props.hostPlaying);
           }
+          const completeTime = Date.now();
+          console.log(
+            `${props.unitId} loaded in ${completeTime - startTime} ms`,
+          );
         },
       );
-      const completeTime = Date.now();
-      console.log(`${props.unitId} loaded in ${completeTime - startTime} ms`);
     }
   });
   return (
