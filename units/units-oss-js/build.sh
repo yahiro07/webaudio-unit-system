@@ -1,4 +1,4 @@
-dstDir=../dist/oss-js
+dstDir=../../framework/packages/wus-units/units/oss-js
 rm -rf $dstDir
 mkdir -p $dstDir
 cp -r drum-machine/du10-drum-machine/web $dstDir/du10-drum-machine

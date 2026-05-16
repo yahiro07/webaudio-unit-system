@@ -1,4 +1,4 @@
 .local/
 dist/
 node_modules/
-framework/packages/units/
+framework/packages/wus-units/units

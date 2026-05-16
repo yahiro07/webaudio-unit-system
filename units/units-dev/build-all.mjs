@@ -3,6 +3,10 @@ import { $ } from "zx";
 
 const scriptName = process.argv.includes("--watch") ? "watch" : "build";
 
+const destDir = fileURLToPath(
+  new URL(`../../framework/packages/wus-units/units/dev`, import.meta.url),
+);
+
 // const dirs = (await readdir(".", { withFileTypes: true }))
 //   .filter((d) => d.isDirectory() && !["dist", "node_modules"].includes(d.name))
 //   .map((d) => `./${d.name}`);
@@ -17,9 +21,7 @@ const folders = [
 
 await Promise.all(
   folders.map((folder) => {
-    const outDir = fileURLToPath(
-      new URL(`../dist/dev/${folder}`, import.meta.url),
-    );
+    const outDir = `${destDir}/${folder}`;
     return $({
       stdio: "inherit",
       env: { ...process.env, WUS_OUT_DIR: outDir },
