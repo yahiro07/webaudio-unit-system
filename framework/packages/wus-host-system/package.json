@@ -5,8 +5,7 @@
     "./host": "./host/index.ts",
     "./react": "./react/index.ts",
     "./solid": "./solid/index.ts",
-    "./web-components": "./web-components/index.ts",
-    "./vite-plugins": "./vite-plugins/index.ts"
+    "./web-components": "./web-components/index.ts"
   },
   "devDependencies": {
     "lit": "^3.3.3"

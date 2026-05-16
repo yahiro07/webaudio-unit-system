@@ -1,7 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
-import { unitsSummaryPlugin } from "@wus/host-system/vite-plugins";
 import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
+import { unitsSummaryPlugin } from "../vite-plugins";
 
 export default defineConfig({
   plugins: [
@@ -11,7 +11,5 @@ export default defineConfig({
   ],
   appType: "mpa",
   resolve: { tsconfigPaths: true },
-  server: {
-    port: 3004,
-  },
+  server: { port: 3004 },
 });
