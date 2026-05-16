@@ -12,6 +12,9 @@ export default defineConfig({
     tailwindcss(),
     viteStaticCopy({ targets: [{ src: "unit-meta.json", dest: "./" }] }),
   ],
-  resolve: { tsconfigPaths: true },
+  resolve: {
+    tsconfigPaths: true,
+    dedupe: ["react", "react-dom"],
+  },
   build: outDir ? { outDir, emptyOutDir: true } : undefined,
 });
