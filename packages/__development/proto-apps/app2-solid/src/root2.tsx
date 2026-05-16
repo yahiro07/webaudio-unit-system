@@ -64,6 +64,10 @@ const unitTemplates: UnitTemplate[] = [
     scaling: 0.4,
   }),
   createUnitTemplateEntry("su12-wasyn-1", { size: [720, 360], scaling: 0.25 }),
+  createUnitTemplateEntry("su20-webaudio-synth-v2", {
+    size: [700, 400],
+    scaling: 0.25,
+  }),
 ];
 
 type UnitAssignment = {

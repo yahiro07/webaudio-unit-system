@@ -46,6 +46,7 @@ function generateSummaryFile(
     const pagePath = path.join(folderPath, "index.html");
     return { pagePath, metadata };
   });
+  entries.sort((a, b) => a.pagePath.localeCompare(b.pagePath));
   const summariesJson = buildSummaryJson(entries);
   const outputContent = `${JSON.stringify(summariesJson, null, 2)}\n`;
   fs.writeFileSync(outputFilePath, outputContent);
