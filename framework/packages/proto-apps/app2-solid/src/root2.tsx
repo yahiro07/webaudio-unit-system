@@ -120,6 +120,10 @@ function createScene(): Scene {
 }
 
 function createAppModel() {
+  const _navigator = navigator as { audioSession?: { type: string } };
+  if (_navigator.audioSession) {
+    _navigator.audioSession.type = "playback";
+  }
   const audioContext = new AudioContext();
   const hostSystem = createHostSystem(audioContext);
 
