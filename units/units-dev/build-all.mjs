@@ -18,7 +18,7 @@ const folders = [
 await Promise.all(
   folders.map((folder) => {
     const outDir = fileURLToPath(
-      new URL(`../units/dev/${folder}`, import.meta.url),
+      new URL(`../dist/dev/${folder}`, import.meta.url),
     );
     return $({
       stdio: "inherit",

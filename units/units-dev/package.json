@@ -1,9 +1,19 @@
 {
   "name": "@wus/dev-units-monorepo",
   "type": "module",
+  "workspaces": [
+    "*"
+  ],
   "scripts": {
     "build": "node build-all.mjs",
     "watch": "node build-all.mjs --watch"
+  },
+  "dependencies": {
+    "@wus/unit-types": "file:../../framework/packages/wus-unit-types",
+    "@wus/ax": "file:../../framework/packages/mylib/ax",
+    "@wus/mo": "file:../../framework/packages/mylib/mo",
+    "@wus/mo-react": "file:../../framework/packages/mylib/mo-react",
+    "@wus/mo-solid": "file:../../framework/packages/mylib/mo-solid"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.0",
