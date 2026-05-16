@@ -188,7 +188,6 @@ const UnitView = (props: {
               : undefined
           }
         />
-        {props.destUnitId}
       </div>
     </div>
   );
