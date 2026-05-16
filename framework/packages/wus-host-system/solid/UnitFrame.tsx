@@ -13,7 +13,7 @@ import {
 
 export const UnitFrame = (props: {
   unitId: string;
-  pageUri: string;
+  pageUrl: string;
   destUnitId?: string;
   hostBpm?: number;
   hostPlaying?: boolean;
@@ -67,12 +67,19 @@ export const UnitFrame = (props: {
     }
   });
 
-  onMount(() => {
+  onMount(async () => {
+    if (!iframe) return;
+    const baseUrl =
+      props.pageUrl.slice(0, props.pageUrl.lastIndexOf("/")) + "/";
+
+    const content = await fetch(props.pageUrl).then((res) => res.text());
+    iframe.srcdoc = `<base href="${baseUrl}">${content}`;
+
     const win = iframe?.contentWindow as {
       hostInterface?: HostInterface;
     };
     if (win) {
-      win.hostInterface = hostSystem_createHostInterfaceForUnit(
+      const hostInterface = hostSystem_createHostInterfaceForUnit(
         props.hostSystem,
         props.unitId,
         (_unitAgent) => {
@@ -98,13 +105,5 @@ export const UnitFrame = (props: {
       );
     }
   });
-  return (
-    <iframe
-      class={props.className}
-      style={props.style}
-      ref={iframe}
-      src={props.pageUri}
-      title="unit"
-    />
-  );
+  return <iframe class={props.className} style={props.style} ref={iframe} />;
 };

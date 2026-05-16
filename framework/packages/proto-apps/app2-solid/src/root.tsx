@@ -55,19 +55,19 @@ const UnitsSolid = () => {
       /> */}
       <UnitFrame
         unitId="mu3"
-        pageUri="/units-dev/mu5-visualizer/index.html"
+        pageUrl="/units-dev/mu5-visualizer/index.html"
         destUnitId="$output"
         hostSystem={hostSystem}
       />
       <UnitFrame
         unitId="mu1"
-        pageUri="/units-dev/mu1-instrument/index.html"
+        pageUrl="/units-dev/mu1-instrument/index.html"
         destUnitId="mu3"
         hostSystem={hostSystem}
       />
       <UnitFrame
         unitId="mu2"
-        pageUri="/units-dev/mu2-sequencer/index.html"
+        pageUrl="/units-dev/mu2-sequencer/index.html"
         hostBpm={vm.state().bpm}
         hostPlaying={vm.state().playing}
         destUnitId="mu1"
@@ -75,7 +75,7 @@ const UnitsSolid = () => {
       />
       <UnitFrame
         unitId="mu4"
-        pageUri="/units-dev/mu4-keyboard/index.html"
+        pageUrl="/units-dev/mu4-keyboard/index.html"
         destUnitId="mu2"
         hostSystem={hostSystem}
         inputNotes={vm.state().notes}

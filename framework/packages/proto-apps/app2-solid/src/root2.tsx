@@ -18,7 +18,7 @@ import _unitsSummary from "./units-summary.json";
 
 type UnitTemplate = {
   templateId: string;
-  pagePath: string;
+  pageUrl: string;
   unitType: UnitType;
   name: string;
   repositoryUrl: string;
@@ -26,6 +26,9 @@ type UnitTemplate = {
   size?: [number, number];
   scaling?: number;
 };
+
+const baseUrl =
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/";
 
 function createUnitTemplateEntry(
   unitPageId: string,
@@ -40,7 +43,7 @@ function createUnitTemplateEntry(
   }
   return {
     templateId: unit.unitPageId,
-    pagePath: unit.pagePath,
+    pageUrl: `${baseUrl}${unit.pagePath}`,
     unitType: unit.unitType,
     name: unit.name,
     repositoryUrl: unit.repositoryUrl,
@@ -192,7 +195,7 @@ const UnitView = (props: {
       >
         <UnitFrame
           unitId={props.unitAssignment.unitId}
-          pageUri={props.unitAssignment.template.pagePath}
+          pageUrl={props.unitAssignment.template.pageUrl}
           destUnitId={props.destUnitId}
           hostSystem={appModel.hostSystem}
           style={
