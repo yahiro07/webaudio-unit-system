@@ -1,4 +1,3 @@
-/** @jsxImportSource solid-js */
 /** biome-ignore-all lint/correctness/useJsxKeyInIterable: solid */
 
 import { seqNumbers } from "@wus/ax/array-utils";

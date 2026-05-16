@@ -1,6 +1,7 @@
 {
   "extends": "../../../../tsconfig.json",
   "compilerOptions": {
-    "jsxImportSource": "solid-js",
+    "jsx": "react-jsx",
+    "jsxImportSource": "solid-js"
   }
 }
