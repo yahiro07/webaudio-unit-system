@@ -1,4 +1,4 @@
-import { UnitMetadata } from "../../unit-interfaces";
+import { UnitMetadata } from "@wus/unit-types";
 
 export type HostUnitMetadata = {
   unitPageId: string;
