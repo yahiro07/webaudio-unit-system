@@ -1,13 +1,13 @@
 /** @jsxImportSource solid-js */
 
 import { arrayExclude } from "@wus/ax/array-utils";
-import { createEffect, JSX, onMount } from "solid-js";
+import { createEffect, createSignal, JSX, onMount } from "solid-js";
 import { HostInterface } from "../contract";
 import {
   HostSystem,
   hostSystem_createHostInterfaceForUnit,
+  hostSystem_setUnitDestination,
   hostSystem_wrapAddUnitAgent,
-  hostSystem_wrapConnectUnits,
   UnitAgentInHostSide,
 } from "../host";
 
@@ -23,33 +23,45 @@ export const UnitFrame = (props: {
   style?: JSX.DOMAttributes<HTMLIFrameElement>["style"];
 }) => {
   let iframe: HTMLIFrameElement | undefined;
-  let unitAgent: UnitAgentInHostSide | undefined;
+  const [unitAgent, setUnitAgent] = createSignal<UnitAgentInHostSide>();
   let currentNotes: number[] = [];
 
   createEffect(() => {
     const bpm = props.hostBpm;
-    if (unitAgent && bpm !== undefined) {
-      unitAgent.setBpm?.(bpm);
+    const agent = unitAgent();
+    if (agent && bpm !== undefined) {
+      agent.setBpm?.(bpm);
     }
   });
   createEffect(() => {
     const playing = props.hostPlaying;
-    if (unitAgent && playing !== undefined) {
-      unitAgent.setPlayState?.(playing);
+    const agent = unitAgent();
+    if (agent && playing !== undefined) {
+      agent.setPlayState?.(playing);
     }
   });
   createEffect(() => {
     const { inputNotes } = props;
-    if (unitAgent && inputNotes !== undefined) {
+    const agent = unitAgent();
+    if (agent && inputNotes !== undefined) {
       const notesAdded = arrayExclude(inputNotes, currentNotes);
       const notesRemoved = arrayExclude(currentNotes, inputNotes);
       for (const note of notesAdded) {
-        unitAgent.noteInput?.noteOn?.(note, 1.0);
+        agent.noteInput?.noteOn?.(note, 1.0);
       }
       for (const note of notesRemoved) {
-        unitAgent.noteInput?.noteOff?.(note);
+        agent.noteInput?.noteOff?.(note);
       }
       currentNotes = inputNotes;
+    }
+  });
+  createEffect(() => {
+    if (unitAgent()) {
+      hostSystem_setUnitDestination(
+        props.hostSystem,
+        props.unitId,
+        props.destUnitId,
+      );
     }
   });
 
@@ -62,21 +74,19 @@ export const UnitFrame = (props: {
         props.hostSystem,
         props.unitId,
         (_unitAgent) => {
-          unitAgent = _unitAgent;
-          hostSystem_wrapAddUnitAgent(props.hostSystem, unitAgent);
+          setUnitAgent(_unitAgent);
+          hostSystem_wrapAddUnitAgent(props.hostSystem, _unitAgent);
           console.log(`unitAgent loaded for ${props.unitId}`);
-          if (props.destUnitId) {
-            hostSystem_wrapConnectUnits(
-              props.hostSystem,
-              props.unitId,
-              props.destUnitId,
-            );
-          }
+          hostSystem_setUnitDestination(
+            props.hostSystem,
+            props.unitId,
+            props.destUnitId,
+          );
           if (props.hostBpm !== undefined) {
-            unitAgent.setBpm?.(props.hostBpm);
+            _unitAgent.setBpm?.(props.hostBpm);
           }
           if (props.hostPlaying !== undefined) {
-            unitAgent.setPlayState?.(props.hostPlaying);
+            _unitAgent.setPlayState?.(props.hostPlaying);
           }
         },
       );

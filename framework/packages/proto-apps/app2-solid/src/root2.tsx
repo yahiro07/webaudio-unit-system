@@ -128,11 +128,11 @@ function createAppModel() {
 
   const actions = {
     assignUnit(slotId: string, templateId: string) {
-      const unitId = generateRandomId(6);
       const template = unitTemplates.find(
         (template) => template.templateId === templateId,
       );
       if (!template) return;
+      const unitId = template.name + "-" + generateRandomId(6);
       const laneId = slotId.split("-")[0];
       setState(
         produce((draft) => {
@@ -162,7 +162,10 @@ const presetScenes = {
   },
 };
 
-const UnitView = (props: { unitAssignment: UnitAssignment }) => {
+const UnitView = (props: {
+  unitAssignment: UnitAssignment;
+  destUnitId?: string;
+}) => {
   return (
     <div class="w-full h-full flex-c">
       <div
@@ -174,7 +177,7 @@ const UnitView = (props: { unitAssignment: UnitAssignment }) => {
         <UnitFrame
           unitId={props.unitAssignment.unitId}
           pageUri={props.unitAssignment.template.pagePath}
-          destUnitId="$output"
+          destUnitId={props.destUnitId}
           hostSystem={appModel.hostSystem}
           style={
             props.unitAssignment.template.size
@@ -185,6 +188,7 @@ const UnitView = (props: { unitAssignment: UnitAssignment }) => {
               : undefined
           }
         />
+        {props.destUnitId}
       </div>
     </div>
   );
@@ -237,11 +241,18 @@ const AddableSlotView = (props: { slot: UnitSlot }) => {
   );
 };
 
-const SlotView = (props: { slot: UnitSlot; canAdd: boolean }) => {
+const SlotView = (props: {
+  slot: UnitSlot;
+  canAdd: boolean;
+  destUnitId?: string;
+}) => {
   return (
     <div class="w-[200px] h-[120px] border border-[#888]">
       {props.slot.unitAssignment ? (
-        <UnitView unitAssignment={props.slot.unitAssignment} />
+        <UnitView
+          unitAssignment={props.slot.unitAssignment}
+          destUnitId={props.destUnitId}
+        />
       ) : (
         props.canAdd && <AddableSlotView slot={props.slot} />
       )}
@@ -251,22 +262,56 @@ const SlotView = (props: { slot: UnitSlot; canAdd: boolean }) => {
 
 const LaneView = (props: { lane: Lane }) => {
   const vm = {
-    canAddEffect: () =>
-      !!props.lane.instrumentSlot.unitAssignment &&
-      !props.lane.effectSlot.unitAssignment,
-    canAddInstrument: () => !props.lane.instrumentSlot.unitAssignment,
-    canAddSequencer: () =>
-      !!props.lane.instrumentSlot.unitAssignment &&
-      !props.lane.sequencerSlot.unitAssignment,
+    get effect() {
+      return props.lane.effectSlot.unitAssignment;
+    },
+    get instrument() {
+      return props.lane.instrumentSlot.unitAssignment;
+    },
+    get sequencer() {
+      return props.lane.sequencerSlot.unitAssignment;
+    },
+    canAddEffect: () => !!vm.instrument && !vm.effect,
+    canAddInstrument: () => !vm.instrument,
+    canAddSequencer: () => !!vm.instrument && !vm.sequencer,
+    effectDestId() {
+      if (vm.effect) {
+        return "$output";
+      }
+      return undefined;
+    },
+    instrumentDestId() {
+      if (vm.instrument && vm.effect) {
+        return vm.effect.unitId;
+      } else if (vm.instrument) {
+        return "$output";
+      }
+      return undefined;
+    },
+    sequencerDestId() {
+      if (vm.sequencer && vm.instrument) {
+        return vm.instrument.unitId;
+      }
+      return undefined;
+    },
   };
   return (
     <div class="flex-v">
-      <SlotView slot={props.lane.effectSlot} canAdd={vm.canAddEffect()} />
+      <SlotView
+        slot={props.lane.effectSlot}
+        canAdd={vm.canAddEffect()}
+        destUnitId={vm.effectDestId()}
+      />
       <SlotView
         slot={props.lane.instrumentSlot}
         canAdd={vm.canAddInstrument()}
+        destUnitId={vm.instrumentDestId()}
       />
-      <SlotView slot={props.lane.sequencerSlot} canAdd={vm.canAddSequencer()} />
+      <SlotView
+        slot={props.lane.sequencerSlot}
+        canAdd={vm.canAddSequencer()}
+        destUnitId={vm.sequencerDestId()}
+      />
     </div>
   );
 };

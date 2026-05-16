@@ -19,12 +19,13 @@ export type HostSystem = {
     sourceUnitId: string;
     destUnitId: string;
   }[];
+  currentConnections: Map<string, string>;
   getUnitAgent(unitId: string): UnitAgentInHostSide | undefined;
   addUnitAgent(unitAgent: UnitAgentInHostSide): void;
 };
 
 export type NoteOutputPortImpl = NoteOutputPort & {
-  setDestinationAgent(noteDestinationAgent: UnitAgentInHostSide): void;
+  setDestinationAgent(noteDestinationAgent?: UnitAgentInHostSide): void;
 };
 
 export function createNoteOutputPortImpl(): NoteOutputPortImpl {
@@ -48,9 +49,11 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
     sourceUnitId: string;
     destUnitId: string;
   }[] = [];
+  const currentConnections: Map<string, string> = new Map();
   return {
     audioContext,
     pendingConnectionRules,
+    currentConnections,
     getUnitAgent(unitId: string): UnitAgentInHostSide | undefined {
       return units.get(unitId);
     },
@@ -124,7 +127,8 @@ export function hostSystem_connectUnits(
       sourceUnit.unitDestinationNode.connect(
         hostSystem.audioContext.destination,
       );
-      console.log(`connected: ${unitId} --> output`);
+      hostSystem.currentConnections.set(unitId, destUnitId);
+      console.log(`connected audio: ${unitId} --> output`);
     }
     return;
   }
@@ -135,12 +139,49 @@ export function hostSystem_connectUnits(
     const destType = destUnit.type;
     if (destType === "effect") {
       sourceUnit.unitDestinationNode.connect(destUnit.effectSourceNode);
-      console.log(`connected: ${unitId} --> ${destUnitId}`);
+      hostSystem.currentConnections.set(unitId, destUnitId);
+      console.log(`connected audio: ${unitId} --> ${destUnitId}`);
     } else if (destType === "instrument" || destType === "sequencer") {
       sourceUnit.noteOutputPortImpl.setDestinationAgent(destUnit);
-      console.log(`connected: ${unitId} --> ${destUnitId}`);
+      hostSystem.currentConnections.set(unitId, destUnitId);
+      console.log(`connected note: ${unitId} --> ${destUnitId}`);
     }
   }
+}
+
+export function hostSystem_disconnectUnits(
+  hostSystem: HostSystem,
+  unitId: string,
+  destUnitId: string,
+) {
+  const sourceUnit = hostSystem.getUnitAgent(unitId);
+  if (!sourceUnit) return;
+
+  if (destUnitId === "$output") {
+    if ((["instrument", "effect"] as UnitType[]).includes(sourceUnit.type)) {
+      sourceUnit.unitDestinationNode.disconnect(
+        hostSystem.audioContext.destination,
+      );
+      console.log(`disconnected audio: ${unitId} --> output`);
+    }
+    hostSystem.currentConnections.delete(unitId);
+    return;
+  }
+
+  const destUnit = hostSystem.getUnitAgent(destUnitId);
+  if (!destUnit) {
+    hostSystem.currentConnections.delete(unitId);
+    return;
+  }
+
+  if (destUnit.type === "effect") {
+    sourceUnit.unitDestinationNode.disconnect(destUnit.effectSourceNode);
+    console.log(`disconnected audio: ${unitId} --> ${destUnitId}`);
+  } else if (destUnit.type === "instrument" || destUnit.type === "sequencer") {
+    sourceUnit.noteOutputPortImpl.setDestinationAgent(undefined);
+    console.log(`disconnected note: ${unitId} --> ${destUnitId}`);
+  }
+  hostSystem.currentConnections.delete(unitId);
 }
 
 export function hostSystem_wrapAddUnitAgent(
@@ -150,10 +191,37 @@ export function hostSystem_wrapAddUnitAgent(
   hostSystem.addUnitAgent(unitAgent);
   for (const rule of hostSystem.pendingConnectionRules) {
     if (rule.destUnitId === unitAgent.unitId) {
-      hostSystem_connectUnits(hostSystem, rule.sourceUnitId, unitAgent.unitId);
+      hostSystem_setUnitDestination(
+        hostSystem,
+        rule.sourceUnitId,
+        unitAgent.unitId,
+      );
       removeArrayItem(hostSystem.pendingConnectionRules, rule);
     }
   }
+}
+
+export function hostSystem_setUnitDestination(
+  hostSystem: HostSystem,
+  unitId: string,
+  destUnitId?: string,
+) {
+  const previousDestUnitId = hostSystem.currentConnections.get(unitId);
+  if (previousDestUnitId && previousDestUnitId !== destUnitId) {
+    hostSystem_disconnectUnits(hostSystem, unitId, previousDestUnitId);
+  }
+
+  for (const rule of [...hostSystem.pendingConnectionRules]) {
+    if (rule.sourceUnitId === unitId) {
+      removeArrayItem(hostSystem.pendingConnectionRules, rule);
+    }
+  }
+
+  if (!destUnitId) {
+    return;
+  }
+
+  hostSystem_wrapConnectUnits(hostSystem, unitId, destUnitId);
 }
 
 export function hostSystem_wrapConnectUnits(
