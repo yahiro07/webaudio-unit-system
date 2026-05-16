@@ -15,6 +15,9 @@
       "correctness": {
         "noConstantCondition": "off"
       },
+      "suspicious": {
+        "noExplicitAny": "off"
+      },
       "a11y": {
         "noSvgWithoutTitle": "off",
         "noStaticElementInteractions": "off",
