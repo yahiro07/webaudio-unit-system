@@ -1,5 +1,4 @@
 import * as fs from "node:fs";
-import path from "node:path";
 import { HostUnitMetadata, UnitSummariesJson } from "@wus/host-system/host";
 import { UnitMetadata } from "@wus/unit-types";
 
@@ -17,6 +16,18 @@ const unitPageFolderUrls = [
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-tinysynth-simple/",
 ];
 
+const getPageId = (url: string) => url.split("/").reverse()[1];
+
+function checkPageIdsUnique() {
+  const pageIds = unitPageFolderUrls.map(getPageId);
+  for (let i = 0; i < pageIds.length; i++) {
+    const id = pageIds[i];
+    if (pageIds.indexOf(id) !== i) {
+      throw new Error(`Duplicate page ID detected: ${id}`);
+    }
+  }
+}
+
 async function fetchUnitMeta(pageFolderUrl: string): Promise<HostUnitMetadata> {
   const unitMetaUrl = `${pageFolderUrl}unit-meta.json`;
   const res = await fetch(unitMetaUrl);
@@ -27,13 +38,14 @@ async function fetchUnitMeta(pageFolderUrl: string): Promise<HostUnitMetadata> {
   }
   const unitMeta: UnitMetadata = await res.json();
   return {
-    unitPageId: path.basename(path.dirname(pageFolderUrl)),
-    pagePath: pageFolderUrl + "index.html",
+    unitPageId: getPageId(pageFolderUrl),
+    pagePath: `${pageFolderUrl}index.html`,
     ...unitMeta,
   };
 }
 
 async function buildSummary() {
+  checkPageIdsUnique();
   const metaList = await Promise.all(
     unitPageFolderUrls.map((url) => fetchUnitMeta(url)),
   );
