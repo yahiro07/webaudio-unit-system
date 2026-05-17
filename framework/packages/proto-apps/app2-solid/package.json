@@ -5,7 +5,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "build-summary": "tsx ./scripts/build-summary.ts"
+    "build-summary": "tsx ./scripts/build-summary-from-local.ts"
   },
   "dependencies": {
     "solid-js": "^1.9.12"
