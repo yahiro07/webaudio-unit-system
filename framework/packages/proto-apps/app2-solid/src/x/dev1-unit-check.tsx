@@ -59,6 +59,9 @@ const UnitsSolid = () => {
       <UnitFrame
         unitId="uf_instrument"
         pageUrl="http://localhost:3000/index.html"
+        // pageUrl="/units/koodori/index.html"
+        // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/koodori/index.html"
+        // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-synth-v2/index.html"
         destUnitId="uf_effect"
         hostSystem={hostSystem}
         className="w-[800px] h-[600px]"
