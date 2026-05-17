@@ -4,30 +4,31 @@ import { HostUnitMetadata, UnitSummariesJson } from "@wus/host-system/host";
 import { UnitMetadata } from "@wus/unit-types";
 
 const unitPageFolderUrls = [
-  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu1-instrument",
-  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu2-sequencer",
-  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu3-effect",
-  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu4-keyboard",
-  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu5-visualizer",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/additive",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/drum-machine",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/koodori",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/wasyn-1",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaduio-synth-v2",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaduio-tinysynth-simple",
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu1-instrument/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu2-sequencer/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu3-effect/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu4-keyboard/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu5-visualizer/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/additive/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/drum-machine/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/koodori/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/wasyn-1/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-synth-v2/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-tinysynth-simple/",
 ];
 
-async function fetchUnitMeta(url: string): Promise<HostUnitMetadata> {
-  const res = await fetch(`${url}/unit-meta.json`);
+async function fetchUnitMeta(pageFolderUrl: string): Promise<HostUnitMetadata> {
+  const unitMetaUrl = `${pageFolderUrl}unit-meta.json`;
+  const res = await fetch(unitMetaUrl);
   if (!res.ok) {
     throw new Error(
-      `Failed to fetch unit-meta.json from ${url}: ${res.status} ${res.statusText}`,
+      `Failed to fetch from ${unitMetaUrl}: ${res.status} ${res.statusText}`,
     );
   }
   const unitMeta: UnitMetadata = await res.json();
   return {
-    unitPageId: path.basename(path.dirname(url)),
-    pagePath: url + "/index.html",
+    unitPageId: path.basename(path.dirname(pageFolderUrl)),
+    pagePath: pageFolderUrl + "index.html",
     ...unitMeta,
   };
 }
