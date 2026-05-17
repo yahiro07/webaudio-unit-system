@@ -27,9 +27,6 @@ type UnitTemplate = {
   scaling?: number;
 };
 
-const baseUrl =
-  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/";
-
 function createUnitTemplateEntry(
   unitPageId: string,
   attrs?: { scaling?: number; size?: [number, number] },
@@ -43,7 +40,7 @@ function createUnitTemplateEntry(
   }
   return {
     templateId: unit.unitPageId,
-    pageUrl: `${baseUrl}${unit.pagePath}`,
+    pageUrl: unit.pagePath,
     unitType: unit.unitType,
     name: unit.name,
     repositoryUrl: unit.repositoryUrl,
@@ -58,16 +55,24 @@ const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("mu3-effect", { scaling: 0.6 }),
   createUnitTemplateEntry("mu4-keyboard", { scaling: 0.6 }),
   createUnitTemplateEntry("mu5-visualizer", { scaling: 0.6 }),
-  createUnitTemplateEntry("du10-drum-machine", {
+  createUnitTemplateEntry("drum-machine", {
     size: [800, 500],
     scaling: 0.2,
   }),
-  createUnitTemplateEntry("su11-webaudio-tinysynth", {
+  createUnitTemplateEntry("additive", {
+    size: [800, 500],
+    scaling: 0.2,
+  }),
+  createUnitTemplateEntry("koodori", {
+    size: [800, 500],
+    scaling: 0.2,
+  }),
+  createUnitTemplateEntry("webaudio-tinysynth-simple", {
     size: [520, 280],
     scaling: 0.4,
   }),
-  createUnitTemplateEntry("su12-wasyn-1", { size: [720, 360], scaling: 0.25 }),
-  createUnitTemplateEntry("su20-webaudio-synth-v2", {
+  createUnitTemplateEntry("wasyn-1", { size: [720, 360], scaling: 0.25 }),
+  createUnitTemplateEntry("webaudio-synth-v2", {
     size: [700, 400],
     scaling: 0.25,
   }),
