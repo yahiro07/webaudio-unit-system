@@ -40,6 +40,9 @@ function createAppModel() {
 }
 const appModel = createAppModel();
 
+const baseUrl =
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/";
+
 const UnitsSolid = () => {
   const { hostSystem } = appModel;
   const vm = {
@@ -47,36 +50,36 @@ const UnitsSolid = () => {
   };
   return (
     <>
-      {/* <UnitFrame
-        unitId="mu3"
-        pageUri="/units/mu3-effect.html"
-        destUnitId="$output"
-        hostSystem={hostSystem}
-      /> */}
       <UnitFrame
-        unitId="mu3"
-        pageUrl="/units-dev/mu5-visualizer/index.html"
         destUnitId="$output"
+        unitId="mu5"
+        pageUrl={`${baseUrl}dev/mu5-visualizer/index.html`}
         hostSystem={hostSystem}
       />
       <UnitFrame
-        unitId="mu1"
-        pageUrl="/units-dev/mu1-instrument/index.html"
+        destUnitId="mu5"
+        unitId="mu3"
+        pageUrl={`${baseUrl}dev/mu3-effect/index.html`}
+        hostSystem={hostSystem}
+      />
+      <UnitFrame
         destUnitId="mu3"
+        unitId="mu1"
+        pageUrl={`${baseUrl}dev/mu1-instrument/index.html`}
         hostSystem={hostSystem}
       />
       <UnitFrame
+        destUnitId="mu1"
         unitId="mu2"
-        pageUrl="/units-dev/mu2-sequencer/index.html"
+        pageUrl={`${baseUrl}dev/mu2-sequencer/index.html`}
         hostBpm={vm.state().bpm}
         hostPlaying={vm.state().playing}
-        destUnitId="mu1"
         hostSystem={hostSystem}
       />
       <UnitFrame
-        unitId="mu4"
-        pageUrl="/units-dev/mu4-keyboard/index.html"
         destUnitId="mu2"
+        unitId="mu4"
+        pageUrl={`${baseUrl}dev/mu4-keyboard/index.html`}
         hostSystem={hostSystem}
         inputNotes={vm.state().notes}
       />
