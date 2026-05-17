@@ -3,9 +3,11 @@ import { $ } from "zx";
 
 const scriptName = process.argv.includes("--watch") ? "watch" : "build";
 
-const destDir = fileURLToPath(
-  new URL(`../../framework/packages/wus-units/units/dev`, import.meta.url),
-);
+// const destDir = fileURLToPath(
+//   new URL(`../../framework/packages/wus-units/units/dev`, import.meta.url),
+// );
+
+const destDir = fileURLToPath(new URL(`./dist`, import.meta.url));
 
 // const dirs = (await readdir(".", { withFileTypes: true }))
 //   .filter((d) => d.isDirectory() && !["dist", "node_modules"].includes(d.name))
