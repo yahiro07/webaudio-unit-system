@@ -93,7 +93,11 @@ export function hostSystem_createHostInterfaceForUnit(
   );
   const effectSourceNode = hostSystem.audioContext.createGain();
   const noteOutputPortImpl = createNoteOutputPortImpl();
-  const hostInterface: HostInterface = {
+  const hostInterface: HostInterface & { raw: any } = {
+    raw: {
+      audioContext: hostSystem.audioContext,
+      outputNode: unitDestinationNode,
+    },
     audioContext: unitAudioContext,
     audioSourceNode: effectSourceNode,
     noteOutputPort: noteOutputPortImpl,
