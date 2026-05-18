@@ -20,7 +20,9 @@ function checkDeepEquality(obj1: any, obj2: any): boolean {
 
 function createCacheStorageIo(cacheFolderPath: string) {
   return {
-    readPreviousUnitSourceUrlsInput(): Record<string, string> | undefined {},
+    readPreviousUnitSourceUrlsInput(): Pormise<
+      Record<string, string> | undefined
+    > {},
     writePreviousUnitSourceUrlsInput(
       unitSourceUrls: Record<string, string>,
     ): Promise<void> {},
@@ -40,6 +42,7 @@ function createCacheStorageIo(cacheFolderPath: string) {
     ): Promise<UnitMetadata | undefined> {},
   };
 }
+type CacheStorageIo = ReturnType<typeof createCacheStorageIo>;
 
 type UnitCacheEntry = {
   remoteUrl: string;
@@ -75,57 +78,72 @@ async function generateSummaries(
   ) => Promise<UnitMetadata | undefined>,
 ): Promise<UnitSummariesJson> {}
 
+async function checkCache(
+  cacheStorageIo: CacheStorageIo,
+  unitSourceUrls: Record<string, string>,
+): Promise<UnitSummariesJson | undefined> {
+  const prevUnitSourceUrls =
+    await cacheStorageIo.readPreviousUnitSourceUrlsInput();
+  if (prevUnitSourceUrls) {
+    if (checkDeepEquality(prevUnitSourceUrls, unitSourceUrls)) {
+      const cachedSummariesJson =
+        await cacheStorageIo.readCachedSummariesJson();
+      if (cachedSummariesJson) {
+        return cachedSummariesJson;
+      }
+    }
+  }
+}
+
+async function updateCachedContentsImpl(
+  cacheStorageIo: CacheStorageIo,
+  unitSourceUrls: Record<string, string>,
+): Promise<UnitSummariesJson> {
+  const remoteUrls = Object.values(unitSourceUrls).filter((url) =>
+    url.startsWith("https://"),
+  );
+  const existingBucketPieceKeys =
+    await cacheStorageIo.listExistingBucketPieceKeys();
+
+  const unitCacheEntries: UnitCacheEntry[] = remoteUrls.map((url) => {
+    const bucketName = mapUnitUrlToBucketName(url);
+    const pieceName = mapUnitUrlToPieceName(url);
+    const bucketPieceComparisonKey = `${bucketName}:${pieceName}`;
+    return {
+      remoteUrl: url,
+      bucketName: bucketName,
+      pieceName: pieceName,
+      bucketPieceComparisonKey,
+    };
+  });
+  const unitEntriesToCache = unitCacheEntries.filter(
+    (entry) =>
+      !existingBucketPieceKeys.includes(entry.bucketPieceComparisonKey),
+  );
+  await downloadUnitsFromRemote(
+    unitEntriesToCache,
+    cacheStorageIo.writeCachedPiece,
+  );
+
+  const summariesJson = await generateSummaries(
+    unitSourceUrls,
+    cacheStorageIo.readCachedPieceMeta,
+  );
+  await cacheStorageIo.writePreviousUnitSourceUrlsInput(unitSourceUrls);
+  await cacheStorageIo.writeCachedSummariesJson(summariesJson);
+  return summariesJson;
+}
+
 export function createRemoteUnitCacheStore(
   cacheFolderPath: string,
 ): RemoteUnitCacheStore {
   const cacheStorageIo = createCacheStorageIo(cacheFolderPath);
   return {
     async updateCachedContents(unitSourceUrls) {
-      const prevUnitSourceUrls =
-        cacheStorageIo.readPreviousUnitSourceUrlsInput();
-      if (prevUnitSourceUrls) {
-        if (checkDeepEquality(prevUnitSourceUrls, unitSourceUrls)) {
-          const cachedSummariesJson =
-            await cacheStorageIo.readCachedSummariesJson();
-          if (cachedSummariesJson) {
-            return cachedSummariesJson;
-          }
-        }
-      }
-
-      const remoteUrls = Object.values(unitSourceUrls).filter((url) =>
-        url.startsWith("https://"),
+      return (
+        (await checkCache(cacheStorageIo, unitSourceUrls)) ??
+        (await updateCachedContentsImpl(cacheStorageIo, unitSourceUrls))
       );
-      const existingBucketPieceKeys =
-        await cacheStorageIo.listExistingBucketPieceKeys();
-
-      const unitCacheEntries: UnitCacheEntry[] = remoteUrls.map((url) => {
-        const bucketName = mapUnitUrlToBucketName(url);
-        const pieceName = mapUnitUrlToPieceName(url);
-        const bucketPieceComparisonKey = `${bucketName}:${pieceName}`;
-        return {
-          remoteUrl: url,
-          bucketName: bucketName,
-          pieceName: pieceName,
-          bucketPieceComparisonKey,
-        };
-      });
-      const unitEntriesToCache = unitCacheEntries.filter(
-        (entry) =>
-          !existingBucketPieceKeys.includes(entry.bucketPieceComparisonKey),
-      );
-      await downloadUnitsFromRemote(
-        unitEntriesToCache,
-        cacheStorageIo.writeCachedPiece,
-      );
-
-      const summariesJson = await generateSummaries(
-        unitSourceUrls,
-        cacheStorageIo.readCachedPieceMeta,
-      );
-      await cacheStorageIo.writePreviousUnitSourceUrlsInput(unitSourceUrls);
-      await cacheStorageIo.writeCachedSummariesJson(summariesJson);
-      return summariesJson;
     },
     resolveCachedRemoteUnitRequest(requestPath) {
       return undefined;
