@@ -1,10 +1,31 @@
 import fs from "node:fs";
+import { createHash } from "node:crypto";
 import type { Plugin, ResolvedConfig } from "vite";
 import {
   HostUnitMetadata,
   UnitSummariesJson,
 } from "../../wus-host-system/contract";
 import { UnitMetadata } from "../../wus-unit-types/unit-metadata";
+
+function slugifyUnitName(name: string): string {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function buildUnitPageId(meta: UnitMetadata): string {
+  const readableName = slugifyUnitName(meta.name);
+  const hashSource = `${meta.repositoryUrl}\n${meta.name}`;
+  const hash = createHash("sha256")
+    .update(hashSource)
+    .digest("base64url")
+    .replaceAll("-", "A")
+    .replaceAll("_", "B")
+    .slice(0, 6);
+  return `U${hash}-${readableName}`;
+}
 
 function checkPageIdsUnique(metaList: HostUnitMetadata[]) {
   const pageIds = metaList.map((m) => m.unitPageId);
@@ -39,7 +60,7 @@ function createHostUnitMeta(
 ): HostUnitMetadata {
   return {
     ...meta,
-    unitPageId: meta.name,
+    unitPageId: buildUnitPageId(meta),
     pagePath: `${pageFolderUrl}index.html`,
   };
 }
