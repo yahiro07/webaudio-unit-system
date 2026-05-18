@@ -1,7 +1,8 @@
+import { UnitSummariesJson } from "../../wus-host-system/contract";
 import {
-  UnitMetadata,
-  UnitSummariesJson,
-} from "../../wus-host-system/contract";
+  createRemoteUnitCacheStorageIo,
+  RemoteUnitCacheStorageIo,
+} from "./remote-unit-cache-storage-io";
 import { generateSummariesJson } from "./units-summary-generator";
 
 export type RemoteUnitCacheStore = {
@@ -24,32 +25,6 @@ function mapUnitUrlToBucketAndPieceNames(url: string): {
 function checkDeepEquality(obj1: any, obj2: any): boolean {
   return JSON.stringify(obj1) === JSON.stringify(obj2);
 }
-
-function createCacheStorageIo(cacheFolderPath: string) {
-  return {
-    readPreviousUnitSourceUrlsInput(): Pormise<
-      Record<string, string> | undefined
-    > {},
-    writePreviousUnitSourceUrlsInput(
-      unitSourceUrls: Record<string, string>,
-    ): Promise<void> {},
-    readCachedSummariesJson(): Promise<UnitSummariesJson | undefined> {},
-    writeCachedSummariesJson(
-      summariesJson: UnitSummariesJson,
-    ): Promise<void> {},
-    listExistingBucketPieceKeys(): Promise<string[]> {},
-    writeCachedPiece(
-      bucketName: string,
-      pieceName: string,
-      sourceUnitFolderPath: string,
-    ): Promise<void> {},
-    readCachedPieceMeta(
-      bucketName: string,
-      pieceName: string,
-    ): Promise<UnitMetadata | undefined> {},
-  };
-}
-type CacheStorageIo = ReturnType<typeof createCacheStorageIo>;
 
 type UnitCacheEntry = {
   remoteUrl: string;
@@ -78,7 +53,7 @@ async function downloadUnitsFromRemote(
 }
 
 async function checkCache(
-  cacheStorageIo: CacheStorageIo,
+  cacheStorageIo: RemoteUnitCacheStorageIo,
   unitSourceUrls: Record<string, string>,
 ): Promise<UnitSummariesJson | undefined> {
   const prevUnitSourceUrls =
@@ -95,7 +70,7 @@ async function checkCache(
 }
 
 async function updateCachedContentsImpl(
-  cacheStorageIo: CacheStorageIo,
+  cacheStorageIo: RemoteUnitCacheStorageIo,
   unitSourceUrls: Record<string, string>,
 ): Promise<UnitSummariesJson> {
   const remoteUrls = Object.values(unitSourceUrls).filter((url) =>
@@ -139,7 +114,7 @@ async function updateCachedContentsImpl(
 export function createRemoteUnitCacheStore(
   cacheFolderPath: string,
 ): RemoteUnitCacheStore {
-  const cacheStorageIo = createCacheStorageIo(cacheFolderPath);
+  const cacheStorageIo = createRemoteUnitCacheStorageIo(cacheFolderPath);
   return {
     async updateCachedContents(unitSourceUrls) {
       return (
@@ -147,7 +122,7 @@ export function createRemoteUnitCacheStore(
         (await updateCachedContentsImpl(cacheStorageIo, unitSourceUrls))
       );
     },
-    resolveCachedRemoteUnitRequest(unitPageUrl: string, requestPath: string) {
+    resolveCachedRemoteUnitRequest(unitPageUrl, requestPath) {
       return undefined;
     },
   };
