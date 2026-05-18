@@ -7,10 +7,22 @@
       "request": "launch",
       "cwd": "${workspaceFolder}/framework/packages/proto-apps/app2-solid",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["--import", "tsx"],
+      "runtimeArgs": [
+        "--import",
+        "tsx"
+      ],
       "program": "${workspaceFolder}/framework/packages/proto-apps/vite-plugins/debug-downloading.ts",
       "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"]
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Debug App2 Vite Dev Server",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm exec vite -- --configLoader runner dev",
+      "cwd": "${workspaceFolder}/framework/packages/proto-apps/app2-solid"
     }
   ]
 }
