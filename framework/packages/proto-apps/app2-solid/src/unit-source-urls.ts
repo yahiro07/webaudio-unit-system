@@ -37,7 +37,8 @@ export const unitSourceUrls = {
     "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r2/units/wasyn-1/",
   webaudioTinysynthSimple:
     "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r2/units/webaudio-tinysynth-simple/",
-  // "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/koodori/",
+  // koodori:
+  // "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r2/units/koodori/",
   // "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-synth-v2/",
   koodori: `${wusCustomUnitsLocalRoot}koodori/dist/`,
   webaudioSynthV2: `${wusCustomUnitsLocalRoot}webaudio-synth-v2/web/`,

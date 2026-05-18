@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Remote Unit Download",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/framework/packages/proto-apps/app2-solid",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--import", "tsx"],
+      "program": "${workspaceFolder}/framework/packages/proto-apps/vite-plugins/debug-downloading.ts",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}
