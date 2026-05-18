@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { createHash } from "node:crypto";
+import path from "node:path";
 import type { Plugin, ResolvedConfig } from "vite";
 import {
   HostUnitMetadata,
@@ -15,16 +15,30 @@ function slugifyUnitName(name: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-function buildUnitPageId(meta: UnitMetadata): string {
+function trimTrailingSlash(value: string): string {
+  return value.replace(/\/+$/, "");
+}
+
+function buildUnitPageId(meta: UnitMetadata, pageFolderUrl: string): string {
   const readableName = slugifyUnitName(meta.name);
-  const hashSource = `${meta.repositoryUrl}\n${meta.name}`;
-  const hash = createHash("sha256")
-    .update(hashSource)
-    .digest("base64url")
-    .replaceAll("-", "A")
-    .replaceAll("_", "B")
-    .slice(0, 6);
-  return `U${hash}-${readableName}`;
+  const url = new URL(pageFolderUrl);
+  if (url.protocol === "file:") {
+    const sourceFolderSegments = trimTrailingSlash(pageFolderUrl)
+      .split(path.sep)
+      .filter(Boolean);
+    return `local:${sourceFolderSegments.slice(-3).join("/")}:${readableName}`;
+  } else {
+    const normalizedPathname = trimTrailingSlash(url.pathname);
+    const ghMatch = normalizedPathname.match(
+      /^\/gh\/([^/]+)\/([^/@]+)(?:@[^/]+)?(?:\/.*)?$/,
+    );
+    if (url.hostname === "cdn.jsdelivr.net" && ghMatch) {
+      return `gh:${ghMatch[1]}/${ghMatch[2]}:${readableName}`;
+    } else {
+      const sourcePath = path.posix.dirname(normalizedPathname);
+      return `url:${url.host}${sourcePath}:${readableName}`;
+    }
+  }
 }
 
 function checkPageIdsUnique(metaList: HostUnitMetadata[]) {
@@ -60,7 +74,7 @@ function createHostUnitMeta(
 ): HostUnitMetadata {
   return {
     ...meta,
-    unitPageId: buildUnitPageId(meta),
+    unitPageId: buildUnitPageId(meta, pageFolderUrl),
     pagePath: `${pageFolderUrl}index.html`,
   };
 }
