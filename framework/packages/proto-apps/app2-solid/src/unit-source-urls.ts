@@ -28,3 +28,26 @@ export const unitSourceUrls = [
   `${repositoryRoot}units/units-dev/dist/mu4-keyboard/`,
   `${repositoryRoot}units/units-dev/dist/mu5-visualizer/`,
 ];
+
+
+export const unitSourceUrls2 = {
+  additive: "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/additive/",
+  drumMachine: "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/drum-machine/",
+  wasyn1: "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/wasyn-1/",
+  webaudioTinysynthSimple: "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-tinysynth-simple/",
+  // "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/koodori/",
+  // "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-synth-v2/",
+  koodori: `${wusCustomUnitsLocalRoot}koodori/dist/`,
+  webaudioSynthV2: `${wusCustomUnitsLocalRoot}webaudio-synth-v2/web/`,
+  // "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu1-instrument/",
+  // "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu2-sequencer/",
+  // "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu3-effect/",
+  // "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu4-keyboard/",
+  // "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu5-visualizer/",
+  mu1Instrument: `${repositoryRoot}units/units-dev/dist/mu1-instrument/`,
+  mu2Sequencer: `${repositoryRoot}units/units-dev/dist/mu2-sequencer/`,
+  mu3Effect: `${repositoryRoot}units/units-dev/dist/mu3-effect/`,
+  mu4Keyboard: `${repositoryRoot}units/units-dev/dist/mu4-keyboard/`,
+  mu5Visualizer: `${repositoryRoot}units/units-dev/dist/mu5-visualizer/`,
+};
+
