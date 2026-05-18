@@ -162,6 +162,13 @@ function resolveCatalogUnitRequest(
   return targetFilePath;
 }
 
+function checkFileExists(filePath: string): Promise<boolean> {
+  return fs.promises
+    .stat(filePath)
+    .then(() => true)
+    .catch(() => false);
+}
+
 export function unitLoaderPlugin(options: {
   unitSourceUrls: UnitSourceUrls;
   cacheFolderPath?: string;
@@ -186,7 +193,8 @@ export function unitLoaderPlugin(options: {
       const res =
         await remoteUnitCacheStore.updateCachedContents(unitSourceUrls);
       summariesJson = res.summariesJson;
-      if (res.updated) {
+      const summaryFileExists = await checkFileExists(summaryOutputPath);
+      if (res.updated || !summaryFileExists) {
         writeSummariesJsonToFile(summariesJson, summaryOutputPath);
       }
       // summariesJson =
