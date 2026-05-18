@@ -105,7 +105,6 @@ export async function generateSummariesJson(
   unitSourceUrls: Record<string, string>,
   readCachedUnitMeta: ReadCachedUnitMetaFn,
 ): Promise<UnitSummariesJson> {
-  console.log("buildSummaryFile");
   const metaList = await Promise.all(
     Object.entries(unitSourceUrls).map(async ([catalogKey, url]) => {
       const meta = await fetchUnitMeta(url, readCachedUnitMeta);

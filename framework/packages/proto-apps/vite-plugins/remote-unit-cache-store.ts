@@ -12,15 +12,11 @@ import { generateSummariesJson } from "./units-summary-generator";
 
 const execFileAsync = promisify(execFile);
 
-type UpdateResult = {
-  updated: boolean;
-  summariesJson: UnitSummariesJson;
-};
-
 export type RemoteUnitCacheStore = {
-  updateCachedContents(
-    unitSourceUrls: Record<string, string>,
-  ): Promise<UpdateResult>;
+  updateCachedContents(unitSourceUrls: Record<string, string>): Promise<{
+    updated: boolean;
+    summariesJson: UnitSummariesJson;
+  }>;
   resolveCachedRemoteUnitRequest(
     unitPageUrl: string,
     relativePathInUnit: string,
@@ -194,28 +190,10 @@ async function downloadUnitsFromRemote(
   }
 }
 
-async function returnCachedSummariesIfNoChange(
-  cacheStorageIo: RemoteUnitCacheStorageIo,
+async function enumerateUnitEntriesToCache(
   unitSourceUrls: Record<string, string>,
-): Promise<UpdateResult | undefined> {
-  const prevUnitSourceUrls =
-    await cacheStorageIo.readPreviousUnitSourceUrlsInput();
-  if (prevUnitSourceUrls) {
-    if (checkDeepEquality(prevUnitSourceUrls, unitSourceUrls)) {
-      const cachedSummariesJson =
-        await cacheStorageIo.readCachedSummariesJson();
-      if (cachedSummariesJson) {
-        return { updated: false, summariesJson: cachedSummariesJson };
-      }
-    }
-  }
-}
-
-async function updateCachedContentsImpl(
   cacheStorageIo: RemoteUnitCacheStorageIo,
-  unitSourceUrls: Record<string, string>,
-  cacheFolderPath: string,
-): Promise<UpdateResult> {
+) {
   const remoteUrls = Object.values(unitSourceUrls).filter((url) =>
     url.startsWith("https://"),
   );
@@ -232,10 +210,32 @@ async function updateCachedContentsImpl(
       bucketPieceComparisonKey,
     };
   });
-  const unitEntriesToCache = unitCacheEntries.filter(
+  return unitCacheEntries.filter(
     (entry) =>
       !existingBucketPieceKeys.includes(entry.bucketPieceComparisonKey),
   );
+}
+
+async function checkUnitSourceUrlsChanged(
+  cacheStorageIo: RemoteUnitCacheStorageIo,
+  unitSourceUrls: Record<string, string>,
+): Promise<boolean> {
+  const prevUnitSourceUrls =
+    await cacheStorageIo.readPreviousUnitSourceUrlsInput();
+  if (prevUnitSourceUrls) {
+    if (checkDeepEquality(prevUnitSourceUrls, unitSourceUrls)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+async function updateCachedContentsImpl(
+  cacheStorageIo: RemoteUnitCacheStorageIo,
+  unitSourceUrls: Record<string, string>,
+  unitEntriesToCache: UnitCacheEntry[],
+  cacheFolderPath: string,
+): Promise<UnitSummariesJson> {
   await downloadUnitsFromRemote(
     unitEntriesToCache,
     cacheStorageIo.writeCachedPiece,
@@ -252,7 +252,7 @@ async function updateCachedContentsImpl(
   );
   await cacheStorageIo.writePreviousUnitSourceUrlsInput(unitSourceUrls);
   await cacheStorageIo.writeCachedSummariesJson(summariesJson);
-  return { updated: true, summariesJson };
+  return summariesJson;
 }
 
 export function createRemoteUnitCacheStore(
@@ -261,17 +261,28 @@ export function createRemoteUnitCacheStore(
   const cacheStorageIo = createRemoteUnitCacheStorageIo(cacheFolderPath);
   return {
     async updateCachedContents(unitSourceUrls) {
-      return (
-        (await returnCachedSummariesIfNoChange(
-          cacheStorageIo,
-          unitSourceUrls,
-        )) ??
-        (await updateCachedContentsImpl(
-          cacheStorageIo,
-          unitSourceUrls,
-          cacheFolderPath,
-        ))
+      const urlsChanged = await checkUnitSourceUrlsChanged(
+        cacheStorageIo,
+        unitSourceUrls,
       );
+      const unitEntriesToCache = await enumerateUnitEntriesToCache(
+        unitSourceUrls,
+        cacheStorageIo,
+      );
+      if (!urlsChanged && unitEntriesToCache.length === 0) {
+        const cachedSummariesJson =
+          await cacheStorageIo.readCachedSummariesJson();
+        if (cachedSummariesJson) {
+          return { updated: false, summariesJson: cachedSummariesJson };
+        }
+      }
+      const summariesJson = await updateCachedContentsImpl(
+        cacheStorageIo,
+        unitSourceUrls,
+        unitEntriesToCache,
+        cacheFolderPath,
+      );
+      return { updated: true, summariesJson };
     },
     resolveCachedRemoteUnitRequest(unitPageUrl, relativePathInUnit) {
       const { bucketName, pieceName } =
