@@ -1,5 +1,5 @@
 {
-  "unitType": "effect",
   "name": "mu5-visualizer",
+  "unitType": "effect",
   "repositoryUrl": "https://github.com/yahiro07/webaudio-unit-system"
 }

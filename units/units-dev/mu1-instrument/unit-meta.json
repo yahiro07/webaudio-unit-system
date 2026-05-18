@@ -1,5 +1,5 @@
 {
-  "unitType": "instrument",
   "name": "mu1-instrument",
+  "unitType": "instrument",
   "repositoryUrl": "https://github.com/yahiro07/webaudio-unit-system"
 }
