@@ -106,7 +106,12 @@ async function downloadUnitsFromRemote(
     pieceName: string,
     sourceUnitFolderPath: string,
   ) => Promise<void>,
+  cacheFolderPath: string,
 ) {
+  console.log(
+    `adding ${unitCacheEntries.length} remote unit(s) to local cache...`,
+  );
+
   const entriesPerBuckets = Object.groupBy(
     unitCacheEntries,
     (entry) => entry.bucketName,
@@ -127,6 +132,7 @@ async function downloadUnitsFromRemote(
     try {
       const archivePath = path.join(tempDirPath, "archive.zip");
       const extractDirPath = path.join(tempDirPath, "extract");
+      console.log(`fetching remote units archive: ${archiveUrl}`);
       const archiveResponse = await fetch(archiveUrl);
       if (!archiveResponse.ok) {
         const fallbackArchiveUrl = archiveUrl.replace(
@@ -178,6 +184,7 @@ async function downloadUnitsFromRemote(
       }
     } finally {
       await fs.promises.rm(tempDirPath, { recursive: true, force: true });
+      console.log(`units cache saved in ${cacheFolderPath}`);
     }
   }
 }
@@ -202,6 +209,7 @@ async function checkCache(
 async function updateCachedContentsImpl(
   cacheStorageIo: RemoteUnitCacheStorageIo,
   unitSourceUrls: Record<string, string>,
+  cacheFolderPath: string,
 ): Promise<UnitSummariesJson> {
   const remoteUrls = Object.values(unitSourceUrls).filter((url) =>
     url.startsWith("https://"),
@@ -226,6 +234,7 @@ async function updateCachedContentsImpl(
   await downloadUnitsFromRemote(
     unitEntriesToCache,
     cacheStorageIo.writeCachedPiece,
+    cacheFolderPath,
   );
 
   const summariesJson = await generateSummariesJson(
@@ -249,7 +258,11 @@ export function createRemoteUnitCacheStore(
     async updateCachedContents(unitSourceUrls) {
       return (
         (await checkCache(cacheStorageIo, unitSourceUrls)) ??
-        (await updateCachedContentsImpl(cacheStorageIo, unitSourceUrls))
+        (await updateCachedContentsImpl(
+          cacheStorageIo,
+          unitSourceUrls,
+          cacheFolderPath,
+        ))
       );
     },
     resolveCachedRemoteUnitRequest(unitPageUrl, relativePathInUnit) {
