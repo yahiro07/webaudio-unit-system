@@ -1,26 +1,30 @@
 import "@wus/mo/styles";
-import { createHostSystem } from "@wus/host-system/host";
+import { createHostSystem, UnitSummariesJson } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
+import unitsSummaryJson from "../units-summary.json";
 
 const audioContext = new AudioContext();
 const hostSystem = createHostSystem(audioContext);
 
+const catalogKeysAvailable = (unitsSummaryJson as UnitSummariesJson).units.map(
+  (unit) => unit.catalogKey,
+);
+console.log("catalog keys available:", catalogKeysAvailable);
+
 const PageRoot = () => {
   return (
     <div class="w-dvw h-dvh flex-vc">
-      {/* load unit from public folder */}
       <UnitFrame
         destUnitId="$output"
         unitId="unit1"
-        pageUrl="/local-units/mu1-instrument/index.html"
+        catalogKey="mu1Instrument"
         hostSystem={hostSystem}
       />
-      {/* load unit from remote url */}
       <UnitFrame
         destUnitId="$output"
         unitId="unit2"
-        pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r2/units/webaudio-tinysynth-simple/index.html"
+        catalogKey="webaudioTinysynthSimple"
         hostSystem={hostSystem}
         style={{ width: "500px", height: "300px" }}
       />
