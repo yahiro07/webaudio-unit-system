@@ -20,22 +20,57 @@ export type RemoteUnitCacheStorageIo = {
     bucketName: string,
     pieceName: string,
   ): Promise<UnitMetadata | undefined>;
-  resolveCachedRemoteUnitRequest(
-    unitPageUrl: string,
-    requestPath: string,
+  resolveCachedRemoteUnitRequestToFilePath(
+    bucketName: string,
+    pieceName: string,
+    pathInPiece: string,
   ): string | undefined;
 };
 
 export function createRemoteUnitCacheStorageIo(
   cacheFolderPath: string,
 ): RemoteUnitCacheStorageIo {
+  const internal = {
+    readJsonFile<T>(path: string): Promise<T | undefined> {},
+    writeJsonFile<T>(path: string, content: T): Promise<void> {},
+    writeFolder(path: string, srcPath: string): Promise<void> {},
+    globFoldersTwoLevels(basePath: string): Promise<string[]> {},
+  };
   return {
-    readPreviousUnitSourceUrlsInput() {},
-    writePreviousUnitSourceUrlsInput(unitSourceUrls) {},
-    readCachedSummariesJson() {},
-    writeCachedSummariesJson(summariesJson) {},
-    listExistingBucketPieceKeys() {},
-    writeCachedPiece(bucketName, pieceName, sourceUnitFolderPath) {},
-    readCachedPieceMeta(bucketName, pieceName) {},
+    readPreviousUnitSourceUrlsInput() {
+      return internal.readJsonFile("previous-unit-source-urls.json");
+    },
+    writePreviousUnitSourceUrlsInput(unitSourceUrls) {
+      return internal.writeJsonFile(
+        "previous-unit-source-urls.json",
+        unitSourceUrls,
+      );
+    },
+    readCachedSummariesJson() {
+      return internal.readJsonFile("cached-summaries.json");
+    },
+    writeCachedSummariesJson(summariesJson) {
+      return internal.writeJsonFile("cached-summaries.json", summariesJson);
+    },
+    async listExistingBucketPieceKeys() {
+      const paths = await internal.globFoldersTwoLevels("units");
+      return paths.map((p) => p.replace("/", ":"));
+    },
+    writeCachedPiece(bucketName, pieceName, sourceUnitFolderPath) {
+      const destFolder = `units/${bucketName}/${pieceName}`;
+      return internal.writeFolder(destFolder, sourceUnitFolderPath);
+    },
+    readCachedPieceMeta(bucketName, pieceName) {
+      return internal.readJsonFile(
+        `units/${bucketName}/${pieceName}/unit-meta.json`,
+      );
+    },
+    resolveCachedRemoteUnitRequestToFilePath(
+      bucketName,
+      pieceName,
+      pathInPiece,
+    ) {
+      return `units/${bucketName}/${pieceName}/${pathInPiece}`;
+    },
   };
 }

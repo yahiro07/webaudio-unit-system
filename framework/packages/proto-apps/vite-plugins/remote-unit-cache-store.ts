@@ -123,7 +123,13 @@ export function createRemoteUnitCacheStore(
       );
     },
     resolveCachedRemoteUnitRequest(unitPageUrl, requestPath) {
-      return undefined;
+      const { bucketName, pieceName } =
+        mapUnitUrlToBucketAndPieceNames(unitPageUrl);
+      return cacheStorageIo.resolveCachedRemoteUnitRequestToFilePath(
+        bucketName,
+        pieceName,
+        requestPath,
+      );
     },
   };
 }
