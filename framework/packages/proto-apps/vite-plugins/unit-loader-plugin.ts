@@ -183,13 +183,16 @@ export function unitLoaderPlugin(options: {
       config = _config;
     },
     async buildStart() {
-      summariesJson =
+      const res =
         await remoteUnitCacheStore.updateCachedContents(unitSourceUrls);
+      summariesJson = res.summariesJson;
+      if (res.updated) {
+        writeSummariesJsonToFile(summariesJson, summaryOutputPath);
+      }
       // summariesJson =
       //   config.command === "serve"
       //     ? createServeSummariesJson(sourceSummariesJson)
       //     : sourceSummariesJson;
-      writeSummariesJsonToFile(summariesJson, summaryOutputPath);
     },
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {

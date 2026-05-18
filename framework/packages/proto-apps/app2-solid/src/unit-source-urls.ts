@@ -53,3 +53,5 @@ export const unitSourceUrls = {
   mu4Keyboard: `${repositoryRoot}units/units-dev/dist/mu4-keyboard/`,
   mu5Visualizer: `${repositoryRoot}units/units-dev/dist/mu5-visualizer/`,
 };
+
+console.log("unit sources:", unitSourceUrls);

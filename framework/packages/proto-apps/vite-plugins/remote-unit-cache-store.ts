@@ -12,10 +12,15 @@ import { generateSummariesJson } from "./units-summary-generator";
 
 const execFileAsync = promisify(execFile);
 
+type UpdateResult = {
+  updated: boolean;
+  summariesJson: UnitSummariesJson;
+};
+
 export type RemoteUnitCacheStore = {
   updateCachedContents(
     unitSourceUrls: Record<string, string>,
-  ): Promise<UnitSummariesJson>;
+  ): Promise<UpdateResult>;
   resolveCachedRemoteUnitRequest(
     unitPageUrl: string,
     relativePathInUnit: string,
@@ -189,10 +194,10 @@ async function downloadUnitsFromRemote(
   }
 }
 
-async function checkCache(
+async function returnCachedSummariesIfNoChange(
   cacheStorageIo: RemoteUnitCacheStorageIo,
   unitSourceUrls: Record<string, string>,
-): Promise<UnitSummariesJson | undefined> {
+): Promise<UpdateResult | undefined> {
   const prevUnitSourceUrls =
     await cacheStorageIo.readPreviousUnitSourceUrlsInput();
   if (prevUnitSourceUrls) {
@@ -200,7 +205,7 @@ async function checkCache(
       const cachedSummariesJson =
         await cacheStorageIo.readCachedSummariesJson();
       if (cachedSummariesJson) {
-        return cachedSummariesJson;
+        return { updated: false, summariesJson: cachedSummariesJson };
       }
     }
   }
@@ -210,7 +215,7 @@ async function updateCachedContentsImpl(
   cacheStorageIo: RemoteUnitCacheStorageIo,
   unitSourceUrls: Record<string, string>,
   cacheFolderPath: string,
-): Promise<UnitSummariesJson> {
+): Promise<UpdateResult> {
   const remoteUrls = Object.values(unitSourceUrls).filter((url) =>
     url.startsWith("https://"),
   );
@@ -247,7 +252,7 @@ async function updateCachedContentsImpl(
   );
   await cacheStorageIo.writePreviousUnitSourceUrlsInput(unitSourceUrls);
   await cacheStorageIo.writeCachedSummariesJson(summariesJson);
-  return summariesJson;
+  return { updated: true, summariesJson };
 }
 
 export function createRemoteUnitCacheStore(
@@ -257,7 +262,10 @@ export function createRemoteUnitCacheStore(
   return {
     async updateCachedContents(unitSourceUrls) {
       return (
-        (await checkCache(cacheStorageIo, unitSourceUrls)) ??
+        (await returnCachedSummariesIfNoChange(
+          cacheStorageIo,
+          unitSourceUrls,
+        )) ??
         (await updateCachedContentsImpl(
           cacheStorageIo,
           unitSourceUrls,

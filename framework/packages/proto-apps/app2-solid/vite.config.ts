@@ -4,8 +4,6 @@ import solid from "vite-plugin-solid";
 import { unitLoaderPlugin } from "../vite-plugins";
 import { unitSourceUrls } from "./src/unit-source-urls";
 
-console.log(unitSourceUrls);
-
 export default defineConfig({
   plugins: [solid(), tailwindcss(), unitLoaderPlugin({ unitSourceUrls })],
   appType: "mpa",
