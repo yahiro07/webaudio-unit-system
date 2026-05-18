@@ -14,7 +14,7 @@ function loadUnitMeta(
   ) as UnitMetadata;
   return {
     unitPageId: getPageId(relativeUnitFolderPath),
-    pagePath: `${relativeUnitFolderPath}/index.html`,
+    pageUrl: `${relativeUnitFolderPath}/index.html`,
     ...unitMeta,
   };
 }

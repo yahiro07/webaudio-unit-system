@@ -39,7 +39,7 @@ async function fetchUnitMeta(pageFolderUrl: string): Promise<HostUnitMetadata> {
   const unitMeta: UnitMetadata = await res.json();
   return {
     unitPageId: getPageId(pageFolderUrl),
-    pagePath: `${pageFolderUrl}index.html`,
+    pageUrl: `${pageFolderUrl}index.html`,
     ...unitMeta,
   };
 }

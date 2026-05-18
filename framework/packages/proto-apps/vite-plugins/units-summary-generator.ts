@@ -78,7 +78,7 @@ function createHostUnitMeta(
     catalogKey,
     canonicalPageId: buildUnitPageId(meta, pageFolderUrl),
     ...meta,
-    pagePath: `${pageFolderUrl}index.html`,
+    pageUrl: `${pageFolderUrl}index.html`,
   };
 }
 

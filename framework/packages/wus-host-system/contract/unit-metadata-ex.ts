@@ -4,7 +4,7 @@ export type HostUnitMetadata = {
   catalogKey: string;
   canonicalPageId: string;
   // unitPageId: string;
-  pagePath: string;
+  pageUrl: string;
 } & UnitMetadata;
 
 export type UnitSummariesJson = {

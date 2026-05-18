@@ -12,12 +12,12 @@ import {
 const LOCAL_UNIT_ROUTE_PREFIX = "/@unit-file";
 const CATALOG_UNIT_ROUTE_PREFIX = "/@unit-loader";
 
-function isLocalPagePath(pagePath: string): boolean {
-  return pagePath.startsWith("file:///");
+function isLocalPageUrl(pageUrl: string): boolean {
+  return pageUrl.startsWith("file:///");
 }
 
-function fileUrlToRoutePath(pagePath: string): string {
-  const filePath = fileURLToPath(new URL(pagePath));
+function fileUrlToRoutePath(pageUrl: string): string {
+  const filePath = fileURLToPath(new URL(pageUrl));
   const posixPath = filePath.split(path.sep).join("/");
   return `${LOCAL_UNIT_ROUTE_PREFIX}${posixPath}`;
 }
@@ -28,12 +28,12 @@ function createServeSummariesJson(
   return {
     ...summariesJson,
     units: summariesJson.units.map((unit) => {
-      if (!isLocalPagePath(unit.pagePath)) {
+      if (!isLocalPageUrl(unit.pageUrl)) {
         return unit;
       }
       return {
         ...unit,
-        pagePath: fileUrlToRoutePath(unit.pagePath),
+        pageUrl: fileUrlToRoutePath(unit.pageUrl),
       };
     }),
   };
@@ -80,12 +80,12 @@ function resolveLocalUnitRequest(
     decodeURIComponent(requestPath.slice(LOCAL_UNIT_ROUTE_PREFIX.length)),
   );
   const localUnits = summariesJson.units.filter((unit) =>
-    isLocalPagePath(unit.pagePath),
+    isLocalPageUrl(unit.pageUrl),
   );
   const matchedUnit = localUnits
     .map((unit) => {
       const entryFilePath = path.normalize(
-        fileURLToPath(new URL(unit.pagePath)),
+        fileURLToPath(new URL(unit.pageUrl)),
       );
       const entryFolderPath = path.dirname(entryFilePath);
       return {
@@ -125,14 +125,13 @@ function resolveCatalogUnitRequest(
   }
 
   const unit = summariesJson.units.find(
-    (entry) =>
-      entry.catalogKey === catalogKey && isLocalPagePath(entry.pagePath),
+    (entry) => entry.catalogKey === catalogKey && isLocalPageUrl(entry.pageUrl),
   );
   if (!unit) {
     return undefined;
   }
 
-  const entryFilePath = path.normalize(fileURLToPath(new URL(unit.pagePath)));
+  const entryFilePath = path.normalize(fileURLToPath(new URL(unit.pageUrl)));
   const entryFolderPath = path.dirname(entryFilePath);
   const requestedResourcePath = resourceSegments.join("/") || "index.html";
   const targetFilePath = path.normalize(
