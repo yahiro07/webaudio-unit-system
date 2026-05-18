@@ -113,13 +113,12 @@ function resolveCatalogUnitRequest(
   summariesJson: UnitSummariesJson,
   resolveCachedRemoteUnitRequestFn: (
     unitPageUrl: string,
-    requestPath: string,
+    relativePathInUnit: string,
   ) => string | undefined,
 ): string | undefined {
   if (!requestPath.startsWith(`${CATALOG_UNIT_ROUTE_PREFIX}/`)) {
     return undefined;
   }
-
   const relativePath = decodeURIComponent(
     requestPath.slice(CATALOG_UNIT_ROUTE_PREFIX.length + 1),
   );
@@ -139,7 +138,11 @@ function resolveCatalogUnitRequest(
     unit.pageUrl.startsWith("http://") ||
     unit.pageUrl.startsWith("https://")
   ) {
-    return resolveCachedRemoteUnitRequestFn(unit.pageUrl, requestPath);
+    const requestedResourcePath = resourceSegments.join("/");
+    return resolveCachedRemoteUnitRequestFn(
+      unit.pageUrl,
+      requestedResourcePath,
+    );
   }
 
   const entryFilePath = path.normalize(fileURLToPath(new URL(unit.pageUrl)));
@@ -190,7 +193,7 @@ export function unitLoaderPlugin(options: {
     },
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
-        // console.log("requested", req.url);
+        console.log("requested", req.url);
         if (!req.url || !summariesJson) {
           next();
           return;
@@ -212,6 +215,9 @@ export function unitLoaderPlugin(options: {
           const filePath = stat.isDirectory()
             ? path.join(targetFilePath, "index.html")
             : targetFilePath;
+
+          console.log("--> resolved by unit loader:", req.url, "-->", filePath);
+
           res.statusCode = 200;
           res.setHeader("Content-Type", getContentType(filePath));
           fs.createReadStream(filePath).pipe(res);

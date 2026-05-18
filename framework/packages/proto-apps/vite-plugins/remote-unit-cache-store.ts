@@ -18,7 +18,7 @@ export type RemoteUnitCacheStore = {
   ): Promise<UnitSummariesJson>;
   resolveCachedRemoteUnitRequest(
     unitPageUrl: string,
-    requestPath: string,
+    relativePathInUnit: string,
   ): string | undefined;
 };
 
@@ -252,13 +252,13 @@ export function createRemoteUnitCacheStore(
         (await updateCachedContentsImpl(cacheStorageIo, unitSourceUrls))
       );
     },
-    resolveCachedRemoteUnitRequest(unitPageUrl, requestPath) {
+    resolveCachedRemoteUnitRequest(unitPageUrl, relativePathInUnit) {
       const { bucketName, pieceName } =
         mapUnitUrlToBucketAndPieceNames(unitPageUrl);
       return cacheStorageIo.resolveCachedRemoteUnitRequestToFilePath(
         bucketName,
         pieceName,
-        requestPath,
+        relativePathInUnit,
       );
     },
   };
