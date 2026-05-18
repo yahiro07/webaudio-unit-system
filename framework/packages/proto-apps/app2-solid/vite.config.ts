@@ -1,7 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
-import { unitLoaderPlugin } from "../vite-plugins/unit-loader-plugin";
+import { unitLoaderPlugin } from "../vite-plugins";
 import { unitSourceUrls } from "./src/unit-source-urls";
 
 console.log(unitSourceUrls);

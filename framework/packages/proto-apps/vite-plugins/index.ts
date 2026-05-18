@@ -1,1 +1,1 @@
-export * from "./vite-units-summary-plugin";
+export * from "./unit-loader-plugin";
