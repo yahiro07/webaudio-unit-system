@@ -1,5 +1,10 @@
 import type { Plugin, ResolvedConfig } from "vite";
-import { generateSummaryFile, UnitSourceUrls } from "./units-summary-generator";
+import { UnitSummariesJson } from "../../wus-host-system/contract";
+import {
+  generateSummariesJson,
+  UnitSourceUrls,
+  writeSummariesJsonToFile,
+} from "./units-summary-generator";
 
 export function unitLoaderPlugin(options: {
   unitSourceUrls: UnitSourceUrls;
@@ -8,6 +13,7 @@ export function unitLoaderPlugin(options: {
 }): Plugin {
   const { unitSourceUrls } = options;
   let config: ResolvedConfig;
+  let summariesJson: UnitSummariesJson;
 
   return {
     name: "unit-loader",
@@ -17,7 +23,8 @@ export function unitLoaderPlugin(options: {
     async buildStart() {
       const { root, publicDir } = config;
       const outputPath = options.summaryOutputPath ?? "src/units-summary.json";
-      await generateSummaryFile(unitSourceUrls, outputPath);
+      summariesJson = await generateSummariesJson(unitSourceUrls);
+      writeSummariesJsonToFile(summariesJson, outputPath);
     },
   };
 }

@@ -82,10 +82,9 @@ function createHostUnitMeta(
   };
 }
 
-export async function generateSummaryFile(
+export async function generateSummariesJson(
   unitSourceUrls: UnitSourceUrls,
-  outputPath: string,
-) {
+): Promise<UnitSummariesJson> {
   console.log("buildSummaryFile");
   const metaList = await Promise.all(
     Object.entries(unitSourceUrls).map(async ([catalogKey, url]) => {
@@ -98,7 +97,14 @@ export async function generateSummaryFile(
     generatedAt: new Date().toISOString(),
     units: metaList,
   };
-  const fileContent = JSON.stringify(summariesJson, null, 2) + "\n";
-  fs.writeFileSync(outputPath, fileContent);
+  return summariesJson;
+}
+
+export function writeSummariesJsonToFile(
+  summariesJson: UnitSummariesJson,
+  outputPath: string,
+) {
+  const outputContent = `${JSON.stringify(summariesJson, null, 2)}\n`;
+  fs.writeFileSync(outputPath, outputContent);
   console.log(`generated ${outputPath}`);
 }
