@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { UnitSummariesJson } from "../../wus-host-system/contract";
 import { UnitMetadata } from "../../wus-unit-types/unit-metadata";
 
@@ -30,11 +33,62 @@ export type RemoteUnitCacheStorageIo = {
 export function createRemoteUnitCacheStorageIo(
   cacheFolderPath: string,
 ): RemoteUnitCacheStorageIo {
+  const resolvedCacheFolderPath = cacheFolderPath.startsWith("~/")
+    ? path.join(os.homedir(), cacheFolderPath.slice(2))
+    : cacheFolderPath;
+
   const internal = {
-    readJsonFile<T>(path: string): Promise<T | undefined> {},
-    writeJsonFile<T>(path: string, content: T): Promise<void> {},
-    writeFolder(path: string, srcPath: string): Promise<void> {},
-    globFoldersTwoLevels(basePath: string): Promise<string[]> {},
+    resolvePath(relativePath: string): string {
+      return path.join(resolvedCacheFolderPath, relativePath);
+    },
+    async readJsonFile<T>(relativePath: string): Promise<T | undefined> {
+      const filePath = internal.resolvePath(relativePath);
+      try {
+        const content = await fs.promises.readFile(filePath, "utf8");
+        return JSON.parse(content) as T;
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+          return undefined;
+        }
+        throw error;
+      }
+    },
+    async writeJsonFile<T>(relativePath: string, content: T): Promise<void> {
+      const filePath = internal.resolvePath(relativePath);
+      await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+      await fs.promises.writeFile(
+        filePath,
+        `${JSON.stringify(content, null, 2)}\n`,
+        "utf8",
+      );
+    },
+    async writeFolder(relativePath: string, srcPath: string): Promise<void> {
+      const destPath = internal.resolvePath(relativePath);
+      await fs.promises.mkdir(path.dirname(destPath), { recursive: true });
+      await fs.promises.rm(destPath, { recursive: true, force: true });
+      await fs.promises.cp(srcPath, destPath, { recursive: true });
+    },
+    async globFoldersTwoLevels(basePath: string): Promise<string[]> {
+      const absoluteBasePath = internal.resolvePath(basePath);
+      try {
+        const matches: string[] = [];
+        for await (const relativePath of fs.promises.glob("*/*", {
+          cwd: absoluteBasePath,
+        })) {
+          const targetPath = path.join(absoluteBasePath, relativePath);
+          const stat = await fs.promises.stat(targetPath);
+          if (stat.isDirectory()) {
+            matches.push(relativePath);
+          }
+        }
+        return matches;
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+          return [];
+        }
+        throw error;
+      }
+    },
   };
   return {
     readPreviousUnitSourceUrlsInput() {
@@ -70,7 +124,9 @@ export function createRemoteUnitCacheStorageIo(
       pieceName,
       pathInPiece,
     ) {
-      return `units/${bucketName}/${pieceName}/${pathInPiece}`;
+      return internal.resolvePath(
+        `units/${bucketName}/${pieceName}/${pathInPiece}`,
+      );
     },
   };
 }
