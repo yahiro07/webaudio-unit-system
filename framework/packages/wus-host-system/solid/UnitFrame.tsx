@@ -15,7 +15,8 @@ const HOST_INTERFACE_REGISTRY_KEY = "__wusHostInterfaceRegistry";
 
 export const UnitFrame = (props: {
   unitId: string;
-  pageUrl: string;
+  catalogKey?: string;
+  pageUrl?: string;
   destUnitId?: string;
   hostBpm?: number;
   hostPlaying?: boolean;
@@ -24,7 +25,7 @@ export const UnitFrame = (props: {
   className?: string;
   style?: JSX.DOMAttributes<HTMLIFrameElement>["style"];
 }) => {
-  console.log(`loading ${props.pageUrl}`);
+  console.log(`loading ${props.catalogKey ?? props.pageUrl}`);
   const [unitAgent, setUnitAgent] = createSignal<UnitAgentInHostSide>();
   let currentNotes: number[] = [];
 
@@ -95,9 +96,11 @@ export const UnitFrame = (props: {
   );
 
   if (
-    props.pageUrl.startsWith("http://") ||
-    props.pageUrl.startsWith("https://")
+    props.pageUrl &&
+    (props.pageUrl.startsWith("http://") ||
+      props.pageUrl.startsWith("https://"))
   ) {
+    const pageUrl = props.pageUrl;
     let iframe: HTMLIFrameElement | undefined;
     onMount(async () => {
       if (!iframe) return;
@@ -112,9 +115,8 @@ export const UnitFrame = (props: {
         delete registry[props.unitId];
       });
 
-      const baseUrl =
-        props.pageUrl.slice(0, props.pageUrl.lastIndexOf("/")) + "/";
-      const html = await fetch(props.pageUrl).then((res) => res.text());
+      const baseUrl = pageUrl.slice(0, pageUrl.lastIndexOf("/")) + "/";
+      const html = await fetch(pageUrl).then((res) => res.text());
       const bootstrap = [
         `<base href="${baseUrl}">`,
         "<script>",
@@ -128,6 +130,9 @@ export const UnitFrame = (props: {
     });
     return <iframe class={props.className} style={props.style} ref={iframe} />;
   } else {
+    const pageUrl = props.catalogKey
+      ? `/@unit-loader/${props.catalogKey}/index.html`
+      : props.pageUrl;
     let iframe: HTMLIFrameElement | undefined;
     onMount(async () => {
       if (!iframe) return;
@@ -138,7 +143,7 @@ export const UnitFrame = (props: {
       <iframe
         class={props.className}
         style={props.style}
-        src={props.pageUrl}
+        src={pageUrl}
         ref={iframe}
       />
     );

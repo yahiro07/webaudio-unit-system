@@ -10,6 +10,7 @@ import {
 } from "./units-summary-generator";
 
 const LOCAL_UNIT_ROUTE_PREFIX = "/@unit-file";
+const CATALOG_UNIT_ROUTE_PREFIX = "/@unit-loader";
 
 function isLocalPagePath(pagePath: string): boolean {
   return pagePath.startsWith("file:///");
@@ -107,6 +108,47 @@ function resolveLocalUnitRequest(
   return requestedFilePath;
 }
 
+function resolveCatalogUnitRequest(
+  requestPath: string,
+  summariesJson: UnitSummariesJson,
+): string | undefined {
+  if (!requestPath.startsWith(`${CATALOG_UNIT_ROUTE_PREFIX}/`)) {
+    return undefined;
+  }
+
+  const relativePath = decodeURIComponent(
+    requestPath.slice(CATALOG_UNIT_ROUTE_PREFIX.length + 1),
+  );
+  const [catalogKey, ...resourceSegments] = relativePath.split("/");
+  if (!catalogKey) {
+    return undefined;
+  }
+
+  const unit = summariesJson.units.find(
+    (entry) =>
+      entry.catalogKey === catalogKey && isLocalPagePath(entry.pagePath),
+  );
+  if (!unit) {
+    return undefined;
+  }
+
+  const entryFilePath = path.normalize(fileURLToPath(new URL(unit.pagePath)));
+  const entryFolderPath = path.dirname(entryFilePath);
+  const requestedResourcePath = resourceSegments.join("/") || "index.html";
+  const targetFilePath = path.normalize(
+    path.join(entryFolderPath, requestedResourcePath),
+  );
+
+  if (
+    targetFilePath !== entryFolderPath &&
+    !targetFilePath.startsWith(`${entryFolderPath}${path.sep}`)
+  ) {
+    return undefined;
+  }
+
+  return targetFilePath;
+}
+
 export function unitLoaderPlugin(options: {
   unitSourceUrls: UnitSourceUrls;
   cacheFolderPath?: string;
@@ -140,10 +182,9 @@ export function unitLoaderPlugin(options: {
         }
 
         const requestUrl = new URL(req.url, "http://localhost");
-        const targetFilePath = resolveLocalUnitRequest(
-          requestUrl.pathname,
-          sourceSummariesJson,
-        );
+        const targetFilePath =
+          resolveCatalogUnitRequest(requestUrl.pathname, sourceSummariesJson) ??
+          resolveLocalUnitRequest(requestUrl.pathname, sourceSummariesJson);
         if (!targetFilePath) {
           next();
           return;

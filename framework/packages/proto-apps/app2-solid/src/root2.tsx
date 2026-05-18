@@ -20,7 +20,7 @@ import _unitsSummary from "./units-summary.json";
 type CatalogKey = keyof typeof unitSourceUrls;
 
 type UnitTemplate = {
-  templateId: CatalogKey;
+  catalogKey: CatalogKey;
   pageUrl: string;
   unitType: UnitType;
   name: string;
@@ -42,7 +42,7 @@ function createUnitTemplateEntry(
     throw new Error(`Unit not found: ${catalogKey}`);
   }
   return {
-    templateId: unit.catalogKey as CatalogKey,
+    catalogKey: unit.catalogKey as CatalogKey,
     pageUrl: unit.pagePath,
     unitType: unit.unitType,
     name: unit.name,
@@ -143,9 +143,9 @@ function createAppModel() {
   });
 
   const actions = {
-    assignUnit(slotId: string, templateId: CatalogKey) {
+    assignUnit(slotId: string, catalogKey: CatalogKey) {
       const template = unitTemplates.find(
-        (template) => template.templateId === templateId,
+        (template) => template.catalogKey === catalogKey,
       );
       if (!template) return;
       const unitId = template.name + "-" + generateRandomId(6);
@@ -203,7 +203,8 @@ const UnitView = (props: {
       >
         <UnitFrame
           unitId={props.unitAssignment.unitId}
-          pageUrl={props.unitAssignment.template.pageUrl}
+          catalogKey={props.unitAssignment.template.catalogKey}
+          // pageUrl={props.unitAssignment.template.pageUrl}
           destUnitId={props.destUnitId}
           hostSystem={appModel.hostSystem}
           style={
@@ -229,7 +230,7 @@ const UnitListingView = (props: {
       (template) => template.unitType === props.slot.targetUnitType,
     ),
     addUnit(template: UnitTemplate) {
-      appModel.actions.assignUnit(props.slot.slotId, template.templateId);
+      appModel.actions.assignUnit(props.slot.slotId, template.catalogKey);
     },
   };
   return (
