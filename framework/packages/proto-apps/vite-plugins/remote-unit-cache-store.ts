@@ -18,9 +18,35 @@ export type RemoteUnitCacheStore = {
 function mapUnitUrlToBucketAndPieceNames(url: string): {
   bucketName: string;
   pieceName: string;
-} {}
+} {
+  const parsedUrl = new URL(url);
+  const pathSegments = parsedUrl.pathname.split("/").filter(Boolean);
 
-// function mapUnitUrlToPieceName(url: string): string {}
+  const bucketLastSegmentIndex = pathSegments.findIndex((segment) =>
+    segment.includes("@"),
+  );
+  if (bucketLastSegmentIndex < 0) {
+    throw new Error(`Remote unit URL must contain a tag segment: ${url}`);
+  }
+
+  if (pathSegments.length < 2) {
+    throw new Error(`Remote unit URL must contain a piece path: ${url}`);
+  }
+
+  const bucketSegments = pathSegments
+    .slice(0, bucketLastSegmentIndex + 1)
+    .flatMap((segment) => segment.split("@"));
+  const pieceName = pathSegments.at(-2);
+
+  if (!pieceName) {
+    throw new Error(`Remote unit URL must contain a piece name: ${url}`);
+  }
+
+  return {
+    bucketName: bucketSegments.join("__"),
+    pieceName,
+  };
+}
 
 function checkDeepEquality(obj1: any, obj2: any): boolean {
   return JSON.stringify(obj1) === JSON.stringify(obj2);
