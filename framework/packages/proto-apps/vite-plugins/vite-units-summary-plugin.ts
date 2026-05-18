@@ -17,7 +17,8 @@ function buildSummaryJson(
   const metadataObjects: HostUnitMetadata[] = entries.map(
     ({ pagePath, metadata }) => {
       return {
-        unitPageId: path.basename(path.dirname(pagePath)),
+        catalogKey: "unimplemented_yet",
+        canonicalPageId: path.basename(path.dirname(pagePath)),
         pagePath,
         ...metadata,
       };

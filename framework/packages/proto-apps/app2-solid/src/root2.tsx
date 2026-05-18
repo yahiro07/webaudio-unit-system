@@ -14,10 +14,13 @@ import { Button } from "@wus/mo-solid/components/button";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createSignal, Show } from "solid-js";
 import { createStore, produce } from "solid-js/store";
+import { unitSourceUrls } from "./unit-source-urls";
 import _unitsSummary from "./units-summary.json";
 
+type CatalogKey = keyof typeof unitSourceUrls;
+
 type UnitTemplate = {
-  templateId: string;
+  templateId: CatalogKey;
   pageUrl: string;
   unitType: UnitType;
   name: string;
@@ -28,18 +31,18 @@ type UnitTemplate = {
 };
 
 function createUnitTemplateEntry(
-  unitPageId: string,
+  catalogKey: CatalogKey,
   attrs?: { scaling?: number; size?: [number, number] },
 ): UnitTemplate {
   const unitsSummary = _unitsSummary as UnitSummariesJson;
   const unit = unitsSummary.units.find(
-    (unit) => unit.unitPageId === unitPageId,
+    (unit) => unit.catalogKey === catalogKey,
   );
   if (!unit) {
-    throw new Error(`Unit not found: ${unitPageId}`);
+    throw new Error(`Unit not found: ${catalogKey}`);
   }
   return {
-    templateId: unit.unitPageId,
+    templateId: unit.catalogKey as CatalogKey,
     pageUrl: unit.pagePath,
     unitType: unit.unitType,
     name: unit.name,
@@ -50,12 +53,12 @@ function createUnitTemplateEntry(
 }
 
 const unitTemplates: UnitTemplate[] = [
-  createUnitTemplateEntry("mu1-instrument", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu2-sequencer", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu3-effect", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu4-keyboard", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu5-visualizer", { scaling: 0.6 }),
-  createUnitTemplateEntry("drum-machine", {
+  createUnitTemplateEntry("mu1Instrument", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu2Sequencer", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu3Effect", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu4Keyboard", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu5Visualizer", { scaling: 0.6 }),
+  createUnitTemplateEntry("drumMachine", {
     size: [800, 500],
     scaling: 0.2,
   }),
@@ -67,12 +70,12 @@ const unitTemplates: UnitTemplate[] = [
     size: [800, 500],
     scaling: 0.2,
   }),
-  createUnitTemplateEntry("webaudio-tinysynth-simple", {
+  createUnitTemplateEntry("webaudioTinysynthSimple", {
     size: [520, 280],
     scaling: 0.4,
   }),
-  createUnitTemplateEntry("wasyn-1", { size: [720, 360], scaling: 0.25 }),
-  createUnitTemplateEntry("webaudio-synth-v2", {
+  createUnitTemplateEntry("wasyn1", { size: [720, 360], scaling: 0.25 }),
+  createUnitTemplateEntry("webaudioSynthV2", {
     size: [700, 400],
     scaling: 0.25,
   }),
@@ -140,7 +143,7 @@ function createAppModel() {
   });
 
   const actions = {
-    assignUnit(slotId: string, templateId: string) {
+    assignUnit(slotId: string, templateId: CatalogKey) {
       const template = unitTemplates.find(
         (template) => template.templateId === templateId,
       );
@@ -182,7 +185,7 @@ const appModel = createAppModel();
 
 const presetScenes = {
   setupScenePreset1() {
-    appModel.actions.assignUnit("lane0-instrument", "mu1-instrument");
+    appModel.actions.assignUnit("lane0-instrument", "mu1Instrument");
   },
 };
 

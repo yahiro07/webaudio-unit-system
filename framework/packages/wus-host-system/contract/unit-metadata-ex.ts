@@ -1,7 +1,9 @@
 import { UnitMetadata } from "@wus/unit-types";
 
 export type HostUnitMetadata = {
-  unitPageId: string;
+  catalogKey: string;
+  canonicalPageId: string;
+  // unitPageId: string;
   pagePath: string;
 } & UnitMetadata;
 

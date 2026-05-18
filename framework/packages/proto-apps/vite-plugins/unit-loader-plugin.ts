@@ -7,6 +7,8 @@ import {
 } from "../../wus-host-system/contract";
 import { UnitMetadata } from "../../wus-unit-types/unit-metadata";
 
+type UnitSourceUrls = Record<string, string>;
+
 function slugifyUnitName(name: string): string {
   return name
     .trim()
@@ -42,7 +44,7 @@ function buildUnitPageId(meta: UnitMetadata, pageFolderUrl: string): string {
 }
 
 function checkPageIdsUnique(metaList: HostUnitMetadata[]) {
-  const pageIds = metaList.map((m) => m.unitPageId);
+  const pageIds = metaList.map((m) => m.canonicalPageId);
   for (let i = 0; i < pageIds.length; i++) {
     const id = pageIds[i];
     if (pageIds.indexOf(id) !== i) {
@@ -69,25 +71,27 @@ async function fetchUnitMeta(pageFolderUrl: string): Promise<UnitMetadata> {
 }
 
 function createHostUnitMeta(
-  meta: UnitMetadata,
+  catalogKey: string,
   pageFolderUrl: string,
+  meta: UnitMetadata,
 ): HostUnitMetadata {
   return {
+    catalogKey,
+    canonicalPageId: buildUnitPageId(meta, pageFolderUrl),
     ...meta,
-    unitPageId: buildUnitPageId(meta, pageFolderUrl),
     pagePath: `${pageFolderUrl}index.html`,
   };
 }
 
 async function generateSummaryFile(
-  unitSourceUrls: string[],
+  unitSourceUrls: UnitSourceUrls,
   outputPath: string,
 ) {
   console.log("buildSummaryFile");
   const metaList = await Promise.all(
-    unitSourceUrls.map(async (url) => {
+    Object.entries(unitSourceUrls).map(async ([catalogKey, url]) => {
       const meta = await fetchUnitMeta(url);
-      return createHostUnitMeta(meta, url);
+      return createHostUnitMeta(catalogKey, url, meta);
     }),
   );
   checkPageIdsUnique(metaList);
@@ -101,7 +105,7 @@ async function generateSummaryFile(
 }
 
 export function unitLoaderPlugin(options: {
-  unitSourceUrls: string[];
+  unitSourceUrls: UnitSourceUrls;
   cacheFolderPath?: string;
   summaryOutputPath?: string;
 }): Plugin {
