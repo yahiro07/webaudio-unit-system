@@ -233,7 +233,7 @@ const UnitListingView = (props: {
     },
   };
   return (
-    <div class="flex-vl  h-full" onClick={() => props.closeListing()}>
+    <div class="flex-vl  h-full text-xs" onClick={() => props.closeListing()}>
       {vm.unitTemplatesForThisSlot.map((template) => (
         <div class="cursor-pointer" onClick={() => vm.addUnit(template)}>
           {template.name}

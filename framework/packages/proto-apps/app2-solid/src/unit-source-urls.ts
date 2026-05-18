@@ -5,7 +5,7 @@ const wusCustomUnitsLocalRoot = new URL(
   import.meta.url,
 ).href;
 
-console.log({ repositoryRoot, wusCustomUnitsLocalRoot });
+// console.log({ repositoryRoot, wusCustomUnitsLocalRoot });
 
 export const unitSourceUrls_array = [
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/additive/",

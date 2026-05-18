@@ -24,6 +24,7 @@ export const UnitFrame = (props: {
   className?: string;
   style?: JSX.DOMAttributes<HTMLIFrameElement>["style"];
 }) => {
+  console.log(`loading ${props.pageUrl}`);
   const [unitAgent, setUnitAgent] = createSignal<UnitAgentInHostSide>();
   let currentNotes: number[] = [];
 
