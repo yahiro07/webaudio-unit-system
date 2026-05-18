@@ -1,5 +1,6 @@
 {
   "name": "mu3-effect",
   "unitType": "effect",
-  "repositoryUrl": "https://github.com/yahiro07/webaudio-unit-system"
+  "repositoryUrl": "https://github.com/yahiro07/webaudio-unit-system",
+  "preferredSize": "300,150"
 }

@@ -1,5 +1,7 @@
 {
   "name": "mu1-instrument",
+  "category": "synthesizer",
   "unitType": "instrument",
-  "repositoryUrl": "https://github.com/yahiro07/webaudio-unit-system"
+  "repositoryUrl": "https://github.com/yahiro07/webaudio-unit-system",
+  "preferredSize": "300,150"
 }
