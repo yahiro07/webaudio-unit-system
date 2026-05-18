@@ -2,17 +2,24 @@ import {
   UnitMetadata,
   UnitSummariesJson,
 } from "../../wus-host-system/contract";
+import { generateSummariesJson } from "./units-summary-generator";
 
 export type RemoteUnitCacheStore = {
   updateCachedContents(
     unitSourceUrls: Record<string, string>,
   ): Promise<UnitSummariesJson>;
-  resolveCachedRemoteUnitRequest(requestPath: string): string | undefined;
+  resolveCachedRemoteUnitRequest(
+    unitPageUrl: string,
+    requestPath: string,
+  ): string | undefined;
 };
 
-function mapUnitUrlToBucketName(url: string): string {}
+function mapUnitUrlToBucketAndPieceNames(url: string): {
+  bucketName: string;
+  pieceName: string;
+} {}
 
-function mapUnitUrlToPieceName(url: string): string {}
+// function mapUnitUrlToPieceName(url: string): string {}
 
 function checkDeepEquality(obj1: any, obj2: any): boolean {
   return JSON.stringify(obj1) === JSON.stringify(obj2);
@@ -70,14 +77,6 @@ async function downloadUnitsFromRemote(
   }
 }
 
-async function generateSummaries(
-  unitSourceUrls: Record<string, string>,
-  readCachedPieceMeta: (
-    bucketName: string,
-    pieceName: string,
-  ) => Promise<UnitMetadata | undefined>,
-): Promise<UnitSummariesJson> {}
-
 async function checkCache(
   cacheStorageIo: CacheStorageIo,
   unitSourceUrls: Record<string, string>,
@@ -106,8 +105,7 @@ async function updateCachedContentsImpl(
     await cacheStorageIo.listExistingBucketPieceKeys();
 
   const unitCacheEntries: UnitCacheEntry[] = remoteUrls.map((url) => {
-    const bucketName = mapUnitUrlToBucketName(url);
-    const pieceName = mapUnitUrlToPieceName(url);
+    const { bucketName, pieceName } = mapUnitUrlToBucketAndPieceNames(url);
     const bucketPieceComparisonKey = `${bucketName}:${pieceName}`;
     return {
       remoteUrl: url,
@@ -125,9 +123,13 @@ async function updateCachedContentsImpl(
     cacheStorageIo.writeCachedPiece,
   );
 
-  const summariesJson = await generateSummaries(
+  const summariesJson = await generateSummariesJson(
     unitSourceUrls,
-    cacheStorageIo.readCachedPieceMeta,
+    (pageFolderUrl) => {
+      const { bucketName, pieceName } =
+        mapUnitUrlToBucketAndPieceNames(pageFolderUrl);
+      return cacheStorageIo.readCachedPieceMeta(bucketName, pieceName);
+    },
   );
   await cacheStorageIo.writePreviousUnitSourceUrlsInput(unitSourceUrls);
   await cacheStorageIo.writeCachedSummariesJson(summariesJson);
@@ -145,7 +147,7 @@ export function createRemoteUnitCacheStore(
         (await updateCachedContentsImpl(cacheStorageIo, unitSourceUrls))
       );
     },
-    resolveCachedRemoteUnitRequest(requestPath) {
+    resolveCachedRemoteUnitRequest(unitPageUrl: string, requestPath: string) {
       return undefined;
     },
   };

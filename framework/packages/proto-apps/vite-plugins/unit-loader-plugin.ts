@@ -3,41 +3,41 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Plugin, ResolvedConfig } from "vite";
 import { UnitSummariesJson } from "../../wus-host-system/contract";
+import { createRemoteUnitCacheStore } from "./remote-unit-cache-store";
 import {
-  generateSummariesJson,
   UnitSourceUrls,
   writeSummariesJsonToFile,
 } from "./units-summary-generator";
 
-const LOCAL_UNIT_ROUTE_PREFIX = "/@unit-file";
+// const LOCAL_UNIT_ROUTE_PREFIX = "/@unit-file";
 const CATALOG_UNIT_ROUTE_PREFIX = "/@unit-loader";
 
-function isLocalPageUrl(pageUrl: string): boolean {
-  return pageUrl.startsWith("file:///");
-}
+// function isLocalPageUrl(pageUrl: string): boolean {
+//   return pageUrl.startsWith("file:///");
+// }
 
-function fileUrlToRoutePath(pageUrl: string): string {
-  const filePath = fileURLToPath(new URL(pageUrl));
-  const posixPath = filePath.split(path.sep).join("/");
-  return `${LOCAL_UNIT_ROUTE_PREFIX}${posixPath}`;
-}
+// function fileUrlToRoutePath(pageUrl: string): string {
+//   const filePath = fileURLToPath(new URL(pageUrl));
+//   const posixPath = filePath.split(path.sep).join("/");
+//   return `${LOCAL_UNIT_ROUTE_PREFIX}${posixPath}`;
+// }
 
-function createServeSummariesJson(
-  summariesJson: UnitSummariesJson,
-): UnitSummariesJson {
-  return {
-    ...summariesJson,
-    units: summariesJson.units.map((unit) => {
-      if (!isLocalPageUrl(unit.pageUrl)) {
-        return unit;
-      }
-      return {
-        ...unit,
-        pageUrl: fileUrlToRoutePath(unit.pageUrl),
-      };
-    }),
-  };
-}
+// function createServeSummariesJson(
+//   summariesJson: UnitSummariesJson,
+// ): UnitSummariesJson {
+//   return {
+//     ...summariesJson,
+//     units: summariesJson.units.map((unit) => {
+//       if (!isLocalPageUrl(unit.pageUrl)) {
+//         return unit;
+//       }
+//       return {
+//         ...unit,
+//         pageUrl: fileUrlToRoutePath(unit.pageUrl),
+//       };
+//     }),
+//   };
+// }
 
 function getContentType(filePath: string): string {
   switch (path.extname(filePath).toLowerCase()) {
@@ -68,49 +68,53 @@ function getContentType(filePath: string): string {
   }
 }
 
-function resolveLocalUnitRequest(
-  requestPath: string,
-  summariesJson: UnitSummariesJson,
-): string | undefined {
-  if (!requestPath.startsWith(`${LOCAL_UNIT_ROUTE_PREFIX}/`)) {
-    return undefined;
-  }
+// function resolveLocalUnitRequest(
+//   requestPath: string,
+//   summariesJson: UnitSummariesJson,
+// ): string | undefined {
+//   if (!requestPath.startsWith(`${LOCAL_UNIT_ROUTE_PREFIX}/`)) {
+//     return undefined;
+//   }
 
-  const requestedFilePath = path.normalize(
-    decodeURIComponent(requestPath.slice(LOCAL_UNIT_ROUTE_PREFIX.length)),
-  );
-  const localUnits = summariesJson.units.filter((unit) =>
-    isLocalPageUrl(unit.pageUrl),
-  );
-  const matchedUnit = localUnits
-    .map((unit) => {
-      const entryFilePath = path.normalize(
-        fileURLToPath(new URL(unit.pageUrl)),
-      );
-      const entryFolderPath = path.dirname(entryFilePath);
-      return {
-        entryFilePath,
-        entryFolderPath,
-      };
-    })
-    .filter(({ entryFilePath, entryFolderPath }) => {
-      return (
-        requestedFilePath === entryFilePath ||
-        requestedFilePath.startsWith(`${entryFolderPath}${path.sep}`)
-      );
-    })
-    .sort((a, b) => b.entryFolderPath.length - a.entryFolderPath.length)[0];
+//   const requestedFilePath = path.normalize(
+//     decodeURIComponent(requestPath.slice(LOCAL_UNIT_ROUTE_PREFIX.length)),
+//   );
+//   const localUnits = summariesJson.units.filter((unit) =>
+//     isLocalPageUrl(unit.pageUrl),
+//   );
+//   const matchedUnit = localUnits
+//     .map((unit) => {
+//       const entryFilePath = path.normalize(
+//         fileURLToPath(new URL(unit.pageUrl)),
+//       );
+//       const entryFolderPath = path.dirname(entryFilePath);
+//       return {
+//         entryFilePath,
+//         entryFolderPath,
+//       };
+//     })
+//     .filter(({ entryFilePath, entryFolderPath }) => {
+//       return (
+//         requestedFilePath === entryFilePath ||
+//         requestedFilePath.startsWith(`${entryFolderPath}${path.sep}`)
+//       );
+//     })
+//     .sort((a, b) => b.entryFolderPath.length - a.entryFolderPath.length)[0];
 
-  if (!matchedUnit) {
-    return undefined;
-  }
+//   if (!matchedUnit) {
+//     return undefined;
+//   }
 
-  return requestedFilePath;
-}
+//   return requestedFilePath;
+// }
 
 function resolveCatalogUnitRequest(
   requestPath: string,
   summariesJson: UnitSummariesJson,
+  resolveCachedRemoteUnitRequestFn: (
+    unitPageUrl: string,
+    requestPath: string,
+  ) => string | undefined,
 ): string | undefined {
   if (!requestPath.startsWith(`${CATALOG_UNIT_ROUTE_PREFIX}/`)) {
     return undefined;
@@ -125,10 +129,17 @@ function resolveCatalogUnitRequest(
   }
 
   const unit = summariesJson.units.find(
-    (entry) => entry.catalogKey === catalogKey && isLocalPageUrl(entry.pageUrl),
+    (entry) => entry.catalogKey === catalogKey,
   );
   if (!unit) {
     return undefined;
+  }
+
+  if (
+    unit.pageUrl.startsWith("http://") ||
+    unit.pageUrl.startsWith("https://")
+  ) {
+    return resolveCachedRemoteUnitRequestFn(unit.pageUrl, requestPath);
   }
 
   const entryFilePath = path.normalize(fileURLToPath(new URL(unit.pageUrl)));
@@ -153,10 +164,15 @@ export function unitLoaderPlugin(options: {
   cacheFolderPath?: string;
   summaryOutputPath?: string;
 }): Plugin {
+  const cacheFolderPath = options.cacheFolderPath ?? "~/.wus/cache";
+  const summaryOutputPath =
+    options.summaryOutputPath ?? "src/units-summary.json";
+
   const { unitSourceUrls } = options;
   let config: ResolvedConfig;
   let summariesJson: UnitSummariesJson;
-  let sourceSummariesJson: UnitSummariesJson;
+  // let sourceSummariesJson: UnitSummariesJson;
+  const remoteUnitCacheStore = createRemoteUnitCacheStore(cacheFolderPath);
 
   return {
     name: "unit-loader",
@@ -164,26 +180,28 @@ export function unitLoaderPlugin(options: {
       config = _config;
     },
     async buildStart() {
-      const outputPath = options.summaryOutputPath ?? "src/units-summary.json";
-      sourceSummariesJson = await generateSummariesJson(unitSourceUrls);
       summariesJson =
-        config.command === "serve"
-          ? createServeSummariesJson(sourceSummariesJson)
-          : sourceSummariesJson;
-      writeSummariesJsonToFile(summariesJson, outputPath);
+        await remoteUnitCacheStore.updateCachedContents(unitSourceUrls);
+      // summariesJson =
+      //   config.command === "serve"
+      //     ? createServeSummariesJson(sourceSummariesJson)
+      //     : sourceSummariesJson;
+      writeSummariesJsonToFile(summariesJson, summaryOutputPath);
     },
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
         // console.log("requested", req.url);
-        if (!req.url || !summariesJson || !sourceSummariesJson) {
+        if (!req.url || !summariesJson) {
           next();
           return;
         }
 
         const requestUrl = new URL(req.url, "http://localhost");
-        const targetFilePath =
-          resolveCatalogUnitRequest(requestUrl.pathname, sourceSummariesJson) ??
-          resolveLocalUnitRequest(requestUrl.pathname, sourceSummariesJson);
+        const targetFilePath = resolveCatalogUnitRequest(
+          requestUrl.pathname,
+          summariesJson,
+          remoteUnitCacheStore.resolveCachedRemoteUnitRequest,
+        );
         if (!targetFilePath) {
           next();
           return;

@@ -52,20 +52,35 @@ function checkPageIdsUnique(metaList: HostUnitMetadata[]) {
   }
 }
 
-async function fetchUnitMeta(pageFolderUrl: string): Promise<UnitMetadata> {
+type ReadCachedUnitMetaFn = (
+  pageFolderUrl: string,
+  // bucketName: string,
+  // pieceName: string,
+) => Promise<UnitMetadata | undefined>;
+
+async function fetchUnitMeta(
+  pageFolderUrl: string,
+  readCachedUnitMeta: ReadCachedUnitMetaFn,
+): Promise<UnitMetadata> {
   if (pageFolderUrl.startsWith("file:///")) {
     const url = new URL("unit-meta.json", pageFolderUrl);
     const text = await fs.promises.readFile(url, "utf8");
     return JSON.parse(text);
   } else {
-    const unitMetaUrl = `${pageFolderUrl}unit-meta.json`;
-    const res = await fetch(unitMetaUrl);
-    if (!res.ok) {
-      throw new Error(
-        `Failed to fetch from ${unitMetaUrl}: ${res.status} ${res.statusText}`,
-      );
+    const res = await readCachedUnitMeta(pageFolderUrl);
+    if (!res) {
+      throw new Error(`Failed to read cached unit meta for ${pageFolderUrl}`);
     }
-    return await res.json();
+    return res;
+
+    // const unitMetaUrl = `${pageFolderUrl}unit-meta.json`;
+    // const res = await fetch(unitMetaUrl);
+    // if (!res.ok) {
+    //   throw new Error(
+    //     `Failed to fetch from ${unitMetaUrl}: ${res.status} ${res.statusText}`,
+    //   );
+    // }
+    // return await res.json();
   }
 }
 
@@ -82,13 +97,18 @@ function createHostUnitMeta(
   };
 }
 
+// export async function generateSummariesJson(
+//   unitSourceUrls: UnitSourceUrls,
+// ): Promise<UnitSummariesJson> {}
+
 export async function generateSummariesJson(
-  unitSourceUrls: UnitSourceUrls,
+  unitSourceUrls: Record<string, string>,
+  readCachedUnitMeta: ReadCachedUnitMetaFn,
 ): Promise<UnitSummariesJson> {
   console.log("buildSummaryFile");
   const metaList = await Promise.all(
     Object.entries(unitSourceUrls).map(async ([catalogKey, url]) => {
-      const meta = await fetchUnitMeta(url);
+      const meta = await fetchUnitMeta(url, readCachedUnitMeta);
       return createHostUnitMeta(catalogKey, url, meta);
     }),
   );
