@@ -73,7 +73,7 @@ function parseRemoteUnitUrl(url: string): {
   }
 
   return {
-    bucketName: bucketSegments.join("__"),
+    bucketName: bucketSegments.join("_"),
     pieceName,
     pieceFolderPath,
     archiveUrl: `https://github.com/${owner}/${repo}/archive/refs/tags/${ref}.zip`,
