@@ -1,9 +1,16 @@
+import { execFile } from "node:child_process";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { promisify } from "node:util";
 import { UnitSummariesJson } from "../../wus-host-system/contract";
 import {
   createRemoteUnitCacheStorageIo,
   RemoteUnitCacheStorageIo,
 } from "./remote-unit-cache-storage-io";
 import { generateSummariesJson } from "./units-summary-generator";
+
+const execFileAsync = promisify(execFile);
 
 export type RemoteUnitCacheStore = {
   updateCachedContents(
@@ -15,12 +22,21 @@ export type RemoteUnitCacheStore = {
   ): string | undefined;
 };
 
-function mapUnitUrlToBucketAndPieceNames(url: string): {
+function parseRemoteUnitUrl(url: string): {
   bucketName: string;
   pieceName: string;
+  pieceFolderPath: string;
+  archiveUrl: string;
 } {
   const parsedUrl = new URL(url);
+  if (parsedUrl.hostname !== "cdn.jsdelivr.net") {
+    throw new Error(`Unsupported remote unit host: ${url}`);
+  }
+
   const pathSegments = parsedUrl.pathname.split("/").filter(Boolean);
+  if (pathSegments[0] !== "gh") {
+    throw new Error(`Unsupported remote unit path format: ${url}`);
+  }
 
   const bucketLastSegmentIndex = pathSegments.findIndex((segment) =>
     segment.includes("@"),
@@ -29,23 +45,47 @@ function mapUnitUrlToBucketAndPieceNames(url: string): {
     throw new Error(`Remote unit URL must contain a tag segment: ${url}`);
   }
 
-  if (pathSegments.length < 2) {
-    throw new Error(`Remote unit URL must contain a piece path: ${url}`);
-  }
-
   const bucketSegments = pathSegments
     .slice(0, bucketLastSegmentIndex + 1)
     .flatMap((segment) => segment.split("@"));
-  const pieceName = pathSegments.at(-2);
+  const [_, owner, repoWithTag] = pathSegments;
+  const [repo, ref] = repoWithTag.split("@");
+  if (!owner || !repo || !ref) {
+    throw new Error(
+      `Remote unit URL must contain owner, repo, and ref: ${url}`,
+    );
+  }
+
+  const piecePathSegments = pathSegments.slice(bucketLastSegmentIndex + 1);
+  const isLastSegmentFile = piecePathSegments.at(-1)?.includes(".") ?? false;
+  const pieceFolderSegments = isLastSegmentFile
+    ? piecePathSegments.slice(0, -1)
+    : piecePathSegments;
+  const pieceName = pieceFolderSegments.at(-1);
 
   if (!pieceName) {
     throw new Error(`Remote unit URL must contain a piece name: ${url}`);
   }
 
+  const pieceFolderPath = pieceFolderSegments.join("/");
+  if (!pieceFolderPath) {
+    throw new Error(`Remote unit URL must contain a piece folder path: ${url}`);
+  }
+
   return {
     bucketName: bucketSegments.join("__"),
     pieceName,
+    pieceFolderPath,
+    archiveUrl: `https://github.com/${owner}/${repo}/archive/refs/tags/${ref}.zip`,
   };
+}
+
+function mapUnitUrlToBucketAndPieceNames(url: string): {
+  bucketName: string;
+  pieceName: string;
+} {
+  const { bucketName, pieceName } = parseRemoteUnitUrl(url);
+  return { bucketName, pieceName };
 }
 
 function checkDeepEquality(obj1: any, obj2: any): boolean {
@@ -67,14 +107,78 @@ async function downloadUnitsFromRemote(
     sourceUnitFolderPath: string,
   ) => Promise<void>,
 ) {
-  const entriesPerBuckets: Record<string, UnitCacheEntry[]> = {};
+  const entriesPerBuckets = Object.groupBy(
+    unitCacheEntries,
+    (entry) => entry.bucketName,
+  );
 
-  //todo: group units by repository
+  for (const [_bucketName, bucketEntries] of Object.entries(
+    entriesPerBuckets,
+  )) {
+    if (!bucketEntries || bucketEntries.length === 0) {
+      continue;
+    }
 
-  for (const bucketName in entriesPerBuckets) {
-    //fetch the zip file
-    //extract
-    //write to cache for each required unit
+    const { archiveUrl } = parseRemoteUnitUrl(bucketEntries[0].remoteUrl);
+    const tempDirPath = await fs.promises.mkdtemp(
+      path.join(os.tmpdir(), "wus-remote-cache-"),
+    );
+
+    try {
+      const archivePath = path.join(tempDirPath, "archive.zip");
+      const extractDirPath = path.join(tempDirPath, "extract");
+      const archiveResponse = await fetch(archiveUrl);
+      if (!archiveResponse.ok) {
+        const fallbackArchiveUrl = archiveUrl.replace(
+          "/refs/tags/",
+          "/refs/heads/",
+        );
+        const fallbackArchiveResponse = await fetch(fallbackArchiveUrl);
+        if (!fallbackArchiveResponse.ok) {
+          throw new Error(
+            `Failed to download remote unit archive: ${archiveUrl} (${archiveResponse.status}), ${fallbackArchiveUrl} (${fallbackArchiveResponse.status})`,
+          );
+        }
+        await fs.promises.writeFile(
+          archivePath,
+          Buffer.from(await fallbackArchiveResponse.arrayBuffer()),
+        );
+      } else {
+        await fs.promises.writeFile(
+          archivePath,
+          Buffer.from(await archiveResponse.arrayBuffer()),
+        );
+      }
+
+      await fs.promises.mkdir(extractDirPath, { recursive: true });
+      await execFileAsync("unzip", ["-q", archivePath, "-d", extractDirPath]);
+
+      const extractedRootDirEntry = (
+        await fs.promises.readdir(extractDirPath, { withFileTypes: true })
+      ).find((entry) => entry.isDirectory());
+      if (!extractedRootDirEntry) {
+        throw new Error(`Archive extraction produced no files: ${archiveUrl}`);
+      }
+
+      const extractedRootPath = path.join(
+        extractDirPath,
+        extractedRootDirEntry.name,
+      );
+      for (const entry of bucketEntries) {
+        const { pieceFolderPath } = parseRemoteUnitUrl(entry.remoteUrl);
+        const sourceUnitFolderPath = path.join(
+          extractedRootPath,
+          pieceFolderPath,
+        );
+        await writeCachedPiece(
+          entry.bucketName,
+          entry.pieceName,
+          sourceUnitFolderPath,
+        );
+      }
+    } finally {
+      await fs.promises.rm(tempDirPath, { recursive: true, force: true });
+    }
   }
 }
 
