@@ -14,13 +14,13 @@ const wusCustomUnitsLocalRoot = new URL(
 
 export const unitSourceUrls_array = [
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r2/wavicle/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/additive/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/drum-machine/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/wasyn-1/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/webaudio-tinysynth-simple/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/bc-010/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/koodori/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/webaudio-synth-v2/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/additive/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/drum-machine/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/wasyn-1/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/webaudio-tinysynth-simple/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/bc-010/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/koodori/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/webaudio-synth-v2/",
 
   // `${wusCustomUnitsLocalRoot}/dist/koodori/`,
   // `${wusCustomUnitsLocalRoot}/dist/webaudio-synth-v2/`,
@@ -41,19 +41,16 @@ console.log("unit sources:", unitSourceUrls_array);
 
 export const unitSourceUrls = {
   additive:
-    "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/additive/",
+    "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/additive/",
   drumMachine:
-    "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/drum-machine/",
-  wasyn1:
-    "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/wasyn-1/",
+    "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/drum-machine/",
+  wasyn1: "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/wasyn-1/",
   webaudioTinysynthSimple:
-    "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/webaudio-tinysynth-simple/",
-  bc010:
-    "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/bc-010/",
-  koodori:
-    "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/koodori/",
+    "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/webaudio-tinysynth-simple/",
+  bc010: "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/bc-010/",
+  koodori: "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/koodori/",
   webaudioSynthV2:
-    "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/webaudio-synth-v2/",
+    "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/webaudio-synth-v2/",
   // additive: `${wusCustomUnitsLocalRoot}/dist/additive/`,
   // drumMachine: `${wusCustomUnitsLocalRoot}/dist/drum-machine/`,
   // wasyn1: `${wusCustomUnitsLocalRoot}/dist/wasyn-1/`,
