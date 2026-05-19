@@ -40,9 +40,9 @@ function createAppModel() {
 }
 const appModel = createAppModel();
 
-// const baseUrl =
-//   "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev";
-const baseUrl = "/units";
+const baseUrl =
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev";
+// const baseUrl = "/units";
 
 const UnitsSolid = () => {
   const { hostSystem } = appModel;

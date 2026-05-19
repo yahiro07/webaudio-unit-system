@@ -1,8 +1,10 @@
 import { UnitMetadata } from "@wus/unit-types";
 
 export type HostUnitMetadata = {
-  unitPageId: string;
-  pagePath: string;
+  catalogKey: string;
+  canonicalPageId: string;
+  // unitPageId: string;
+  pageUrl: string;
 } & UnitMetadata;
 
 export type UnitSummariesJson = {

@@ -14,10 +14,13 @@ import { Button } from "@wus/mo-solid/components/button";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createSignal, Show } from "solid-js";
 import { createStore, produce } from "solid-js/store";
+import { unitSourceUrls } from "./unit-source-urls";
 import _unitsSummary from "./units-summary.json";
 
+type CatalogKey = keyof typeof unitSourceUrls;
+
 type UnitTemplate = {
-  templateId: string;
+  catalogKey: CatalogKey;
   pageUrl: string;
   unitType: UnitType;
   name: string;
@@ -28,19 +31,19 @@ type UnitTemplate = {
 };
 
 function createUnitTemplateEntry(
-  unitPageId: string,
+  catalogKey: CatalogKey,
   attrs?: { scaling?: number; size?: [number, number] },
 ): UnitTemplate {
   const unitsSummary = _unitsSummary as UnitSummariesJson;
   const unit = unitsSummary.units.find(
-    (unit) => unit.unitPageId === unitPageId,
+    (unit) => unit.catalogKey === catalogKey,
   );
   if (!unit) {
-    throw new Error(`Unit not found: ${unitPageId}`);
+    throw new Error(`Unit not found: ${catalogKey}`);
   }
   return {
-    templateId: unit.unitPageId,
-    pageUrl: unit.pagePath,
+    catalogKey: unit.catalogKey as CatalogKey,
+    pageUrl: unit.pageUrl,
     unitType: unit.unitType,
     name: unit.name,
     repositoryUrl: unit.repositoryUrl,
@@ -50,12 +53,12 @@ function createUnitTemplateEntry(
 }
 
 const unitTemplates: UnitTemplate[] = [
-  createUnitTemplateEntry("mu1-instrument", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu2-sequencer", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu3-effect", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu4-keyboard", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu5-visualizer", { scaling: 0.6 }),
-  createUnitTemplateEntry("drum-machine", {
+  createUnitTemplateEntry("mu1Instrument", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu2Sequencer", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu3Effect", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu4Keyboard", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu5Visualizer", { scaling: 0.6 }),
+  createUnitTemplateEntry("drumMachine", {
     size: [800, 500],
     scaling: 0.2,
   }),
@@ -67,12 +70,16 @@ const unitTemplates: UnitTemplate[] = [
     size: [800, 500],
     scaling: 0.2,
   }),
-  createUnitTemplateEntry("webaudio-tinysynth-simple", {
+  createUnitTemplateEntry("bc010", {
+    size: [750, 500],
+    scaling: 0.25,
+  }),
+  createUnitTemplateEntry("webaudioTinysynthSimple", {
     size: [520, 280],
     scaling: 0.4,
   }),
-  createUnitTemplateEntry("wasyn-1", { size: [720, 360], scaling: 0.25 }),
-  createUnitTemplateEntry("webaudio-synth-v2", {
+  createUnitTemplateEntry("wasyn1", { size: [720, 360], scaling: 0.25 }),
+  createUnitTemplateEntry("webaudioSynthV2", {
     size: [700, 400],
     scaling: 0.25,
   }),
@@ -140,9 +147,9 @@ function createAppModel() {
   });
 
   const actions = {
-    assignUnit(slotId: string, templateId: string) {
+    assignUnit(slotId: string, catalogKey: CatalogKey) {
       const template = unitTemplates.find(
-        (template) => template.templateId === templateId,
+        (template) => template.catalogKey === catalogKey,
       );
       if (!template) return;
       const unitId = template.name + "-" + generateRandomId(6);
@@ -182,7 +189,7 @@ const appModel = createAppModel();
 
 const presetScenes = {
   setupScenePreset1() {
-    appModel.actions.assignUnit("lane0-instrument", "mu1-instrument");
+    appModel.actions.assignUnit("lane0-instrument", "mu1Instrument");
   },
 };
 
@@ -200,7 +207,8 @@ const UnitView = (props: {
       >
         <UnitFrame
           unitId={props.unitAssignment.unitId}
-          pageUrl={props.unitAssignment.template.pageUrl}
+          catalogKey={props.unitAssignment.template.catalogKey}
+          // pageUrl={props.unitAssignment.template.pageUrl}
           destUnitId={props.destUnitId}
           hostSystem={appModel.hostSystem}
           style={
@@ -226,11 +234,11 @@ const UnitListingView = (props: {
       (template) => template.unitType === props.slot.targetUnitType,
     ),
     addUnit(template: UnitTemplate) {
-      appModel.actions.assignUnit(props.slot.slotId, template.templateId);
+      appModel.actions.assignUnit(props.slot.slotId, template.catalogKey);
     },
   };
   return (
-    <div class="flex-vl  h-full" onClick={() => props.closeListing()}>
+    <div class="flex-vl  h-full text-xs" onClick={() => props.closeListing()}>
       {vm.unitTemplatesForThisSlot.map((template) => (
         <div class="cursor-pointer" onClick={() => vm.addUnit(template)}>
           {template.name}
