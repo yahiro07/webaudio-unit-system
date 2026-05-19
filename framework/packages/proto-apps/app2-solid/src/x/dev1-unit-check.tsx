@@ -66,7 +66,7 @@ const UnitsSolid = () => {
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/bc-010/index.html"
         destUnitId="uf_effect"
         hostSystem={hostSystem}
-        className="w-[800px] h-[600px]"
+        frameSize={{ width: 800, height: 600 }}
       />
       <UnitFrame
         unitId="uf_keyboard"

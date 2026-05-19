@@ -24,6 +24,7 @@ export const UnitFrame = (props: {
   hostSystem: HostSystem;
   className?: string;
   style?: JSX.DOMAttributes<HTMLIFrameElement>["style"];
+  frameSize?: { width: number; height: number };
 }) => {
   console.log(`loading ${props.catalogKey ?? props.pageUrl}`);
   const [unitAgent, setUnitAgent] = createSignal<UnitAgentInHostSide>();
@@ -145,6 +146,8 @@ export const UnitFrame = (props: {
         style={props.style}
         src={pageUrl}
         ref={iframe}
+        width={props.frameSize?.width}
+        height={props.frameSize?.height}
       />
     );
   }
