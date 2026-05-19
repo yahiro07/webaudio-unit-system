@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { UnitMetadata } from "../../wus-unit-types/unit-metadata";
 import { UnitInventoriesJson, UnitInventorySpec } from "./unit-inventory-types";
-import { mapUnitUrlToBucketAndPieceNames } from "./unit-url-helpers";
 
 export type UnitSourceUrls = Record<string, string>;
 
@@ -52,8 +51,6 @@ function checkPageIdsUnique(metaList: UnitInventorySpec[]) {
 
 type ReadCachedUnitMetaFn = (
   pageFolderUrl: string,
-  // bucketName: string,
-  // pieceName: string,
 ) => Promise<UnitMetadata | undefined>;
 
 async function fetchUnitMeta(
@@ -73,19 +70,6 @@ async function fetchUnitMeta(
   }
 }
 
-function createLoaderUrl(pageFolderUrl: string) {
-  if (
-    pageFolderUrl.startsWith("http://") ||
-    pageFolderUrl.startsWith("https://")
-  ) {
-    const { bucketName, pieceName } =
-      mapUnitUrlToBucketAndPieceNames(pageFolderUrl);
-    return `/@unit-loader/cached/${bucketName}/${pieceName}/index.html`;
-  } else {
-    return `/@unit-loader/local/${pageFolderUrl.replace("file:///", "")}index.html`;
-  }
-}
-
 function createUnitInventorySpec(
   catalogKey: string,
   pageFolderUrl: string,
@@ -96,7 +80,7 @@ function createUnitInventorySpec(
     canonicalPageId: buildUnitPageId(meta, pageFolderUrl),
     ...meta,
     originalPageUrl: `${pageFolderUrl}index.html`,
-    loaderPageUrl: createLoaderUrl(pageFolderUrl),
+    loaderPageUrl: `/inventory-units/${catalogKey}/index.html`,
   };
 }
 
