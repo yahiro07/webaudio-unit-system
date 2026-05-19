@@ -103,7 +103,6 @@ export function unitLoaderPlugin(options: {
         unitSourceUrls,
         remoteUnitCacheStore,
       );
-      console.log(unitFolderPathMap);
       if (res.updated || !summaryFileExists) {
         writeSummariesJsonToFile(inventoriesJson, summaryOutputPath);
       }
@@ -142,6 +141,20 @@ export function unitLoaderPlugin(options: {
         }
         next();
       });
+    },
+    async writeBundle(outputOptions) {
+      for (const [catalogKey, folderPath] of Object.entries(
+        unitFolderPathMap,
+      )) {
+        const outputFolderPath = path.resolve(
+          config.root,
+          outputOptions.dir ?? "dist",
+          "inventory-units",
+          catalogKey,
+        );
+        await fs.promises.mkdir(outputFolderPath, { recursive: true });
+        await fs.promises.cp(folderPath, outputFolderPath, { recursive: true });
+      }
     },
   };
 }
