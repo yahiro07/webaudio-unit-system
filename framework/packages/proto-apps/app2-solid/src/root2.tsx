@@ -13,9 +13,9 @@ import { Button } from "@wus/mo-solid/components/button";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createSignal, Show } from "solid-js";
 import { createStore, produce } from "solid-js/store";
-import { UnitSummariesJson } from "../../vite-plugins/unit-inventory-types";
+import { UnitInventorySpec } from "../../vite-plugins/unit-inventory-types";
+import unitInventories from "./unit-inventories.json";
 import { unitSourceUrls } from "./unit-source-urls";
-import _unitsSummary from "./units-summary.json";
 
 type CatalogKey = keyof typeof unitSourceUrls;
 
@@ -34,16 +34,13 @@ function createUnitTemplateEntry(
   catalogKey: CatalogKey,
   attrs?: { scaling?: number; size?: [number, number] },
 ): UnitTemplate {
-  const unitsSummary = _unitsSummary as UnitSummariesJson;
-  const unit = unitsSummary.units.find(
-    (unit) => unit.catalogKey === catalogKey,
-  );
+  const unit = unitInventories[catalogKey] as UnitInventorySpec | undefined;
   if (!unit) {
     throw new Error(`Unit not found: ${catalogKey}`);
   }
   return {
     catalogKey: unit.catalogKey as CatalogKey,
-    pageUrl: unit.pageUrl,
+    pageUrl: unit.loaderUrl,
     unitType: unit.unitType,
     name: unit.name,
     repositoryUrl: unit.repositoryUrl,
@@ -207,8 +204,7 @@ const UnitView = (props: {
       >
         <UnitFrame
           unitId={props.unitAssignment.unitId}
-          catalogKey={props.unitAssignment.template.catalogKey}
-          // pageUrl={props.unitAssignment.template.pageUrl}
+          pageUrl={props.unitAssignment.template.pageUrl}
           destUnitId={props.destUnitId}
           hostSystem={appModel.hostSystem}
           style={
