@@ -13,15 +13,15 @@ const PageRoot = () => {
       <UnitFrame
         destUnitId="$output"
         unitId="unit1"
-        pageUrl={catalog.mu1Instrument.loaderPageUrl}
-        frameSize={catalog.mu1Instrument.preferredSize}
+        pageUrl={catalog["mu1-instrument"].loaderPageUrl}
+        frameSize={catalog["mu1-instrument"].preferredSize}
         hostSystem={hostSystem}
       />
       <UnitFrame
         destUnitId="$output"
         unitId="unit2"
-        pageUrl={catalog.webaudioTinysynthSimple.loaderPageUrl}
-        frameSize={catalog.webaudioTinysynthSimple.preferredSize}
+        pageUrl={catalog["webaudio-tinysynth-simple"].loaderPageUrl}
+        frameSize={catalog["webaudio-tinysynth-simple"].preferredSize}
         hostSystem={hostSystem}
       />
     </div>

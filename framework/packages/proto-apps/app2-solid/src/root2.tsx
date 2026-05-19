@@ -15,9 +15,8 @@ import { createSignal, Show } from "solid-js";
 import { createStore, produce } from "solid-js/store";
 import { UnitInventorySpec } from "../../vite-plugins/unit-inventory-types";
 import unitInventories from "./unit-inventories.json";
-import { unitSourceUrls } from "./unit-source-urls";
 
-type CatalogKey = keyof typeof unitSourceUrls;
+type CatalogKey = keyof typeof unitInventories;
 
 type UnitTemplate = {
   catalogKey: CatalogKey;
@@ -51,12 +50,12 @@ function createUnitTemplateEntry(
 }
 
 const unitTemplates: UnitTemplate[] = [
-  createUnitTemplateEntry("mu1Instrument", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu2Sequencer", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu3Effect", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu4Keyboard", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu5Visualizer", { scaling: 0.6 }),
-  createUnitTemplateEntry("drumMachine", {
+  createUnitTemplateEntry("mu1-instrument", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu2-sequencer", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu3-effect", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu4-keyboard", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu5-visualizer", { scaling: 0.6 }),
+  createUnitTemplateEntry("drum-machine", {
     scaling: 0.2,
   }),
   createUnitTemplateEntry("additive", {
@@ -65,14 +64,14 @@ const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("koodori", {
     scaling: 0.2,
   }),
-  createUnitTemplateEntry("bc010", {
+  createUnitTemplateEntry("bc-010", {
     scaling: 0.25,
   }),
-  createUnitTemplateEntry("webaudioTinysynthSimple", {
+  createUnitTemplateEntry("webaudio-tinysynth-simple", {
     scaling: 0.4,
   }),
-  createUnitTemplateEntry("wasyn1", { scaling: 0.25 }),
-  createUnitTemplateEntry("webaudioSynthV2", {
+  createUnitTemplateEntry("wasyn-1", { scaling: 0.25 }),
+  createUnitTemplateEntry("webaudio-synth-v2", {
     scaling: 0.25,
   }),
 ];
@@ -181,7 +180,7 @@ const appModel = createAppModel();
 
 const presetScenes = {
   setupScenePreset1() {
-    appModel.actions.assignUnit("lane0-instrument", "mu1Instrument");
+    appModel.actions.assignUnit("lane0-instrument", "mu1-instrument");
   },
 };
 

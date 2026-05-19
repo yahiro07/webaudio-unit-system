@@ -8,14 +8,15 @@ const wusCustomUnitsLocalRoot = new URL(
 // console.log({ repositoryRoot, wusCustomUnitsLocalRoot });
 
 export const unitSourceUrls_array = [
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/additive/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/drum-machine/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/wasyn-1/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/webaudio-tinysynth-simple/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r5/units/additive/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r5/units/drum-machine/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r5/units/wasyn-1/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r5/units/webaudio-tinysynth-simple/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r5/units/bc-010/",
   // "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/koodori/",
   // "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-synth-v2/",
-  `${wusCustomUnitsLocalRoot}koodori/dist/`,
-  `${wusCustomUnitsLocalRoot}webaudio-synth-v2/web/`,
+  `${wusCustomUnitsLocalRoot}/dist/koodori/`,
+  `${wusCustomUnitsLocalRoot}/dist/webaudio-synth-v2/`,
   // "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu1-instrument/",
   // "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu2-sequencer/",
   // "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu3-effect/",
@@ -27,6 +28,8 @@ export const unitSourceUrls_array = [
   `${repositoryRoot}framework/packages/units-dev/dist/mu4-keyboard/`,
   `${repositoryRoot}framework/packages/units-dev/dist/mu5-visualizer/`,
 ];
+
+console.log("unit sources:", unitSourceUrls_array);
 
 export const unitSourceUrls = {
   additive:
@@ -63,4 +66,4 @@ export const unitSourceUrls = {
   mu5Visualizer: `${repositoryRoot}framework/packages/units-dev/dist/mu5-visualizer/`,
 };
 
-console.log("unit sources:", unitSourceUrls);
+// console.log("unit sources:", unitSourceUrls);

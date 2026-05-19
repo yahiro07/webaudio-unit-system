@@ -2,13 +2,16 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
 import { unitLoaderPlugin } from "../vite-plugins";
-import { unitSourceUrls } from "./src/unit-source-urls";
+import { unitSourceUrls_array } from "./src/unit-source-urls";
 
 export default defineConfig({
   plugins: [
     solid(),
     tailwindcss(),
-    unitLoaderPlugin({ unitSourceUrls, cacheFolderPath: "./.wus-unit-cache" }),
+    unitLoaderPlugin({
+      unitSourceUrls: unitSourceUrls_array,
+      cacheFolderPath: "./.wus-unit-cache",
+    }),
   ],
   appType: "mpa",
   resolve: { tsconfigPaths: true },

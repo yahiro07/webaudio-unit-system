@@ -6,6 +6,7 @@ import {
   UnitSourceUrls,
   writeSummariesJsonToFile,
 } from "./unit-inventories-generator";
+import { formatUnitSourceUrlsToDictionary } from "./unit-source-urls-array-converter";
 
 function getContentType(filePath: string): string {
   switch (path.extname(filePath).toLowerCase()) {
@@ -76,15 +77,13 @@ function checkFileExists(filePath: string): Promise<boolean> {
 }
 
 export function unitLoaderPlugin(options: {
-  unitSourceUrls: UnitSourceUrls;
+  unitSourceUrls: UnitSourceUrls | string[];
   cacheFolderPath?: string;
   summaryOutputPath?: string;
 }): Plugin {
   const cacheFolderPath = options.cacheFolderPath ?? "~/.wus/cache";
   const summaryOutputPath =
     options.summaryOutputPath ?? "src/unit-inventories.json";
-
-  const { unitSourceUrls } = options;
   let config: ResolvedConfig;
   const remoteUnitCacheStore = createRemoteUnitCacheStore(cacheFolderPath);
 
@@ -94,6 +93,9 @@ export function unitLoaderPlugin(options: {
       config = _config;
     },
     async buildStart() {
+      const unitSourceUrls = formatUnitSourceUrlsToDictionary(
+        options.unitSourceUrls,
+      );
       const res =
         await remoteUnitCacheStore.updateCachedContents(unitSourceUrls);
       const summariesJson = res.inventoriesJson;
