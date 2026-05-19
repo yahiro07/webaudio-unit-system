@@ -9,7 +9,6 @@ import {
 } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
 import { generateRandomId } from "@wus/mo/random-id-generator";
-import { Button } from "@wus/mo-solid/components/button";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createSignal, Show } from "solid-js";
 import { createStore, produce } from "solid-js/store";
@@ -61,8 +60,8 @@ const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("additive", {
     scaling: 0.2,
   }),
-  createUnitTemplateEntry("koodori", {
-    scaling: 0.2,
+  createUnitTemplateEntry("wavicle", {
+    scaling: 0.25,
   }),
   createUnitTemplateEntry("bc-010", {
     scaling: 0.25,
@@ -73,6 +72,9 @@ const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("wasyn-1", { scaling: 0.25 }),
   createUnitTemplateEntry("webaudio-synth-v2", {
     scaling: 0.25,
+  }),
+  createUnitTemplateEntry("koodori", {
+    scaling: 0.2,
   }),
 ];
 
@@ -331,21 +333,21 @@ const LaneView = (props: { lane: Lane }) => {
 };
 
 const App = () => {
-  presetScenes.setupScenePreset1();
+  // presetScenes.setupScenePreset1();
   return (
     <div class="w-dvw h-dvh flex-vc gap-4">
-      <div>app2-solid 2136</div>
+      {/* <div>app2-solid 2136</div> */}
       <div class="flex-h gap-4">
         {appModel.state.scene.lanes.map((lane) => (
           <LaneView lane={lane} />
         ))}
       </div>
-      <div>
+      {/* <div>
         <Button
           text="resume"
           onClick={() => appModel.actions.resumeAudioContext()}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

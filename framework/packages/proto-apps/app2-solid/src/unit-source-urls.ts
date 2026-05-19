@@ -1,5 +1,10 @@
 const repositoryRoot = new URL("../../../../..", import.meta.url).href;
 
+const wusSelfUnitsLocalRoot = new URL(
+  "../../../../../../wus-units/",
+  import.meta.url,
+).href;
+
 const wusCustomUnitsLocalRoot = new URL(
   "../../../../../../wus-custom-units/",
   import.meta.url,
@@ -8,6 +13,7 @@ const wusCustomUnitsLocalRoot = new URL(
 // console.log({ repositoryRoot, wusCustomUnitsLocalRoot });
 
 export const unitSourceUrls_array = [
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r2/wavicle/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/additive/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/drum-machine/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/wasyn-1/",
@@ -15,6 +21,7 @@ export const unitSourceUrls_array = [
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/bc-010/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/koodori/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r6/units/webaudio-synth-v2/",
+
   // `${wusCustomUnitsLocalRoot}/dist/koodori/`,
   // `${wusCustomUnitsLocalRoot}/dist/webaudio-synth-v2/`,
   // "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu1-instrument/",
@@ -27,6 +34,7 @@ export const unitSourceUrls_array = [
   `${repositoryRoot}framework/packages/units-dev/dist/mu3-effect/`,
   `${repositoryRoot}framework/packages/units-dev/dist/mu4-keyboard/`,
   `${repositoryRoot}framework/packages/units-dev/dist/mu5-visualizer/`,
+  // `${wusSelfUnitsLocalRoot}dist/wavicle/`,
 ];
 
 console.log("unit sources:", unitSourceUrls_array);
