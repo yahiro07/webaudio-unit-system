@@ -39,11 +39,12 @@ export const unitSourceUrls = {
     "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/webaudio-tinysynth-simple/",
   bc010:
     "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/bc-010/",
-  // koodori:
-  // "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/koodori/",
-  // "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-synth-v2/",
-  koodori: `${wusCustomUnitsLocalRoot}koodori/dist/`,
-  webaudioSynthV2: `${wusCustomUnitsLocalRoot}webaudio-synth-v2/web/`,
+  koodori:
+    "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/koodori/",
+  webaudioSynthV2:
+    "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/webaudio-synth-v2/",
+  // koodori: `${wusCustomUnitsLocalRoot}koodori/dist/`,
+  // webaudioSynthV2: `${wusCustomUnitsLocalRoot}webaudio-synth-v2/web/`,
   // bc010: `${wusCustomUnitsLocalRoot}bc-010/build/`,
   // "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu1-instrument/",
   // "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu2-sequencer/",
