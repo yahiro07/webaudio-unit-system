@@ -5,7 +5,7 @@ import { createRemoteUnitCacheStore } from "./remote-unit-cache-store";
 import {
   UnitSourceUrls,
   writeSummariesJsonToFile,
-} from "./units-summary-generator";
+} from "./unit-inventories-generator";
 
 function getContentType(filePath: string): string {
   switch (path.extname(filePath).toLowerCase()) {
@@ -82,7 +82,7 @@ export function unitLoaderPlugin(options: {
 }): Plugin {
   const cacheFolderPath = options.cacheFolderPath ?? "~/.wus/cache";
   const summaryOutputPath =
-    options.summaryOutputPath ?? "src/units-summary.json";
+    options.summaryOutputPath ?? "src/unit-inventories.json";
 
   const { unitSourceUrls } = options;
   let config: ResolvedConfig;
@@ -96,7 +96,7 @@ export function unitLoaderPlugin(options: {
     async buildStart() {
       const res =
         await remoteUnitCacheStore.updateCachedContents(unitSourceUrls);
-      const summariesJson = res.summariesJson;
+      const summariesJson = res.inventoriesJson;
       const summaryFileExists = await checkFileExists(summaryOutputPath);
       if (res.updated || !summaryFileExists) {
         writeSummariesJsonToFile(summariesJson, summaryOutputPath);

@@ -13,7 +13,7 @@ import { Button } from "@wus/mo-solid/components/button";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createSignal, Show } from "solid-js";
 import { createStore, produce } from "solid-js/store";
-import { UnitSummariesJson } from "../../vite-plugins/catalogue-types";
+import { UnitSummariesJson } from "../../vite-plugins/unit-inventory-types";
 import { unitSourceUrls } from "./unit-source-urls";
 import _unitsSummary from "./units-summary.json";
 

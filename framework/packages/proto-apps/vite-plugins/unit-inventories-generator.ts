@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { UnitMetadata } from "../../wus-unit-types/unit-metadata";
-import { HostUnitMetadata, UnitSummariesJson } from "./catalogue-types";
+import { UnitInventoriesJson, UnitInventorySpec } from "./unit-inventory-types";
 import { mapUnitUrlToBucketAndPieceNames } from "./unit-url-helpers";
 
 export type UnitSourceUrls = Record<string, string>;
@@ -40,7 +40,7 @@ function buildUnitPageId(meta: UnitMetadata, pageFolderUrl: string): string {
   }
 }
 
-function checkPageIdsUnique(metaList: HostUnitMetadata[]) {
+function checkPageIdsUnique(metaList: UnitInventorySpec[]) {
   const pageIds = metaList.map((m) => m.canonicalPageId);
   for (let i = 0; i < pageIds.length; i++) {
     const id = pageIds[i];
@@ -70,15 +70,6 @@ async function fetchUnitMeta(
       throw new Error(`Failed to read cached unit meta for ${pageFolderUrl}`);
     }
     return res;
-
-    // const unitMetaUrl = `${pageFolderUrl}unit-meta.json`;
-    // const res = await fetch(unitMetaUrl);
-    // if (!res.ok) {
-    //   throw new Error(
-    //     `Failed to fetch from ${unitMetaUrl}: ${res.status} ${res.statusText}`,
-    //   );
-    // }
-    // return await res.json();
   }
 }
 
@@ -95,11 +86,11 @@ function createLoaderUrl(pageFolderUrl: string) {
   }
 }
 
-function createHostUnitMeta(
+function createUnitInventorySpec(
   catalogKey: string,
   pageFolderUrl: string,
   meta: UnitMetadata,
-): HostUnitMetadata {
+): UnitInventorySpec {
   return {
     catalogKey,
     canonicalPageId: buildUnitPageId(meta, pageFolderUrl),
@@ -109,30 +100,25 @@ function createHostUnitMeta(
   };
 }
 
-// export async function generateSummariesJson(
-//   unitSourceUrls: UnitSourceUrls,
-// ): Promise<UnitSummariesJson> {}
-
 export async function generateSummariesJson(
   unitSourceUrls: Record<string, string>,
   readCachedUnitMeta: ReadCachedUnitMetaFn,
-): Promise<UnitSummariesJson> {
-  const metaList = await Promise.all(
+): Promise<UnitInventoriesJson> {
+  const inventorySpecs = await Promise.all(
     Object.entries(unitSourceUrls).map(async ([catalogKey, url]) => {
       const meta = await fetchUnitMeta(url, readCachedUnitMeta);
-      return createHostUnitMeta(catalogKey, url, meta);
+      return createUnitInventorySpec(catalogKey, url, meta);
     }),
   );
-  checkPageIdsUnique(metaList);
-  const summariesJson: UnitSummariesJson = {
-    generatedAt: new Date().toISOString(),
-    units: metaList,
-  };
+  checkPageIdsUnique(inventorySpecs);
+  const summariesJson: UnitInventoriesJson = Object.fromEntries(
+    inventorySpecs.map((units) => [units.catalogKey, units]),
+  );
   return summariesJson;
 }
 
 export function writeSummariesJsonToFile(
-  summariesJson: UnitSummariesJson,
+  summariesJson: UnitInventoriesJson,
   outputPath: string,
 ) {
   const outputContent = `${JSON.stringify(summariesJson, null, 2)}\n`;

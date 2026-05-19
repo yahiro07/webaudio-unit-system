@@ -3,23 +3,23 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
-import { UnitSummariesJson } from "./catalogue-types";
 import {
   createRemoteUnitCacheStorageIo,
   RemoteUnitCacheStorageIo,
 } from "./remote-unit-cache-storage-io";
+import { generateSummariesJson } from "./unit-inventories-generator";
+import { UnitInventoriesJson } from "./unit-inventory-types";
 import {
   mapUnitUrlToBucketAndPieceNames,
   parseRemoteUnitUrl,
 } from "./unit-url-helpers";
-import { generateSummariesJson } from "./units-summary-generator";
 
 const execFileAsync = promisify(execFile);
 
 export type RemoteUnitCacheStore = {
   updateCachedContents(unitSourceUrls: Record<string, string>): Promise<{
     updated: boolean;
-    summariesJson: UnitSummariesJson;
+    inventoriesJson: UnitInventoriesJson;
   }>;
   resolveCachedRemoteUnitRequest(
     bucketName: string,
@@ -174,7 +174,7 @@ async function updateCachedContentsImpl(
   unitSourceUrls: Record<string, string>,
   unitEntriesToCache: UnitCacheEntry[],
   cacheFolderPath: string,
-): Promise<UnitSummariesJson> {
+): Promise<UnitInventoriesJson> {
   await downloadUnitsFromRemote(
     unitEntriesToCache,
     cacheStorageIo.writeCachedPiece,
@@ -209,19 +209,19 @@ export function createRemoteUnitCacheStore(
         cacheStorageIo,
       );
       if (!urlsChanged && unitEntriesToCache.length === 0) {
-        const cachedSummariesJson =
+        const cachedInventoriesJson =
           await cacheStorageIo.readCachedSummariesJson();
-        if (cachedSummariesJson) {
-          return { updated: false, summariesJson: cachedSummariesJson };
+        if (cachedInventoriesJson) {
+          return { updated: false, inventoriesJson: cachedInventoriesJson };
         }
       }
-      const summariesJson = await updateCachedContentsImpl(
+      const inventoriesJson = await updateCachedContentsImpl(
         cacheStorageIo,
         unitSourceUrls,
         unitEntriesToCache,
         cacheFolderPath,
       );
-      return { updated: true, summariesJson };
+      return { updated: true, inventoriesJson };
     },
     resolveCachedRemoteUnitRequest(bucketName, pieceName, resourcePath) {
       return cacheStorageIo.resolveCachedRemoteUnitRequestToFilePath(

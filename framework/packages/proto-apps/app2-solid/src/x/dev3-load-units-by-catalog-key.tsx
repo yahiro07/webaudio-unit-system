@@ -5,7 +5,7 @@ import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import {
   HostUnitMetadata,
   UnitSummariesJson,
-} from "../../../vite-plugins/catalogue-types";
+} from "../../../vite-plugins/unit-inventory-types";
 import unitsSummaryJson from "../units-summary.json";
 
 const audioContext = new AudioContext();
