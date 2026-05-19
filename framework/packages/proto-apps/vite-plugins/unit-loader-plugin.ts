@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import type { Plugin, ResolvedConfig } from "vite";
 import { UnitSummariesJson } from "./catalogue-types";
 import { createRemoteUnitCacheStore } from "./remote-unit-cache-store";
@@ -10,7 +9,7 @@ import {
 } from "./units-summary-generator";
 
 // const LOCAL_UNIT_ROUTE_PREFIX = "/@unit-file";
-const CATALOG_UNIT_ROUTE_PREFIX = "/@unit-loader";
+// const CATALOG_UNIT_ROUTE_PREFIX = "/@unit-loader";
 
 // function isLocalPageUrl(pageUrl: string): boolean {
 //   return pageUrl.startsWith("file:///");
@@ -112,54 +111,70 @@ function resolveCatalogUnitRequest(
   requestPath: string,
   summariesJson: UnitSummariesJson,
   resolveCachedRemoteUnitRequestFn: (
-    unitPageUrl: string,
-    relativePathInUnit: string,
+    bucketName: string,
+    pieceName: string,
+    resourcePath: string,
   ) => string | undefined,
 ): string | undefined {
-  if (!requestPath.startsWith(`${CATALOG_UNIT_ROUTE_PREFIX}/`)) {
+  if (!requestPath.startsWith("/@unit-loader/")) {
     return undefined;
   }
-  const relativePath = decodeURIComponent(
-    requestPath.slice(CATALOG_UNIT_ROUTE_PREFIX.length + 1),
-  );
-  const [catalogKey, ...resourceSegments] = relativePath.split("/");
-  if (!catalogKey) {
-    return undefined;
-  }
+  // debugger;
 
-  const unit = summariesJson.units.find(
-    (entry) => entry.catalogKey === catalogKey,
-  );
-  if (!unit) {
-    return undefined;
-  }
+  const segments = requestPath.replace("/@unit-loader/", "").split("/");
 
-  if (
-    unit.pageUrl.startsWith("http://") ||
-    unit.pageUrl.startsWith("https://")
-  ) {
-    const requestedResourcePath = resourceSegments.join("/");
+  if (segments[0] === "cached") {
+    const bucketName = segments[1];
+    const pieceName = segments[2];
+    const resourcePath = segments.slice(3).join("/");
     return resolveCachedRemoteUnitRequestFn(
-      unit.pageUrl,
-      requestedResourcePath,
+      bucketName,
+      pieceName,
+      resourcePath,
     );
+  } else if (segments[0] === "local") {
+    return "/" + segments.slice(1).join("/");
+
+    // const entryFilePath = path.normalize(fileURLToPath(new URL(unit.pageUrl)));
+    // const entryFolderPath = path.dirname(entryFilePath);
+    // const requestedResourcePath = resourceSegments.join("/") || "index.html";
+    // const targetFilePath = path.normalize(
+    //   path.join(entryFolderPath, requestedResourcePath),
+    // );
+
+    // if (
+    //   targetFilePath !== entryFolderPath &&
+    //   !targetFilePath.startsWith(`${entryFolderPath}${path.sep}`)
+    // ) {
+    //   return undefined;
+    // }
   }
 
-  const entryFilePath = path.normalize(fileURLToPath(new URL(unit.pageUrl)));
-  const entryFolderPath = path.dirname(entryFilePath);
-  const requestedResourcePath = resourceSegments.join("/") || "index.html";
-  const targetFilePath = path.normalize(
-    path.join(entryFolderPath, requestedResourcePath),
-  );
+  // const relativePath = decodeURIComponent(
+  //   requestPath.slice(CATALOG_UNIT_ROUTE_PREFIX.length + 1),
+  // );
+  // const [catalogKey, ...resourceSegments] = relativePath.split("/");
+  // if (!catalogKey) {
+  //   return undefined;
+  // }
 
-  if (
-    targetFilePath !== entryFolderPath &&
-    !targetFilePath.startsWith(`${entryFolderPath}${path.sep}`)
-  ) {
-    return undefined;
-  }
+  // const unit = summariesJson.units.find(
+  //   (entry) => entry.catalogKey === catalogKey,
+  // );
+  // if (!unit) {
+  //   return undefined;
+  // }
 
-  return targetFilePath;
+  // if (
+  //   unit.pageUrl.startsWith("http://") ||
+  //   unit.pageUrl.startsWith("https://")
+  // ) {
+  //   const requestedResourcePath = resourceSegments.join("/");
+  //   return resolveCachedRemoteUnitRequestFn(
+  //     unit.pageUrl,
+  //     requestedResourcePath,
+  //   );
+  // }
 }
 
 function checkFileExists(filePath: string): Promise<boolean> {

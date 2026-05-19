@@ -44,7 +44,6 @@ function normalizeFrameSize(
 
 export const UnitFrame = (props: {
   unitId: string;
-  catalogKey?: string;
   pageUrl?: string;
   destUnitId?: string;
   hostBpm?: number;
@@ -55,7 +54,7 @@ export const UnitFrame = (props: {
   style?: JSX.DOMAttributes<HTMLIFrameElement>["style"];
   frameSize?: FrameSizeInput;
 }) => {
-  console.log(`loading ${props.catalogKey ?? props.pageUrl}`);
+  console.log(`loading ${props.pageUrl}`);
   const [unitAgent, setUnitAgent] = createSignal<UnitAgentInHostSide>();
   let currentNotes: number[] = [];
 
@@ -162,9 +161,6 @@ export const UnitFrame = (props: {
     });
     return <iframe class={props.className} style={props.style} ref={iframe} />;
   } else {
-    const pageUrl = props.catalogKey
-      ? `/@unit-loader/${props.catalogKey}/index.html`
-      : props.pageUrl;
     let iframe: HTMLIFrameElement | undefined;
     onMount(async () => {
       if (!iframe) return;
@@ -175,7 +171,7 @@ export const UnitFrame = (props: {
       <iframe
         class={props.className}
         style={props.style}
-        src={pageUrl}
+        src={props.pageUrl}
         ref={iframe}
         width={frameSize()?.width}
         height={frameSize()?.height}

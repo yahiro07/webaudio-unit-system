@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { UnitMetadata } from "../../wus-unit-types/unit-metadata";
 import { HostUnitMetadata, UnitSummariesJson } from "./catalogue-types";
+import { mapUnitUrlToBucketAndPieceNames } from "./unit-url-helpers";
 
 export type UnitSourceUrls = Record<string, string>;
 
@@ -81,6 +82,19 @@ async function fetchUnitMeta(
   }
 }
 
+function createLoaderUrl(pageFolderUrl: string) {
+  if (
+    pageFolderUrl.startsWith("http://") ||
+    pageFolderUrl.startsWith("https://")
+  ) {
+    const { bucketName, pieceName } =
+      mapUnitUrlToBucketAndPieceNames(pageFolderUrl);
+    return `/@unit-loader/cached/${bucketName}/${pieceName}/index.html`;
+  } else {
+    return `/@unit-loader/local/${pageFolderUrl.replace("file:///", "")}index.html`;
+  }
+}
+
 function createHostUnitMeta(
   catalogKey: string,
   pageFolderUrl: string,
@@ -91,6 +105,7 @@ function createHostUnitMeta(
     canonicalPageId: buildUnitPageId(meta, pageFolderUrl),
     ...meta,
     pageUrl: `${pageFolderUrl}index.html`,
+    loaderUrl: createLoaderUrl(pageFolderUrl),
   };
 }
 

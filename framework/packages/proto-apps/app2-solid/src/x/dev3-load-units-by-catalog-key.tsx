@@ -1,16 +1,25 @@
 import "@wus/mo/styles";
-import { createHostSystem, UnitSummariesJson } from "@wus/host-system/host";
+import { createHostSystem } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
+import {
+  HostUnitMetadata,
+  UnitSummariesJson,
+} from "../../../vite-plugins/catalogue-types";
 import unitsSummaryJson from "../units-summary.json";
 
 const audioContext = new AudioContext();
 const hostSystem = createHostSystem(audioContext);
 
-const catalogKeysAvailable = (unitsSummaryJson as UnitSummariesJson).units.map(
-  (unit) => unit.catalogKey,
-);
-console.log("catalog keys available:", catalogKeysAvailable);
+function findCatalogItem(catalogKey: string): HostUnitMetadata {
+  const item = (unitsSummaryJson as UnitSummariesJson).units.find(
+    (unit) => unit.catalogKey === catalogKey,
+  );
+  if (!item) throw new Error(`catalog item with key "${catalogKey}" not found`);
+  return item;
+}
+const c_mu1 = findCatalogItem("mu1Instrument");
+const c_tinySynth = findCatalogItem("webaudioTinysynthSimple");
 
 const PageRoot = () => {
   return (
@@ -18,13 +27,15 @@ const PageRoot = () => {
       <UnitFrame
         destUnitId="$output"
         unitId="unit1"
-        catalogKey="mu1Instrument"
+        pageUrl={c_mu1.loaderUrl}
+        frameSize={c_mu1.preferredSize}
         hostSystem={hostSystem}
       />
       <UnitFrame
         destUnitId="$output"
         unitId="unit2"
-        catalogKey="webaudioTinysynthSimple"
+        pageUrl={c_tinySynth.loaderUrl}
+        frameSize={c_tinySynth.preferredSize}
         hostSystem={hostSystem}
         style={{ width: "500px", height: "300px" }}
       />

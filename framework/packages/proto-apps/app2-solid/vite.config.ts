@@ -5,7 +5,11 @@ import { unitLoaderPlugin } from "../vite-plugins";
 import { unitSourceUrls } from "./src/unit-source-urls";
 
 export default defineConfig({
-  plugins: [solid(), tailwindcss(), unitLoaderPlugin({ unitSourceUrls })],
+  plugins: [
+    solid(),
+    tailwindcss(),
+    unitLoaderPlugin({ unitSourceUrls, cacheFolderPath: "./.wus-unit-cache" }),
+  ],
   appType: "mpa",
   resolve: { tsconfigPaths: true },
   server: { port: 3004 },
