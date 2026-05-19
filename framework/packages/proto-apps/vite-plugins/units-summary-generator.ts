@@ -1,10 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import {
-  HostUnitMetadata,
-  UnitSummariesJson,
-} from "../../wus-host-system/contract";
 import { UnitMetadata } from "../../wus-unit-types/unit-metadata";
+import { HostUnitMetadata, UnitSummariesJson } from "./catalogue-types";
 
 export type UnitSourceUrls = Record<string, string>;
 

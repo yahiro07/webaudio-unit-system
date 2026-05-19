@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Plugin, ResolvedConfig } from "vite";
-import { UnitSummariesJson } from "../../wus-host-system/contract";
+import { UnitSummariesJson } from "./catalogue-types";
 import { createRemoteUnitCacheStore } from "./remote-unit-cache-store";
 import {
   UnitSourceUrls,

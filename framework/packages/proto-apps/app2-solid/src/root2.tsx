@@ -5,7 +5,6 @@ import { seqNumbers } from "@wus/ax/array-utils";
 import {
   createHostSystem,
   UnitCategoryHint,
-  UnitSummariesJson,
   UnitType,
 } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
@@ -14,6 +13,7 @@ import { Button } from "@wus/mo-solid/components/button";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createSignal, Show } from "solid-js";
 import { createStore, produce } from "solid-js/store";
+import { UnitSummariesJson } from "../../vite-plugins/catalogue-types";
 import { unitSourceUrls } from "./unit-source-urls";
 import _unitsSummary from "./units-summary.json";
 
