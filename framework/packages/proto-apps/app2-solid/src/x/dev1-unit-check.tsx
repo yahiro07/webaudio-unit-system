@@ -59,13 +59,14 @@ const UnitsSolid = () => {
       />
       <UnitFrame
         unitId="uf_instrument"
-        pageUrl="http://localhost:3000/index.html"
-        // pageUrl="/local-units/mu1-instrument/index.html"
+        // pageUrl="http://localhost:3000/index.html"
+        pageUrl="/local-units/mu1-instrument/index.html"
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/koodori/index.html"
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-synth-v2/index.html"
+        // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/bc-010/index.html"
         destUnitId="uf_effect"
         hostSystem={hostSystem}
-        className="w-[800px] h-[600px]"
+        frameSize="800,500"
       />
       <UnitFrame
         unitId="uf_keyboard"

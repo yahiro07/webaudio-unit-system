@@ -3,91 +3,30 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
-import { UnitSummariesJson } from "../../wus-host-system/contract";
 import {
   createRemoteUnitCacheStorageIo,
   RemoteUnitCacheStorageIo,
 } from "./remote-unit-cache-storage-io";
-import { generateSummariesJson } from "./units-summary-generator";
+import { generateSummariesJson } from "./unit-inventories-generator";
+import { UnitInventoriesJson } from "./unit-inventory-types";
+import {
+  mapUnitUrlToBucketAndPieceNames,
+  parseRemoteUnitUrl,
+} from "./unit-url-helpers";
 
 const execFileAsync = promisify(execFile);
 
 export type RemoteUnitCacheStore = {
   updateCachedContents(unitSourceUrls: Record<string, string>): Promise<{
     updated: boolean;
-    summariesJson: UnitSummariesJson;
+    inventoriesJson: UnitInventoriesJson;
   }>;
   resolveCachedRemoteUnitRequest(
-    unitPageUrl: string,
-    relativePathInUnit: string,
+    bucketName: string,
+    pieceName: string,
+    resourcePath: string,
   ): string | undefined;
 };
-
-function parseRemoteUnitUrl(url: string): {
-  bucketName: string;
-  pieceName: string;
-  pieceFolderPath: string;
-  archiveUrl: string;
-} {
-  const parsedUrl = new URL(url);
-  if (parsedUrl.hostname !== "cdn.jsdelivr.net") {
-    throw new Error(`Unsupported remote unit host: ${url}`);
-  }
-
-  const pathSegments = parsedUrl.pathname.split("/").filter(Boolean);
-  if (pathSegments[0] !== "gh") {
-    throw new Error(`Unsupported remote unit path format: ${url}`);
-  }
-
-  const bucketLastSegmentIndex = pathSegments.findIndex((segment) =>
-    segment.includes("@"),
-  );
-  if (bucketLastSegmentIndex < 0) {
-    throw new Error(`Remote unit URL must contain a tag segment: ${url}`);
-  }
-
-  const bucketSegments = pathSegments
-    .slice(0, bucketLastSegmentIndex + 1)
-    .flatMap((segment) => segment.split("@"));
-  const [_, owner, repoWithTag] = pathSegments;
-  const [repo, ref] = repoWithTag.split("@");
-  if (!owner || !repo || !ref) {
-    throw new Error(
-      `Remote unit URL must contain owner, repo, and ref: ${url}`,
-    );
-  }
-
-  const piecePathSegments = pathSegments.slice(bucketLastSegmentIndex + 1);
-  const isLastSegmentFile = piecePathSegments.at(-1)?.includes(".") ?? false;
-  const pieceFolderSegments = isLastSegmentFile
-    ? piecePathSegments.slice(0, -1)
-    : piecePathSegments;
-  const pieceName = pieceFolderSegments.at(-1);
-
-  if (!pieceName) {
-    throw new Error(`Remote unit URL must contain a piece name: ${url}`);
-  }
-
-  const pieceFolderPath = pieceFolderSegments.join("/");
-  if (!pieceFolderPath) {
-    throw new Error(`Remote unit URL must contain a piece folder path: ${url}`);
-  }
-
-  return {
-    bucketName: bucketSegments.join("_"),
-    pieceName,
-    pieceFolderPath,
-    archiveUrl: `https://github.com/${owner}/${repo}/archive/refs/tags/${ref}.zip`,
-  };
-}
-
-function mapUnitUrlToBucketAndPieceNames(url: string): {
-  bucketName: string;
-  pieceName: string;
-} {
-  const { bucketName, pieceName } = parseRemoteUnitUrl(url);
-  return { bucketName, pieceName };
-}
 
 function checkDeepEquality(obj1: any, obj2: any): boolean {
   return JSON.stringify(obj1) === JSON.stringify(obj2);
@@ -235,7 +174,7 @@ async function updateCachedContentsImpl(
   unitSourceUrls: Record<string, string>,
   unitEntriesToCache: UnitCacheEntry[],
   cacheFolderPath: string,
-): Promise<UnitSummariesJson> {
+): Promise<UnitInventoriesJson> {
   await downloadUnitsFromRemote(
     unitEntriesToCache,
     cacheStorageIo.writeCachedPiece,
@@ -270,27 +209,25 @@ export function createRemoteUnitCacheStore(
         cacheStorageIo,
       );
       if (!urlsChanged && unitEntriesToCache.length === 0) {
-        const cachedSummariesJson =
+        const cachedInventoriesJson =
           await cacheStorageIo.readCachedSummariesJson();
-        if (cachedSummariesJson) {
-          return { updated: false, summariesJson: cachedSummariesJson };
+        if (cachedInventoriesJson) {
+          return { updated: false, inventoriesJson: cachedInventoriesJson };
         }
       }
-      const summariesJson = await updateCachedContentsImpl(
+      const inventoriesJson = await updateCachedContentsImpl(
         cacheStorageIo,
         unitSourceUrls,
         unitEntriesToCache,
         cacheFolderPath,
       );
-      return { updated: true, summariesJson };
+      return { updated: true, inventoriesJson };
     },
-    resolveCachedRemoteUnitRequest(unitPageUrl, relativePathInUnit) {
-      const { bucketName, pieceName } =
-        mapUnitUrlToBucketAndPieceNames(unitPageUrl);
+    resolveCachedRemoteUnitRequest(bucketName, pieceName, resourcePath) {
       return cacheStorageIo.resolveCachedRemoteUnitRequestToFilePath(
         bucketName,
         pieceName,
-        relativePathInUnit,
+        resourcePath,
       );
     },
   };

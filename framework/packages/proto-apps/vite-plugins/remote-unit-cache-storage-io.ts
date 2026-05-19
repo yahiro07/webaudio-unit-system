@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { UnitSummariesJson } from "../../wus-host-system/contract";
 import { UnitMetadata } from "../../wus-unit-types/unit-metadata";
+import { UnitInventoriesJson } from "./unit-inventory-types";
 
 export type RemoteUnitCacheStorageIo = {
   readPreviousUnitSourceUrlsInput(): Promise<
@@ -11,8 +11,8 @@ export type RemoteUnitCacheStorageIo = {
   writePreviousUnitSourceUrlsInput(
     unitSourceUrls: Record<string, string>,
   ): Promise<void>;
-  readCachedSummariesJson(): Promise<UnitSummariesJson | undefined>;
-  writeCachedSummariesJson(summariesJson: UnitSummariesJson): Promise<void>;
+  readCachedSummariesJson(): Promise<UnitInventoriesJson | undefined>;
+  writeCachedSummariesJson(summariesJson: UnitInventoriesJson): Promise<void>;
   listExistingBucketPieceKeys(): Promise<string[]>;
   writeCachedPiece(
     bucketName: string,

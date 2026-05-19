@@ -9,10 +9,10 @@ const store = createStore({ gain: 0.5 });
 function setupUnitInstance() {
   const hostInterface = getHostInterface();
   if (hostInterface) {
-    const audioContext = hostInterface.audioContext ?? new AudioContext();
+    const audioContext = hostInterface.audioContext;
     const gainNode = audioContext.createGain();
     hostInterface.audioSourceNode.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    gainNode.connect(hostInterface.audioDestinationNode);
 
     store.subscribe((attrs) => {
       if (attrs.gain !== undefined) {

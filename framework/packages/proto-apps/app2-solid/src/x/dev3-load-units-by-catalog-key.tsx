@@ -1,16 +1,11 @@
 import "@wus/mo/styles";
-import { createHostSystem, UnitSummariesJson } from "@wus/host-system/host";
+import { createHostSystem } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
-import unitsSummaryJson from "../units-summary.json";
+import catalog from "../unit-inventories.json";
 
 const audioContext = new AudioContext();
 const hostSystem = createHostSystem(audioContext);
-
-const catalogKeysAvailable = (unitsSummaryJson as UnitSummariesJson).units.map(
-  (unit) => unit.catalogKey,
-);
-console.log("catalog keys available:", catalogKeysAvailable);
 
 const PageRoot = () => {
   return (
@@ -18,15 +13,16 @@ const PageRoot = () => {
       <UnitFrame
         destUnitId="$output"
         unitId="unit1"
-        catalogKey="mu1Instrument"
+        pageUrl={catalog["mu1-instrument"].loaderPageUrl}
+        frameSize={catalog["mu1-instrument"].preferredSize}
         hostSystem={hostSystem}
       />
       <UnitFrame
         destUnitId="$output"
         unitId="unit2"
-        catalogKey="webaudioTinysynthSimple"
+        pageUrl={catalog["webaudio-tinysynth-simple"].loaderPageUrl}
+        frameSize={catalog["webaudio-tinysynth-simple"].preferredSize}
         hostSystem={hostSystem}
-        style={{ width: "500px", height: "300px" }}
       />
     </div>
   );

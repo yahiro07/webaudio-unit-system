@@ -1,7 +1,14 @@
 /** @jsxImportSource solid-js */
 
 import { arrayExclude } from "@wus/ax/array-utils";
-import { createEffect, createSignal, JSX, onCleanup, onMount } from "solid-js";
+import {
+  createEffect,
+  createMemo,
+  createSignal,
+  JSX,
+  onCleanup,
+  onMount,
+} from "solid-js";
 import { HostInterface } from "../contract";
 import {
   HostSystem,
@@ -13,9 +20,30 @@ import {
 
 const HOST_INTERFACE_REGISTRY_KEY = "__wusHostInterfaceRegistry";
 
+type Size = { width: number; height: number };
+type FrameSizeInput = Size | [number, number] | string;
+
+function normalizeFrameSize(
+  size: FrameSizeInput | undefined,
+): Size | undefined {
+  if (Array.isArray(size)) {
+    return { width: size[0], height: size[1] };
+  } else if (typeof size === "string") {
+    if (size.includes(",")) {
+      const [width, height] = size.split(",").map((s) => Number(s.trim()));
+      return { width, height };
+    } else if (size.includes("x")) {
+      const [width, height] = size.split("x").map((s) => Number(s.trim()));
+      return { width, height };
+    }
+  } else if (typeof size === "object") {
+    return size;
+  }
+  return undefined;
+}
+
 export const UnitFrame = (props: {
   unitId: string;
-  catalogKey?: string;
   pageUrl?: string;
   destUnitId?: string;
   hostBpm?: number;
@@ -24,12 +52,15 @@ export const UnitFrame = (props: {
   hostSystem: HostSystem;
   className?: string;
   style?: JSX.DOMAttributes<HTMLIFrameElement>["style"];
+  frameSize?: FrameSizeInput;
 }) => {
-  console.log(`loading ${props.catalogKey ?? props.pageUrl}`);
+  console.log(`loading ${props.pageUrl}`);
   const [unitAgent, setUnitAgent] = createSignal<UnitAgentInHostSide>();
   let currentNotes: number[] = [];
 
   const startTime = Date.now();
+
+  const frameSize = createMemo(() => normalizeFrameSize(props.frameSize));
 
   createEffect(() => {
     const bpm = props.hostBpm;
@@ -130,9 +161,6 @@ export const UnitFrame = (props: {
     });
     return <iframe class={props.className} style={props.style} ref={iframe} />;
   } else {
-    const pageUrl = props.catalogKey
-      ? `/@unit-loader/${props.catalogKey}/index.html`
-      : props.pageUrl;
     let iframe: HTMLIFrameElement | undefined;
     onMount(async () => {
       if (!iframe) return;
@@ -143,8 +171,10 @@ export const UnitFrame = (props: {
       <iframe
         class={props.className}
         style={props.style}
-        src={pageUrl}
+        src={props.pageUrl}
         ref={iframe}
+        width={frameSize()?.width}
+        height={frameSize()?.height}
       />
     );
   }

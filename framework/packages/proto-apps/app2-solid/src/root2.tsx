@@ -5,7 +5,6 @@ import { seqNumbers } from "@wus/ax/array-utils";
 import {
   createHostSystem,
   UnitCategoryHint,
-  UnitSummariesJson,
   UnitType,
 } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
@@ -14,10 +13,10 @@ import { Button } from "@wus/mo-solid/components/button";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createSignal, Show } from "solid-js";
 import { createStore, produce } from "solid-js/store";
-import { unitSourceUrls } from "./unit-source-urls";
-import _unitsSummary from "./units-summary.json";
+import { UnitInventorySpec } from "../../vite-plugins/unit-inventory-types";
+import unitInventories from "./unit-inventories.json";
 
-type CatalogKey = keyof typeof unitSourceUrls;
+type CatalogKey = keyof typeof unitInventories;
 
 type UnitTemplate = {
   catalogKey: CatalogKey;
@@ -26,61 +25,53 @@ type UnitTemplate = {
   name: string;
   repositoryUrl: string;
   category?: UnitCategoryHint;
-  size?: [number, number];
+  size: string;
   scaling?: number;
 };
 
 function createUnitTemplateEntry(
   catalogKey: CatalogKey,
-  attrs?: { scaling?: number; size?: [number, number] },
+  attrs?: { scaling?: number },
 ): UnitTemplate {
-  const unitsSummary = _unitsSummary as UnitSummariesJson;
-  const unit = unitsSummary.units.find(
-    (unit) => unit.catalogKey === catalogKey,
-  );
+  const unit = unitInventories[catalogKey] as UnitInventorySpec | undefined;
   if (!unit) {
     throw new Error(`Unit not found: ${catalogKey}`);
   }
   return {
     catalogKey: unit.catalogKey as CatalogKey,
-    pageUrl: unit.pageUrl,
+    pageUrl: unit.loaderPageUrl,
     unitType: unit.unitType,
     name: unit.name,
     repositoryUrl: unit.repositoryUrl,
     category: unit.category,
+    size: unit.preferredSize,
     ...attrs,
   };
 }
 
 const unitTemplates: UnitTemplate[] = [
-  createUnitTemplateEntry("mu1Instrument", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu2Sequencer", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu3Effect", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu4Keyboard", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu5Visualizer", { scaling: 0.6 }),
-  createUnitTemplateEntry("drumMachine", {
-    size: [800, 500],
+  createUnitTemplateEntry("mu1-instrument", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu2-sequencer", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu3-effect", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu4-keyboard", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu5-visualizer", { scaling: 0.6 }),
+  createUnitTemplateEntry("drum-machine", {
     scaling: 0.2,
   }),
   createUnitTemplateEntry("additive", {
-    size: [800, 500],
     scaling: 0.2,
   }),
   createUnitTemplateEntry("koodori", {
-    size: [800, 500],
     scaling: 0.2,
   }),
-  createUnitTemplateEntry("bc010", {
-    size: [750, 500],
+  createUnitTemplateEntry("bc-010", {
     scaling: 0.25,
   }),
-  createUnitTemplateEntry("webaudioTinysynthSimple", {
-    size: [520, 280],
+  createUnitTemplateEntry("webaudio-tinysynth-simple", {
     scaling: 0.4,
   }),
-  createUnitTemplateEntry("wasyn1", { size: [720, 360], scaling: 0.25 }),
-  createUnitTemplateEntry("webaudioSynthV2", {
-    size: [700, 400],
+  createUnitTemplateEntry("wasyn-1", { scaling: 0.25 }),
+  createUnitTemplateEntry("webaudio-synth-v2", {
     scaling: 0.25,
   }),
 ];
@@ -189,7 +180,7 @@ const appModel = createAppModel();
 
 const presetScenes = {
   setupScenePreset1() {
-    appModel.actions.assignUnit("lane0-instrument", "mu1Instrument");
+    appModel.actions.assignUnit("lane0-instrument", "mu1-instrument");
   },
 };
 
@@ -207,18 +198,10 @@ const UnitView = (props: {
       >
         <UnitFrame
           unitId={props.unitAssignment.unitId}
-          catalogKey={props.unitAssignment.template.catalogKey}
-          // pageUrl={props.unitAssignment.template.pageUrl}
+          pageUrl={props.unitAssignment.template.pageUrl}
           destUnitId={props.destUnitId}
           hostSystem={appModel.hostSystem}
-          style={
-            props.unitAssignment.template.size
-              ? {
-                  width: `${props.unitAssignment.template.size[0]}px`,
-                  height: `${props.unitAssignment.template.size[1]}px`,
-                }
-              : undefined
-          }
+          frameSize={props.unitAssignment.template.size}
         />
       </div>
     </div>

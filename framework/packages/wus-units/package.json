@@ -1,7 +1,0 @@
-{
-  "name": "@wus/units",
-  "type": "module",
-  "exports": {
-    ".": "./index.ts"
-  }
-}

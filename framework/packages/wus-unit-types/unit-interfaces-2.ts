@@ -83,6 +83,7 @@ export type UnitAgent = {
 
 export type HostInterface = {
   audioContext: AudioContext;
+  audioDestinationNode: AudioNode;
   audioSourceNode: AudioNode;
   noteOutputPort: NoteOutputPort;
   setupUnitAgent(unitAgent: UnitAgent): void;
