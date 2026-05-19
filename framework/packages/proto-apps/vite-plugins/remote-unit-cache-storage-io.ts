@@ -23,11 +23,7 @@ export type RemoteUnitCacheStorageIo = {
     bucketName: string,
     pieceName: string,
   ): Promise<UnitMetadata | undefined>;
-  resolveCachedRemoteUnitRequestToFilePath(
-    bucketName: string,
-    pieceName: string,
-    pathInPiece: string,
-  ): string | undefined;
+  resolveCachedUnitFolderPath(bucketName: string, pieceName: string): string;
 };
 
 export function createRemoteUnitCacheStorageIo(
@@ -119,14 +115,8 @@ export function createRemoteUnitCacheStorageIo(
         `units/${bucketName}/${pieceName}/unit-meta.json`,
       );
     },
-    resolveCachedRemoteUnitRequestToFilePath(
-      bucketName,
-      pieceName,
-      pathInPiece,
-    ) {
-      return internal.resolvePath(
-        `units/${bucketName}/${pieceName}/${pathInPiece}`,
-      );
+    resolveCachedUnitFolderPath(bucketName, pieceName) {
+      return internal.resolvePath(`units/${bucketName}/${pieceName}`);
     },
   };
 }
