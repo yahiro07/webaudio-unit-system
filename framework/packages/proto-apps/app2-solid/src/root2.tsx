@@ -70,6 +70,10 @@ const unitTemplates: UnitTemplate[] = [
     size: [800, 500],
     scaling: 0.2,
   }),
+  createUnitTemplateEntry("bc010", {
+    size: [750, 500],
+    scaling: 0.25,
+  }),
   createUnitTemplateEntry("webaudioTinysynthSimple", {
     size: [520, 280],
     scaling: 0.4,
