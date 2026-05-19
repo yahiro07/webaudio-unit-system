@@ -63,42 +63,17 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
   };
 }
 
-export function createAudioContextDestinationProxied(
-  audioContext: AudioContext,
-  unitDestinationNode: AudioNode,
-): AudioContext {
-  return new Proxy(audioContext, {
-    get: (target, prop) => {
-      if (prop === "destination") {
-        return unitDestinationNode;
-      }
-      const value = Reflect.get(target, prop, target);
-      if (typeof value === "function") {
-        return value.bind(target);
-      }
-      return value;
-    },
-  });
-}
-
 export function hostSystem_createHostInterfaceForUnit(
   hostSystem: HostSystem,
   unitId: string,
   registeredCallback: (unitAgent: UnitAgentInHostSide) => void,
 ) {
   const unitDestinationNode = hostSystem.audioContext.createGain();
-  const unitAudioContext = createAudioContextDestinationProxied(
-    hostSystem.audioContext,
-    unitDestinationNode,
-  );
   const effectSourceNode = hostSystem.audioContext.createGain();
   const noteOutputPortImpl = createNoteOutputPortImpl();
-  const hostInterface: HostInterface & { raw: any } = {
-    raw: {
-      audioContext: hostSystem.audioContext,
-      outputNode: unitDestinationNode,
-    },
-    audioContext: unitAudioContext,
+  const hostInterface: HostInterface = {
+    audioContext: hostSystem.audioContext,
+    audioDestinationNode: unitDestinationNode,
     audioSourceNode: effectSourceNode,
     noteOutputPort: noteOutputPortImpl,
     setupUnitAgent(_unitAgent) {

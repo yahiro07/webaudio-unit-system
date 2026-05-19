@@ -18,7 +18,7 @@ const [state, setState] = createStore<{
 function setupUnitInstance() {
   const hostInterface = getHostInterface();
   if (hostInterface) {
-    const audioContext = hostInterface.audioContext ?? new AudioContext();
+    const audioContext = hostInterface.audioContext;
     setState({ sampleRate: audioContext.sampleRate });
     const analyzer = audioContext.createAnalyser();
     analyzer.fftSize = 1024;
@@ -33,7 +33,7 @@ function setupUnitInstance() {
     }, 16);
 
     hostInterface.audioSourceNode.connect(analyzer);
-    analyzer.connect(audioContext.destination);
+    analyzer.connect(hostInterface.audioDestinationNode);
 
     hostInterface.setupUnitAgent({ type: "effect" });
   }

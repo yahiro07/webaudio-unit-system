@@ -4,6 +4,8 @@ import { getHostInterface } from "@wus/unit-types";
 
 const hostInterface = getHostInterface();
 const audioContext = hostInterface?.audioContext ?? new AudioContext();
+const destinationNode =
+  hostInterface?.audioDestinationNode ?? audioContext.destination;
 
 function midiToFrequency(midiNote: number): number {
   return 440 * 2 ** ((midiNote - 69) / 12);
@@ -21,7 +23,7 @@ function createAppModel() {
       const oscillatorNode = audioContext.createOscillator();
       oscillatorNode.frequency.setValueAtTime(freq, audioContext.currentTime);
       oscillatorNode.type = "sawtooth";
-      oscillatorNode.connect(audioContext.destination);
+      oscillatorNode.connect(destinationNode);
       oscillatorNode.start();
       noteNodes[noteNumber] = oscillatorNode;
     },
