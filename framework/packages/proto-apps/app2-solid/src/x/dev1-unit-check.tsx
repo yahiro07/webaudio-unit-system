@@ -40,8 +40,8 @@ function createAppModel() {
 }
 const appModel = createAppModel();
 
-const baseUrl =
-  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/";
+const devUnitsBase =
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev";
 
 const UnitsSolid = () => {
   const { hostSystem } = appModel;
@@ -52,14 +52,15 @@ const UnitsSolid = () => {
     <>
       <UnitFrame
         unitId="uf_effect"
-        pageUrl={`${baseUrl}dev/mu5-visualizer/index.html`}
+        pageUrl={`${devUnitsBase}/mu5-visualizer/index.html`}
+        // pageUrl="/local-units/mu3-effect/index.html"
         destUnitId="$output"
         hostSystem={hostSystem}
       />
       <UnitFrame
         unitId="uf_instrument"
         pageUrl="http://localhost:3000/index.html"
-        // pageUrl="/units/koodori/index.html"
+        // pageUrl="/local-units/mu1-instrument/index.html"
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/koodori/index.html"
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-synth-v2/index.html"
         destUnitId="uf_effect"
@@ -68,7 +69,8 @@ const UnitsSolid = () => {
       />
       <UnitFrame
         unitId="uf_keyboard"
-        pageUrl={`${baseUrl}dev/mu4-keyboard/index.html`}
+        pageUrl={`${devUnitsBase}/mu4-keyboard/index.html`}
+        // pageUrl="/local-units/mu4-keyboard/index.html"
         destUnitId="uf_instrument"
         hostSystem={hostSystem}
         inputNotes={vm.state().notes}
