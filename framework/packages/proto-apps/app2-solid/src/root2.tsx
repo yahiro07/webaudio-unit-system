@@ -40,7 +40,7 @@ function createUnitTemplateEntry(
   }
   return {
     catalogKey: unit.catalogKey as CatalogKey,
-    pageUrl: unit.loaderUrl,
+    pageUrl: unit.loaderPageUrl,
     unitType: unit.unitType,
     name: unit.name,
     repositoryUrl: unit.repositoryUrl,

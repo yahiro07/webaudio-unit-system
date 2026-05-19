@@ -95,8 +95,8 @@ function createUnitInventorySpec(
     catalogKey,
     canonicalPageId: buildUnitPageId(meta, pageFolderUrl),
     ...meta,
-    pageUrl: `${pageFolderUrl}index.html`,
-    loaderUrl: createLoaderUrl(pageFolderUrl),
+    originalPageUrl: `${pageFolderUrl}index.html`,
+    loaderPageUrl: createLoaderUrl(pageFolderUrl),
   };
 }
 
