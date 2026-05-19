@@ -40,9 +40,8 @@ function createAppModel() {
 }
 const appModel = createAppModel();
 
-// const baseUrl =
-//   "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev";
-const baseUrl = "/units";
+const baseUrl =
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/";
 
 const UnitsSolid = () => {
   const { hostSystem } = appModel;
@@ -52,35 +51,25 @@ const UnitsSolid = () => {
   return (
     <>
       <UnitFrame
+        unitId="uf_effect"
+        pageUrl={`${baseUrl}dev/mu5-visualizer/index.html`}
         destUnitId="$output"
-        unitId="mu5"
-        pageUrl={`${baseUrl}/mu5-visualizer/index.html`}
         hostSystem={hostSystem}
       />
       <UnitFrame
-        destUnitId="mu5"
-        unitId="mu3"
-        pageUrl={`${baseUrl}/mu3-effect/index.html`}
+        unitId="uf_instrument"
+        pageUrl="http://localhost:3000/index.html"
+        // pageUrl="/units/koodori/index.html"
+        // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/koodori/index.html"
+        // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-synth-v2/index.html"
+        destUnitId="uf_effect"
         hostSystem={hostSystem}
+        className="w-[800px] h-[600px]"
       />
       <UnitFrame
-        destUnitId="mu3"
-        unitId="mu1"
-        pageUrl={`${baseUrl}/mu1-instrument/index.html`}
-        hostSystem={hostSystem}
-      />
-      <UnitFrame
-        destUnitId="mu1"
-        unitId="mu2"
-        pageUrl={`${baseUrl}/mu2-sequencer/index.html`}
-        hostBpm={vm.state().bpm}
-        hostPlaying={vm.state().playing}
-        hostSystem={hostSystem}
-      />
-      <UnitFrame
-        destUnitId="mu2"
-        unitId="mu4"
-        pageUrl={`${baseUrl}/mu4-keyboard/index.html`}
+        unitId="uf_keyboard"
+        pageUrl={`${baseUrl}dev/mu4-keyboard/index.html`}
+        destUnitId="uf_instrument"
         hostSystem={hostSystem}
         inputNotes={vm.state().notes}
       />

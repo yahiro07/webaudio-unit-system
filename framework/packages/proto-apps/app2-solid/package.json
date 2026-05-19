@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build-summary": "tsx ./scripts/build-summary-from-local.ts"
   },
   "dependencies": {
     "solid-js": "^1.9.12"
@@ -12,10 +13,11 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.0",
     "@types/node": "^25.7.0",
-    "vite-plugin-solid": "^2.11.12",
     "tailwindcss": "^4.3.0",
+    "tsx": "^4.22.1",
     "typescript": "~6.0.3",
     "vite": "^8.0.12",
+    "vite-plugin-solid": "^2.11.12",
     "wrangler": "^4.90.0"
   }
 }

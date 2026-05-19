@@ -18,7 +18,7 @@ import _unitsSummary from "./units-summary.json";
 
 type UnitTemplate = {
   templateId: string;
-  pagePath: string;
+  pageUrl: string;
   unitType: UnitType;
   name: string;
   repositoryUrl: string;
@@ -40,7 +40,7 @@ function createUnitTemplateEntry(
   }
   return {
     templateId: unit.unitPageId,
-    pagePath: unit.pagePath,
+    pageUrl: unit.pagePath,
     unitType: unit.unitType,
     name: unit.name,
     repositoryUrl: unit.repositoryUrl,
@@ -55,16 +55,24 @@ const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("mu3-effect", { scaling: 0.6 }),
   createUnitTemplateEntry("mu4-keyboard", { scaling: 0.6 }),
   createUnitTemplateEntry("mu5-visualizer", { scaling: 0.6 }),
-  createUnitTemplateEntry("du10-drum-machine", {
+  createUnitTemplateEntry("drum-machine", {
     size: [800, 500],
     scaling: 0.2,
   }),
-  createUnitTemplateEntry("su11-webaudio-tinysynth", {
+  createUnitTemplateEntry("additive", {
+    size: [800, 500],
+    scaling: 0.2,
+  }),
+  createUnitTemplateEntry("koodori", {
+    size: [800, 500],
+    scaling: 0.2,
+  }),
+  createUnitTemplateEntry("webaudio-tinysynth-simple", {
     size: [520, 280],
     scaling: 0.4,
   }),
-  createUnitTemplateEntry("su12-wasyn-1", { size: [720, 360], scaling: 0.25 }),
-  createUnitTemplateEntry("su20-webaudio-synth-v2", {
+  createUnitTemplateEntry("wasyn-1", { size: [720, 360], scaling: 0.25 }),
+  createUnitTemplateEntry("webaudio-synth-v2", {
     size: [700, 400],
     scaling: 0.25,
   }),
@@ -192,7 +200,7 @@ const UnitView = (props: {
       >
         <UnitFrame
           unitId={props.unitAssignment.unitId}
-          pageUri={props.unitAssignment.template.pagePath}
+          pageUrl={props.unitAssignment.template.pageUrl}
           destUnitId={props.destUnitId}
           hostSystem={appModel.hostSystem}
           style={
@@ -335,7 +343,7 @@ const App = () => {
   presetScenes.setupScenePreset1();
   return (
     <div class="w-dvw h-dvh flex-vc gap-4">
-      <div>app2-solid 2010</div>
+      <div>app2-solid 2118</div>
       <div class="flex-h gap-4">
         {appModel.state.scene.lanes.map((lane) => (
           <LaneView lane={lane} />

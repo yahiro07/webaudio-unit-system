@@ -22,9 +22,11 @@ const _IFrameExp0 = () => {
 };
 
 const IFrameExp1 = () => {
-  const baseUrl =
-    "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@main/packages/__development/units-oss-js/drum-machine/du10-drum-machine/web/";
+  // const baseUrl =
+  //   "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@main/packages/__development/units-oss-js/drum-machine/du10-drum-machine/web/";
 
+  const baseUrl =
+    "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu1-instrument/";
   let iframe: HTMLIFrameElement | undefined;
   onMount(async () => {
     if (!iframe) return;
