@@ -26,13 +26,13 @@ type UnitTemplate = {
   name: string;
   repositoryUrl: string;
   category?: UnitCategoryHint;
-  size?: [number, number];
+  size: string;
   scaling?: number;
 };
 
 function createUnitTemplateEntry(
   catalogKey: CatalogKey,
-  attrs?: { scaling?: number; size?: [number, number] },
+  attrs?: { scaling?: number },
 ): UnitTemplate {
   const unit = unitInventories[catalogKey] as UnitInventorySpec | undefined;
   if (!unit) {
@@ -45,6 +45,7 @@ function createUnitTemplateEntry(
     name: unit.name,
     repositoryUrl: unit.repositoryUrl,
     category: unit.category,
+    size: unit.preferredSize,
     ...attrs,
   };
 }
@@ -56,28 +57,22 @@ const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("mu4Keyboard", { scaling: 0.6 }),
   createUnitTemplateEntry("mu5Visualizer", { scaling: 0.6 }),
   createUnitTemplateEntry("drumMachine", {
-    size: [800, 500],
     scaling: 0.2,
   }),
   createUnitTemplateEntry("additive", {
-    size: [800, 500],
     scaling: 0.2,
   }),
   createUnitTemplateEntry("koodori", {
-    size: [800, 500],
     scaling: 0.2,
   }),
   createUnitTemplateEntry("bc010", {
-    size: [750, 500],
     scaling: 0.25,
   }),
   createUnitTemplateEntry("webaudioTinysynthSimple", {
-    size: [520, 280],
     scaling: 0.4,
   }),
-  createUnitTemplateEntry("wasyn1", { size: [720, 360], scaling: 0.25 }),
+  createUnitTemplateEntry("wasyn1", { scaling: 0.25 }),
   createUnitTemplateEntry("webaudioSynthV2", {
-    size: [700, 400],
     scaling: 0.25,
   }),
 ];
@@ -207,14 +202,7 @@ const UnitView = (props: {
           pageUrl={props.unitAssignment.template.pageUrl}
           destUnitId={props.destUnitId}
           hostSystem={appModel.hostSystem}
-          style={
-            props.unitAssignment.template.size
-              ? {
-                  width: `${props.unitAssignment.template.size[0]}px`,
-                  height: `${props.unitAssignment.template.size[1]}px`,
-                }
-              : undefined
-          }
+          frameSize={props.unitAssignment.template.size}
         />
       </div>
     </div>
