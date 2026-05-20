@@ -1,16 +1,14 @@
 import fs from "node:fs";
 import path from "node:path";
+import type { Connect } from "vite";
 import { ResolvedUnitEntry } from "../common/internal-types";
 import { getContentType } from "../common/unit-url-helpers";
 
 export function createDevServerMiddleware(
   resolvedUnitEntries: ResolvedUnitEntry[],
-) {
+): Connect.NextHandleFunction {
   const resolvedUnitEntriesMap = Object.fromEntries(
-    Object.entries(resolvedUnitEntries).map(([catalogKey, entry]) => [
-      catalogKey,
-      entry,
-    ]),
+    resolvedUnitEntries.map((entry) => [entry.catalogKey, entry]),
   );
   return async (req, res, next) => {
     console.log("requested", req.url);
