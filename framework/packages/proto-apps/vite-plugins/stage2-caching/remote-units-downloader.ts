@@ -3,8 +3,8 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
-import { UnitCacheEntry } from "./internal-types";
-import { parseRemoteUnitUrl } from "./unit-url-helpers";
+import { UnitCacheEntry } from "../common/internal-types";
+import { parseRemoteUnitUrl } from "../common/unit-url-helpers";
 
 const execFileAsync = promisify(execFile);
 

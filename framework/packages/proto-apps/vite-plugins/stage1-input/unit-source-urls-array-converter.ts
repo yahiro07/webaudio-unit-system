@@ -1,5 +1,5 @@
-import { UnitSourceUrls } from "./types";
-import { createSegmentsDecoder } from "./unit-url-helpers";
+import { UnitSourceUrls } from "../common/types";
+import { createSegmentsDecoder } from "../common/unit-url-helpers";
 
 function createUnitSourceUrlsDictionaryFromArray(
   unitSourceUrlsArray: string[],

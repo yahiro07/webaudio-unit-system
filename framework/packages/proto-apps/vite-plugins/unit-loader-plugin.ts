@@ -1,17 +1,17 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin, ResolvedConfig } from "vite";
-import { ResolvedUnitEntriesMap } from "./internal-types";
-import { createRemoteUnitCacheStore } from "./remote-unit-cache-store";
-import { UnitInventoriesJson, UnitSourceUrls } from "./types";
-import { createResolvedUnitEntries } from "./unit-entry-resolver";
-import { writeSummariesJsonToFile } from "./unit-inventories-generator";
-import { formatUnitSourceUrlsToDictionary } from "./unit-source-urls-array-converter";
+import { ResolvedUnitEntriesMap } from "./common/internal-types";
+import { UnitInventoriesJson, UnitSourceUrls } from "./common/types";
 import {
   checkFileExists,
   checkUnitSourceUrlFormat,
   getContentType,
-} from "./unit-url-helpers";
+} from "./common/unit-url-helpers";
+import { createResolvedUnitEntries } from "./stage1-input/unit-entry-resolver";
+import { formatUnitSourceUrlsToDictionary } from "./stage1-input/unit-source-urls-array-converter";
+import { createRemoteUnitCacheStore } from "./stage2-caching/remote-unit-cache-store";
+import { writeSummariesJsonToFile } from "./stage3-generate-info/unit-inventories-generator";
 
 export function unitLoaderPlugin(options: {
   unitSourceUrls: UnitSourceUrls | string[];

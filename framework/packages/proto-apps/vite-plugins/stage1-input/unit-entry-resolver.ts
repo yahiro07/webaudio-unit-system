@@ -1,9 +1,9 @@
 import path from "node:path";
-import { ResolvedUnitEntry } from "./internal-types";
+import { ResolvedUnitEntry } from "../common/internal-types";
 import {
   extractDirectTargetUrl,
   mapUnitUrlToBucketAndPieceNames,
-} from "./unit-url-helpers";
+} from "../common/unit-url-helpers";
 
 function mapUrlToResolvedUnitEntry(
   catalogKey: string,

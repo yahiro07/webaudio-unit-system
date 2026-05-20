@@ -1,11 +1,11 @@
-import { ResolvedUnitEntry, UnitCacheEntry } from "./internal-types";
+import { ResolvedUnitEntry, UnitCacheEntry } from "../common/internal-types";
+import { UnitInventoriesJson, UnitSourceUrls } from "../common/types";
+import { generateSummariesJson } from "../stage3-generate-info/unit-inventories-generator";
 import {
   createRemoteUnitCacheStorageIo,
   RemoteUnitCacheStorageIo,
 } from "./remote-unit-cache-storage-io";
 import { downloadUnitsFromRemote } from "./remote-units-downloader";
-import { UnitInventoriesJson, UnitSourceUrls } from "./types";
-import { generateSummariesJson } from "./unit-inventories-generator";
 
 export type RemoteUnitCacheStore = {
   updateCachedContents(
