@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { UnitMetadata } from "../../wus-unit-types/unit-metadata";
-import { UnitInventoriesJson } from "./unit-inventory-types";
+import { UnitInventoriesJson } from "./types";
 
 export type RemoteUnitCacheStorageIo = {
   readPreviousUnitSourceUrlsInput(): Promise<

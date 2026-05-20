@@ -1,18 +1,9 @@
 import path from "node:path";
+import { ResolvedUnitEntry } from "./internal-types";
 import {
   extractDirectTargetUrl,
   mapUnitUrlToBucketAndPieceNames,
 } from "./unit-url-helpers";
-
-export type ResolvedUnitEntry = {
-  catalogKey: string;
-  sourceUrlSpec: string;
-} & (
-  | { kind: "cache" | "file" | "public"; folderPath: string }
-  | { kind: "direct"; targetUrl: string }
-);
-
-export type ResolvedUnitEntriesMap = Record<string, ResolvedUnitEntry>;
 
 function mapUrlToResolvedUnitEntry(
   catalogKey: string,

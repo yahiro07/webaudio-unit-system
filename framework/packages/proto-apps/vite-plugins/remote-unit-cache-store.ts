@@ -4,13 +4,13 @@ import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
 import { unitSourceUrls } from "../app2-solid/src/unit-source-urls";
+import { ResolvedUnitEntry } from "./internal-types";
 import {
   createRemoteUnitCacheStorageIo,
   RemoteUnitCacheStorageIo,
 } from "./remote-unit-cache-storage-io";
-import { ResolvedUnitEntry } from "./unit-entry-resolver";
+import { UnitInventoriesJson } from "./types";
 import { generateSummariesJson } from "./unit-inventories-generator";
-import { UnitInventoriesJson } from "./unit-inventory-types";
 import {
   mapUnitUrlToBucketAndPieceNames,
   parseRemoteUnitUrl,

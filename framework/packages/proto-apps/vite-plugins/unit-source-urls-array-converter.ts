@@ -1,4 +1,4 @@
-import { UnitSourceUrls } from "./unit-inventories-generator";
+import { UnitSourceUrls } from "./types";
 import { createSegmentsDecoder } from "./unit-url-helpers";
 
 function createUnitSourceUrlsDictionaryFromArray(

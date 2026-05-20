@@ -1,16 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin, ResolvedConfig } from "vite";
+import { ResolvedUnitEntriesMap } from "./internal-types";
 import { createRemoteUnitCacheStore } from "./remote-unit-cache-store";
-import {
-  createResolvedUnitEntries,
-  ResolvedUnitEntriesMap,
-} from "./unit-entry-resolver";
-import {
-  UnitSourceUrls,
-  writeSummariesJsonToFile,
-} from "./unit-inventories-generator";
-import { UnitInventoriesJson } from "./unit-inventory-types";
+import { UnitInventoriesJson, UnitSourceUrls } from "./types";
+import { createResolvedUnitEntries } from "./unit-entry-resolver";
+import { writeSummariesJsonToFile } from "./unit-inventories-generator";
 import { formatUnitSourceUrlsToDictionary } from "./unit-source-urls-array-converter";
 import { checkUnitSourceUrlFormat } from "./unit-url-helpers";
 
