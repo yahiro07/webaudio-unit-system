@@ -66,6 +66,16 @@ function createUnitFolderPathMap(
   );
 }
 
+function checkUnitSourceUrlFormat(url: string) {
+  const heads = ["http://", "https://", "file://"];
+  if (!heads.some((head) => url.startsWith(head))) {
+    throw new Error(`Unsupported URL format for unit source: ${url}`);
+  }
+  if (!url.endsWith("/")) {
+    throw new Error(`Unit source URL should end with '/': ${url}`);
+  }
+}
+
 async function checkFileExists(filePath: string): Promise<boolean> {
   return fs.promises
     .stat(filePath)
@@ -95,6 +105,7 @@ export function unitLoaderPlugin(options: {
       const unitSourceUrls = formatUnitSourceUrlsToDictionary(
         options.unitSourceUrls,
       );
+      Object.values(unitSourceUrls).forEach(checkUnitSourceUrlFormat);
       const res =
         await remoteUnitCacheStore.updateCachedContents(unitSourceUrls);
       inventoriesJson = res.inventoriesJson;
