@@ -68,3 +68,27 @@ export function createScreenRecorder(): ScreenRecorder {
     },
   };
 }
+
+export function openVideoInNewTab(blob: Blob) {
+  const videoUrl = URL.createObjectURL(blob);
+  const newTab = window.open("", "_blank");
+  if (newTab) {
+    newTab.document.write(`
+      <!DOCTYPE html>
+      <html lang="ja">
+      <head>
+        <title>video playback</title>
+        <style>
+          body { background: #121212; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+          video { max-width: 80%; max-height: 70vh; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+          h2 { margin-bottom: 10px; font-size: 20px; color: #aaa; }
+        </style>
+      </head>
+      <body>
+        <video src="${videoUrl}" controls autoplay loop></video>
+      </body>
+      </html>
+    `);
+    newTab.document.close();
+  }
+}

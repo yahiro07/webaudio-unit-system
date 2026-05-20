@@ -5,7 +5,7 @@ import { Button } from "@wus/mo-solid/components/button";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createStore } from "solid-js/store";
 import catalog from "../unit-inventories.json";
-import { createScreenRecorder } from "./screen-recorder";
+import { createScreenRecorder, openVideoInNewTab } from "./screen-recorder";
 
 const screenRecorder = createScreenRecorder();
 
@@ -56,6 +56,7 @@ const uiActions = {
       onComplete(recordedBlob) {
         console.log("Recording completed", recordedBlob);
         uiActions.setPlayState(false);
+        openVideoInNewTab(recordedBlob);
       },
     });
   },
