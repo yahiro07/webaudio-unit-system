@@ -54,8 +54,8 @@ const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("mu3-effect", { scaling: 0.6 }),
   createUnitTemplateEntry("mu4-keyboard", { scaling: 0.6 }),
   createUnitTemplateEntry("mu5-visualizer", { scaling: 0.6 }),
-  createUnitTemplateEntry("drum-machine", {
-    scaling: 0.2,
+  createUnitTemplateEntry("my-drum-machine", {
+    scaling: 0.3,
   }),
   createUnitTemplateEntry("additive", {
     scaling: 0.2,
