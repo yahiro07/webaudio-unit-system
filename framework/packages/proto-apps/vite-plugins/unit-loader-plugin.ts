@@ -7,43 +7,11 @@ import { UnitInventoriesJson, UnitSourceUrls } from "./types";
 import { createResolvedUnitEntries } from "./unit-entry-resolver";
 import { writeSummariesJsonToFile } from "./unit-inventories-generator";
 import { formatUnitSourceUrlsToDictionary } from "./unit-source-urls-array-converter";
-import { checkUnitSourceUrlFormat } from "./unit-url-helpers";
-
-function getContentType(filePath: string): string {
-  switch (path.extname(filePath).toLowerCase()) {
-    case ".html":
-      return "text/html; charset=utf-8";
-    case ".js":
-    case ".mjs":
-      return "text/javascript; charset=utf-8";
-    case ".css":
-      return "text/css; charset=utf-8";
-    case ".json":
-      return "application/json; charset=utf-8";
-    case ".svg":
-      return "image/svg+xml";
-    case ".png":
-      return "image/png";
-    case ".jpg":
-    case ".jpeg":
-      return "image/jpeg";
-    case ".gif":
-      return "image/gif";
-    case ".wasm":
-      return "application/wasm";
-    case ".map":
-      return "application/json; charset=utf-8";
-    default:
-      return "application/octet-stream";
-  }
-}
-
-async function checkFileExists(filePath: string): Promise<boolean> {
-  return fs.promises
-    .stat(filePath)
-    .then(() => true)
-    .catch(() => false);
-}
+import {
+  checkFileExists,
+  checkUnitSourceUrlFormat,
+  getContentType,
+} from "./unit-url-helpers";
 
 export function unitLoaderPlugin(options: {
   unitSourceUrls: UnitSourceUrls | string[];
