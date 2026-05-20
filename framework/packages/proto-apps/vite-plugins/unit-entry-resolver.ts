@@ -17,7 +17,14 @@ function mapUrlToResolvedUnitEntry(
   } else if (url.startsWith("https://") || url.startsWith("http://")) {
     const { bucketName, pieceName } = mapUnitUrlToBucketAndPieceNames(url);
     const folderPath = path.join(unitsCacheFolderPath, bucketName, pieceName);
-    return { catalogKey, sourceUrlSpec, kind: "cache", folderPath };
+    return {
+      catalogKey,
+      sourceUrlSpec,
+      kind: "cache",
+      folderPath,
+      bucketName,
+      pieceName,
+    };
   } else if (url.startsWith("file:///")) {
     const folderPath = url.replace("file:///", "/");
     return { catalogKey, sourceUrlSpec, kind: "file", folderPath };
