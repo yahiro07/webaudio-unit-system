@@ -57,7 +57,7 @@ const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("my-drum-machine", {
     scaling: 0.3,
   }),
-  createUnitTemplateEntry("debugLH3000", {scaling: 0.2}),
+  // createUnitTemplateEntry("debugLH3000", {scaling: 0.2}),
   createUnitTemplateEntry("additive", {
     scaling: 0.2,
   }),

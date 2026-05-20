@@ -114,6 +114,19 @@ async function fetchUnitMeta(
   );
 }
 
+function getLoaderPageUrl(
+  catalogKey: string,
+  resolvedUnitEntry: ResolvedUnitEntry,
+): string {
+  if (resolvedUnitEntry.kind === "public") {
+    return `${resolvedUnitEntry.sourceUrlSpec}index.html`;
+  } else if (resolvedUnitEntry.kind === "direct") {
+    return `${resolvedUnitEntry.targetUrl}index.html`;
+  } else {
+    return `/inventory-units/${catalogKey}/index.html`;
+  }
+}
+
 let counter = 1;
 
 function createUnitInventorySpec(
@@ -128,7 +141,7 @@ function createUnitInventorySpec(
     canonicalPageId: "OMIT_AT_THIS_POINT_" + (counter++).toString(),
     ...meta,
     originalPageUrl: `${pageFolderUrl}index.html`,
-    loaderPageUrl: `/inventory-units/${catalogKey}/index.html`,
+    loaderPageUrl: getLoaderPageUrl(catalogKey, resolvedUnitEntry),
   };
 }
 

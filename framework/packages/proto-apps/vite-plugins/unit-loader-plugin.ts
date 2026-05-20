@@ -111,36 +111,6 @@ export function unitLoaderPlugin(options: {
 
           const resolvedUnitEntry = resolvedUnitEntries[catalogKey];
           if (resolvedUnitEntry && pathInUnit) {
-            if (resolvedUnitEntry.kind === "direct") {
-              const targetUrl = new URL(
-                pathInUnit,
-                resolvedUnitEntry.targetUrl,
-              ).toString();
-              console.log(
-                "--> redirected by unit loader:",
-                req.url,
-                "-->",
-                targetUrl,
-              );
-              res.statusCode = 307;
-              res.setHeader("Location", targetUrl);
-              res.end();
-              return;
-            }
-            if (resolvedUnitEntry.kind === "public") {
-              req.url = path.posix.join(
-                resolvedUnitEntry.sourceUrlSpec,
-                pathInUnit,
-              );
-              console.log(
-                "--> rewritten by unit loader:",
-                requestPath,
-                "-->",
-                req.url,
-              );
-              next();
-              return;
-            }
             if (
               resolvedUnitEntry.kind === "cache" ||
               resolvedUnitEntry.kind === "file"
@@ -169,10 +139,10 @@ export function unitLoaderPlugin(options: {
       for (const [catalogKey, resolvedUnitEntry] of Object.entries(
         resolvedUnitEntries,
       )) {
-        if (
-          resolvedUnitEntry.kind === "direct" ||
-          resolvedUnitEntry.kind === "public"
-        ) {
+        if (resolvedUnitEntry.kind === "public") {
+          continue;
+        }
+        if (resolvedUnitEntry.kind === "direct") {
           continue;
         }
         const outputFolderPath = path.resolve(
