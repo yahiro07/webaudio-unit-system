@@ -155,11 +155,11 @@ export async function generateSummariesJson(
   return summariesJson;
 }
 
-export function writeSummariesJsonToFile(
+export async function writeSummariesJsonToFile(
   summariesJson: UnitInventoriesJson,
   outputPath: string,
 ) {
   const outputContent = `${JSON.stringify(summariesJson, null, 2)}\n`;
-  fs.writeFileSync(outputPath, outputContent);
+  await fs.promises.writeFile(outputPath, outputContent);
   console.log(`generated ${outputPath}`);
 }

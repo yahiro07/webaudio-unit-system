@@ -78,7 +78,7 @@ export function unitLoaderPlugin(options: {
       });
       const summaryFileExists = await checkFileExists(summaryOutputPath);
       if (hasUpdated || !summaryFileExists) {
-        writeSummariesJsonToFile(inventoriesJson, summaryOutputPath);
+        await writeSummariesJsonToFile(inventoriesJson, summaryOutputPath);
       }
     },
   };
@@ -98,7 +98,7 @@ export function unitLoaderPlugin(options: {
       server.middlewares.use(middleware);
     },
     async writeBundle(outputOptions) {
-      writeBundleImpl(
+      await writeBundleImpl(
         resolvedUnitEntries,
         config.root,
         outputOptions.dir ?? "dist",
