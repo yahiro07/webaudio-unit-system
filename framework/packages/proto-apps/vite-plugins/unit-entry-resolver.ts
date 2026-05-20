@@ -4,32 +4,35 @@ import {
   mapUnitUrlToBucketAndPieceNames,
 } from "./unit-url-helpers";
 
-export type ResolvedUnitEntry = { sourceUrlSpec: string } & (
-  | { kind: "cache"; folderPath: string }
-  | { kind: "file"; folderPath: string }
-  | { kind: "public"; folderPath: string }
+export type ResolvedUnitEntry = {
+  catalogKey: string;
+  sourceUrlSpec: string;
+} & (
+  | { kind: "cache" | "file" | "public"; folderPath: string }
   | { kind: "direct"; targetUrl: string }
 );
 
-export type ResolvedUnitEntries = Record<string, ResolvedUnitEntry>;
+export type ResolvedUnitEntriesMap = Record<string, ResolvedUnitEntry>;
 
 function mapUrlToResolvedUnitEntry(
+  catalogKey: string,
   url: string,
   unitsCacheFolderPath: string,
 ): ResolvedUnitEntry {
+  const sourceUrlSpec = url;
   if (url.startsWith("/@direct/")) {
     const targetUrl = extractDirectTargetUrl(url);
-    return { kind: "direct", sourceUrlSpec: url, targetUrl };
+    return { catalogKey, sourceUrlSpec, kind: "direct", targetUrl };
   } else if (url.startsWith("https://") || url.startsWith("http://")) {
     const { bucketName, pieceName } = mapUnitUrlToBucketAndPieceNames(url);
     const folderPath = path.join(unitsCacheFolderPath, bucketName, pieceName);
-    return { kind: "cache", folderPath, sourceUrlSpec: url };
+    return { catalogKey, sourceUrlSpec, kind: "cache", folderPath };
   } else if (url.startsWith("file:///")) {
     const folderPath = url.replace("file:///", "/");
-    return { kind: "file", folderPath, sourceUrlSpec: url };
+    return { catalogKey, sourceUrlSpec, kind: "file", folderPath };
   } else if (url.startsWith("/")) {
     const folderPath = `./public${url}`;
-    return { kind: "public", sourceUrlSpec: url, folderPath };
+    return { catalogKey, sourceUrlSpec, kind: "public", folderPath };
   } else {
     throw new Error(`Unsupported URL format for unit source: ${url}`);
   }
@@ -38,11 +41,10 @@ function mapUrlToResolvedUnitEntry(
 export function createResolvedUnitEntries(
   sourceUrls: Record<string, string>,
   unitsCacheFolderPath: string,
-): ResolvedUnitEntries {
+): ResolvedUnitEntry[] {
   return Object.fromEntries(
     Object.entries(sourceUrls).map(([catalogKey, url]) => [
-      catalogKey,
-      mapUrlToResolvedUnitEntry(url, unitsCacheFolderPath),
+      mapUrlToResolvedUnitEntry(catalogKey, url, unitsCacheFolderPath),
     ]),
   );
 }

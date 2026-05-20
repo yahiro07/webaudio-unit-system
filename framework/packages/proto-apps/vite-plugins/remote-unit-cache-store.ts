@@ -8,7 +8,7 @@ import {
   createRemoteUnitCacheStorageIo,
   RemoteUnitCacheStorageIo,
 } from "./remote-unit-cache-storage-io";
-import { ResolvedUnitEntries } from "./unit-entry-resolver";
+import { ResolvedUnitEntry } from "./unit-entry-resolver";
 import { generateSummariesJson } from "./unit-inventories-generator";
 import { UnitInventoriesJson } from "./unit-inventory-types";
 import {
@@ -21,7 +21,7 @@ const execFileAsync = promisify(execFile);
 export type RemoteUnitCacheStore = {
   updateCachedContents(
     unitSourceUrls: Record<string, string>,
-    resolvedUnitEntries: ResolvedUnitEntries,
+    resolvedUnitEntries: ResolvedUnitEntry[],
   ): Promise<{
     updated: boolean;
     inventoriesJson: UnitInventoriesJson;
@@ -172,7 +172,7 @@ async function checkUnitSourceUrlsChanged(
 
 async function updateCachedContentsImpl(
   cacheStorageIo: RemoteUnitCacheStorageIo,
-  resolvedUnitEntries: ResolvedUnitEntries,
+  resolvedUnitEntries: ResolvedUnitEntry[],
   unitEntriesToCache: UnitCacheEntry[],
   cacheFolderPath: string,
 ): Promise<UnitInventoriesJson> {

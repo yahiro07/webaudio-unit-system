@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { UnitMetadata } from "../../wus-unit-types/unit-metadata";
-import { ResolvedUnitEntries, ResolvedUnitEntry } from "./unit-entry-resolver";
+import { ResolvedUnitEntry } from "./unit-entry-resolver";
 import { UnitInventoriesJson, UnitInventorySpec } from "./unit-inventory-types";
 
 export type UnitSourceUrls = Record<string, string>;
@@ -95,7 +95,6 @@ async function readUnitMetaFromUrl(url: string): Promise<UnitMetadata> {
 }
 
 async function fetchUnitMeta(
-  catalogKey: string,
   resolvedUnitEntry: ResolvedUnitEntry,
 ): Promise<UnitMetadata> {
   if (
@@ -110,30 +109,27 @@ async function fetchUnitMeta(
     return readUnitMetaFromUrl(url);
   }
   throw new Error(
-    `Unsupported resolved unit entry kind for ${catalogKey}: ${(resolvedUnitEntry as any).kind}`,
+    `Unsupported resolved unit entry kind for ${resolvedUnitEntry.catalogKey}: ${(resolvedUnitEntry as any).kind}`,
   );
 }
 
-function getLoaderPageUrl(
-  catalogKey: string,
-  resolvedUnitEntry: ResolvedUnitEntry,
-): string {
+function getLoaderPageUrl(resolvedUnitEntry: ResolvedUnitEntry): string {
   if (resolvedUnitEntry.kind === "public") {
     return `${resolvedUnitEntry.sourceUrlSpec}index.html`;
   } else if (resolvedUnitEntry.kind === "direct") {
     return `${resolvedUnitEntry.targetUrl}index.html`;
   } else {
-    return `/inventory-units/${catalogKey}/index.html`;
+    return `/inventory-units/${resolvedUnitEntry.catalogKey}/index.html`;
   }
 }
 
 let counter = 1;
 
 function createUnitInventorySpec(
-  catalogKey: string,
   resolvedUnitEntry: ResolvedUnitEntry,
   meta: UnitMetadata,
 ): UnitInventorySpec {
+  const catalogKey = resolvedUnitEntry.catalogKey;
   const pageFolderUrl = resolvedUnitEntry.sourceUrlSpec;
   return {
     catalogKey,
@@ -141,24 +137,22 @@ function createUnitInventorySpec(
     canonicalPageId: "OMIT_AT_THIS_POINT_" + (counter++).toString(),
     ...meta,
     originalPageUrl: `${pageFolderUrl}index.html`,
-    loaderPageUrl: getLoaderPageUrl(catalogKey, resolvedUnitEntry),
+    loaderPageUrl: getLoaderPageUrl(resolvedUnitEntry),
   };
 }
 
 export async function generateSummariesJson(
-  resolvedUnitEntries: ResolvedUnitEntries,
+  resolvedUnitEntries: ResolvedUnitEntry[],
 ): Promise<UnitInventoriesJson> {
   const inventorySpecs = await Promise.all(
-    Object.entries(resolvedUnitEntries).map(
-      async ([catalogKey, resolvedUnitEntry]) => {
-        const meta = await fetchUnitMeta(catalogKey, resolvedUnitEntry);
-        return createUnitInventorySpec(catalogKey, resolvedUnitEntry, meta);
-      },
-    ),
+    resolvedUnitEntries.map(async (resolvedUnitEntry) => {
+      const meta = await fetchUnitMeta(resolvedUnitEntry);
+      return createUnitInventorySpec(resolvedUnitEntry, meta);
+    }),
   );
   checkPageIdsUnique(inventorySpecs);
   const summariesJson: UnitInventoriesJson = Object.fromEntries(
-    inventorySpecs.map((units) => [units.catalogKey, units]),
+    inventorySpecs.map((spec) => [spec.catalogKey, spec]),
   );
   return summariesJson;
 }

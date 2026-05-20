@@ -4,7 +4,7 @@ import type { Plugin, ResolvedConfig } from "vite";
 import { createRemoteUnitCacheStore } from "./remote-unit-cache-store";
 import {
   createResolvedUnitEntries,
-  ResolvedUnitEntries,
+  ResolvedUnitEntriesMap,
 } from "./unit-entry-resolver";
 import {
   UnitSourceUrls,
@@ -61,7 +61,7 @@ export function unitLoaderPlugin(options: {
   let config: ResolvedConfig;
   const remoteUnitCacheStore = createRemoteUnitCacheStore(cacheFolderPath);
   let inventoriesJson: UnitInventoriesJson;
-  let resolvedUnitEntries: ResolvedUnitEntries;
+  let resolvedUnitEntriesMap: ResolvedUnitEntriesMap;
 
   return {
     name: "unit-loader",
@@ -76,9 +76,15 @@ export function unitLoaderPlugin(options: {
 
       const unitsCacheFolderPath =
         remoteUnitCacheStore.getUnitsCacheFolderPath();
-      resolvedUnitEntries = createResolvedUnitEntries(
+      const resolvedUnitEntries = createResolvedUnitEntries(
         unitSourceUrls,
         unitsCacheFolderPath,
+      );
+      resolvedUnitEntriesMap = Object.fromEntries(
+        Object.entries(resolvedUnitEntries).map(([catalogKey, entry]) => [
+          catalogKey,
+          entry,
+        ]),
       );
       console.log(resolvedUnitEntries);
 
@@ -111,7 +117,7 @@ export function unitLoaderPlugin(options: {
           const catalogKey = segments[0];
           const pathInUnit = segments.slice(1).join("/");
 
-          const resolvedUnitEntry = resolvedUnitEntries[catalogKey];
+          const resolvedUnitEntry = resolvedUnitEntriesMap[catalogKey];
           if (resolvedUnitEntry && pathInUnit) {
             if (
               resolvedUnitEntry.kind === "cache" ||
@@ -139,7 +145,7 @@ export function unitLoaderPlugin(options: {
     },
     async writeBundle(outputOptions) {
       for (const [catalogKey, resolvedUnitEntry] of Object.entries(
-        resolvedUnitEntries,
+        resolvedUnitEntriesMap,
       )) {
         if (resolvedUnitEntry.kind === "public") {
           continue;
