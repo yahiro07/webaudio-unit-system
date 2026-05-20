@@ -57,12 +57,13 @@ const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("my-drum-machine", {
     scaling: 0.3,
   }),
+  createUnitTemplateEntry("debugLH3000", {scaling: 0.2}),
   createUnitTemplateEntry("additive", {
     scaling: 0.2,
   }),
-  createUnitTemplateEntry("wavicle", {
-    scaling: 0.25,
-  }),
+  // createUnitTemplateEntry("wavicle", {
+  //   scaling: 0.25,
+  // }),
   createUnitTemplateEntry("bc-010", {
     scaling: 0.25,
   }),
@@ -263,7 +264,7 @@ const SlotView = (props: {
   destUnitId?: string;
 }) => {
   return (
-    <div class="w-[200px] h-[120px] bg-gray-100">
+    <div class="w-[200px] h-[120px] bg-gray-100 overflow-y-auto">
       {props.slot.unitAssignment ? (
         <UnitView
           unitAssignment={props.slot.unitAssignment}
