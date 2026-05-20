@@ -74,9 +74,11 @@ export function unitLoaderPlugin(options: {
       );
       Object.values(unitSourceUrls).forEach(checkUnitSourceUrlFormat);
 
+      const unitsCacheFolderPath =
+        remoteUnitCacheStore.getUnitsCacheFolderPath();
       resolvedUnitEntries = createResolvedUnitEntries(
         unitSourceUrls,
-        remoteUnitCacheStore,
+        unitsCacheFolderPath,
       );
       console.log(resolvedUnitEntries);
 

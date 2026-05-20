@@ -1,4 +1,4 @@
-import { RemoteUnitCacheStore } from "./remote-unit-cache-store";
+import path from "node:path";
 import {
   extractDirectTargetUrl,
   mapUnitUrlToBucketAndPieceNames,
@@ -15,17 +15,14 @@ export type ResolvedUnitEntries = Record<string, ResolvedUnitEntry>;
 
 function mapUrlToResolvedUnitEntry(
   url: string,
-  remoteUnitCacheStore: RemoteUnitCacheStore,
+  unitsCacheFolderPath: string,
 ): ResolvedUnitEntry {
   if (url.startsWith("/@direct/")) {
     const targetUrl = extractDirectTargetUrl(url);
     return { kind: "direct", sourceUrlSpec: url, targetUrl };
   } else if (url.startsWith("https://") || url.startsWith("http://")) {
     const { bucketName, pieceName } = mapUnitUrlToBucketAndPieceNames(url);
-    const folderPath = remoteUnitCacheStore.resolveCachedUnitFolderPath(
-      bucketName,
-      pieceName,
-    );
+    const folderPath = path.join(unitsCacheFolderPath, bucketName, pieceName);
     return { kind: "cache", folderPath, sourceUrlSpec: url };
   } else if (url.startsWith("file:///")) {
     const folderPath = url.replace("file:///", "/");
@@ -40,12 +37,12 @@ function mapUrlToResolvedUnitEntry(
 
 export function createResolvedUnitEntries(
   sourceUrls: Record<string, string>,
-  remoteUnitCacheStore: RemoteUnitCacheStore,
+  unitsCacheFolderPath: string,
 ): ResolvedUnitEntries {
   return Object.fromEntries(
     Object.entries(sourceUrls).map(([catalogKey, url]) => [
       catalogKey,
-      mapUrlToResolvedUnitEntry(url, remoteUnitCacheStore),
+      mapUrlToResolvedUnitEntry(url, unitsCacheFolderPath),
     ]),
   );
 }

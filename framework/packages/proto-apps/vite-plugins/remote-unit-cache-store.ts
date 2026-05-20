@@ -26,7 +26,7 @@ export type RemoteUnitCacheStore = {
     updated: boolean;
     inventoriesJson: UnitInventoriesJson;
   }>;
-  resolveCachedUnitFolderPath(bucketName: string, pieceName: string): string;
+  getUnitsCacheFolderPath(): string;
 };
 
 function checkDeepEquality(obj1: any, obj2: any): boolean {
@@ -217,8 +217,8 @@ export function createRemoteUnitCacheStore(
       );
       return { updated: true, inventoriesJson };
     },
-    resolveCachedUnitFolderPath(bucketName, pieceName) {
-      return cacheStorageIo.resolveCachedUnitFolderPath(bucketName, pieceName);
+    getUnitsCacheFolderPath() {
+      return cacheStorageIo.getUnitsCacheFolderPath();
     },
   };
 }
