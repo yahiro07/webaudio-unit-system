@@ -65,7 +65,7 @@ const UnitsSolid = () => {
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-synth-v2/index.html"
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/bc-010/index.html"
         // pageUrl={catalog.wavicle.loaderPageUrl}
-        frameSize={[620, 320]}
+        frameSize={[800, 450]}
         // frameSize={catalog.wavicle.preferredSize}
         destUnitId="uf_effect"
         hostSystem={hostSystem}
