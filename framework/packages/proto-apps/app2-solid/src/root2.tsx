@@ -61,14 +61,14 @@ const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("additive", {
     scaling: 0.2,
   }),
-  // createUnitTemplateEntry("wavicle", {
-  //   scaling: 0.25,
-  // }),
+  createUnitTemplateEntry("wavicle", {
+    scaling: 0.25,
+  }),
   createUnitTemplateEntry("bc-010", {
     scaling: 0.25,
   }),
   createUnitTemplateEntry("webaudio-tinysynth-simple", {
-    scaling: 0.4,
+    scaling: 0.35,
   }),
   createUnitTemplateEntry("wasyn-1", { scaling: 0.25 }),
   createUnitTemplateEntry("webaudio-synth-v2", {
