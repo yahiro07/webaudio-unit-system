@@ -263,7 +263,7 @@ const SlotView = (props: {
   destUnitId?: string;
 }) => {
   return (
-    <div class="w-[200px] h-[120px] border border-[#888]">
+    <div class="w-[200px] h-[120px] bg-gray-100">
       {props.slot.unitAssignment ? (
         <UnitView
           unitAssignment={props.slot.unitAssignment}
@@ -312,7 +312,7 @@ const LaneView = (props: { lane: Lane }) => {
     },
   };
   return (
-    <div class="flex-v">
+    <div class="flex-v gap-1">
       <SlotView
         slot={props.lane.effectSlot}
         canAdd={vm.canAddEffect()}
@@ -335,7 +335,7 @@ const LaneView = (props: { lane: Lane }) => {
 const App = () => {
   // presetScenes.setupScenePreset1();
   return (
-    <div class="w-dvw h-dvh flex-vc gap-4">
+    <div class="w-dvw h-dvh flex-vc gap-4 text-[#888]">
       {/* <div>app2-solid 2136</div> */}
       <div class="flex-h gap-4">
         {appModel.state.scene.lanes.map((lane) => (
