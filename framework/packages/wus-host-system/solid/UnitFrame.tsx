@@ -51,7 +51,7 @@ export const UnitFrame = (props: {
   inputNotes?: number[];
   hostSystem: HostSystem;
   className?: string;
-  style?: JSX.DOMAttributes<HTMLIFrameElement>["style"];
+  style?: JSX.CSSProperties;
   frameSize?: FrameSizeInput;
 }) => {
   console.log(`loading ${props.pageUrl}`);
@@ -61,6 +61,14 @@ export const UnitFrame = (props: {
   const startTime = Date.now();
 
   const frameSize = createMemo(() => normalizeFrameSize(props.frameSize));
+
+  const mergedStyle = createMemo<JSX.CSSProperties>(() => {
+    const size = frameSize();
+    return {
+      ...(props.style ?? {}),
+      ...(size ? { width: `${size.width}px`, height: `${size.height}px` } : {}),
+    };
+  });
 
   createEffect(() => {
     const bpm = props.hostBpm;
@@ -159,7 +167,9 @@ export const UnitFrame = (props: {
         : `${bootstrap}${html}`;
       iframe.srcdoc = content;
     });
-    return <iframe class={props.className} style={props.style} ref={iframe} />;
+    return (
+      <iframe class={props.className} style={mergedStyle()} ref={iframe} />
+    );
   } else {
     let iframe: HTMLIFrameElement | undefined;
     onMount(async () => {
@@ -170,11 +180,9 @@ export const UnitFrame = (props: {
     return (
       <iframe
         class={props.className}
-        style={props.style}
+        style={mergedStyle()}
         src={props.pageUrl}
         ref={iframe}
-        width={frameSize()?.width}
-        height={frameSize()?.height}
       />
     );
   }

@@ -7,7 +7,6 @@ import { FeNumberSliderBox } from "@wus/mo-solid/components/number-slider-box";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { onCleanup } from "solid-js";
 import { createStore } from "solid-js/store";
-import catalog from "../unit-inventories.json";
 
 type StoreState = {
   bpm: number;
@@ -60,13 +59,13 @@ const UnitsSolid = () => {
       />
       <UnitFrame
         unitId="uf_instrument"
-        // pageUrl="http://localhost:3000/index.html"
+        pageUrl="http://localhost:3000/index.html"
         // pageUrl="/local-units/mu1-instrument/index.html"
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/koodori/index.html"
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-synth-v2/index.html"
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/bc-010/index.html"
-        pageUrl={catalog.wavicle.loaderPageUrl}
-        frameSize={[700, 394]}
+        // pageUrl={catalog.wavicle.loaderPageUrl}
+        frameSize={[620, 320]}
         // frameSize={catalog.wavicle.preferredSize}
         destUnitId="uf_effect"
         hostSystem={hostSystem}
