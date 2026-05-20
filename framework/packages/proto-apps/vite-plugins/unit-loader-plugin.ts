@@ -1,17 +1,16 @@
-import fs from "node:fs";
-import path from "node:path";
 import type { Plugin, ResolvedConfig } from "vite";
-import { ResolvedUnitEntriesMap } from "./common/internal-types";
+import { ResolvedUnitEntry } from "./common/internal-types";
 import { UnitInventoriesJson, UnitSourceUrls } from "./common/types";
 import {
   checkFileExists,
   checkUnitSourceUrlFormat,
-  getContentType,
 } from "./common/unit-url-helpers";
 import { createResolvedUnitEntries } from "./stage1-input/unit-entry-resolver";
 import { formatUnitSourceUrlsToDictionary } from "./stage1-input/unit-source-urls-array-converter";
 import { createRemoteUnitCacheStore } from "./stage2-caching/remote-unit-cache-store";
 import { writeSummariesJsonToFile } from "./stage3-generate-info/unit-inventories-generator";
+import { createDevServerMiddleware } from "./stage4-dev-serving/dev-server-middleware";
+import { writeBundleImpl } from "./stage5-build/write-bundle-impl";
 
 export function unitLoaderPlugin(options: {
   unitSourceUrls: UnitSourceUrls | string[];
@@ -24,7 +23,7 @@ export function unitLoaderPlugin(options: {
   let config: ResolvedConfig;
   const remoteUnitCacheStore = createRemoteUnitCacheStore(cacheFolderPath);
   let inventoriesJson: UnitInventoriesJson;
-  let resolvedUnitEntriesMap: ResolvedUnitEntriesMap;
+  let resolvedUnitEntries: ResolvedUnitEntry[];
 
   return {
     name: "unit-loader",
@@ -39,16 +38,11 @@ export function unitLoaderPlugin(options: {
 
       const unitsCacheFolderPath =
         remoteUnitCacheStore.getUnitsCacheFolderPath();
-      const resolvedUnitEntries = createResolvedUnitEntries(
+      resolvedUnitEntries = createResolvedUnitEntries(
         unitSourceUrls,
         unitsCacheFolderPath,
       );
-      resolvedUnitEntriesMap = Object.fromEntries(
-        Object.entries(resolvedUnitEntries).map(([catalogKey, entry]) => [
-          catalogKey,
-          entry,
-        ]),
-      );
+
       console.log(resolvedUnitEntries);
 
       const res = await remoteUnitCacheStore.updateCachedContents(
@@ -63,70 +57,15 @@ export function unitLoaderPlugin(options: {
       }
     },
     configureServer(server) {
-      server.middlewares.use(async (req, res, next) => {
-        console.log("requested", req.url);
-        if (!req.url) {
-          next();
-          return;
-        }
-
-        const requestUrl = new URL(req.url, "http://localhost");
-        const requestPath = requestUrl.pathname;
-
-        if (requestPath.startsWith("/inventory-units/")) {
-          const segments = requestPath
-            .replace("/inventory-units/", "")
-            .split("/");
-          const catalogKey = segments[0];
-          const pathInUnit = segments.slice(1).join("/");
-
-          const resolvedUnitEntry = resolvedUnitEntriesMap[catalogKey];
-          if (resolvedUnitEntry && pathInUnit) {
-            if (
-              resolvedUnitEntry.kind === "cache" ||
-              resolvedUnitEntry.kind === "file"
-            ) {
-              const targetFilePath = path.join(
-                resolvedUnitEntry.folderPath,
-                pathInUnit,
-              );
-              console.log(
-                "--> resolved by unit loader:",
-                req.url,
-                "-->",
-                targetFilePath,
-              );
-              res.statusCode = 200;
-              res.setHeader("Content-Type", getContentType(targetFilePath));
-              fs.createReadStream(targetFilePath).pipe(res);
-              return;
-            }
-          }
-        }
-        next();
-      });
+      const middleware = createDevServerMiddleware(resolvedUnitEntries);
+      server.middlewares.use(middleware);
     },
     async writeBundle(outputOptions) {
-      for (const [catalogKey, resolvedUnitEntry] of Object.entries(
-        resolvedUnitEntriesMap,
-      )) {
-        if (resolvedUnitEntry.kind === "public") {
-          continue;
-        }
-        if (resolvedUnitEntry.kind === "direct") {
-          continue;
-        }
-        const outputFolderPath = path.resolve(
-          config.root,
-          outputOptions.dir ?? "dist",
-          "inventory-units",
-          catalogKey,
-        );
-        await fs.promises.mkdir(outputFolderPath, { recursive: true });
-        await fs.promises.cp(resolvedUnitEntry.folderPath, outputFolderPath, {
-          recursive: true,
-        });
-      }
+      writeBundleImpl(
+        resolvedUnitEntries,
+        config.root,
+        outputOptions.dir ?? "dist",
+      );
     },
   };
 }
