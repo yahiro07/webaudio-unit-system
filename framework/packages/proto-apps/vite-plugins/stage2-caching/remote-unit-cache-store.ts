@@ -1,11 +1,8 @@
+import { checkDeepEquality } from "../common/common-helper";
 import { ResolvedUnitEntry, UnitCacheEntry } from "../common/internal-types";
 import { UnitSourceUrls } from "../common/types";
 import { RemoteUnitCacheStorageIo } from "./remote-unit-cache-storage-io";
 import { downloadUnitsFromRemote } from "./remote-units-downloader";
-
-function checkDeepEquality(obj1: any, obj2: any): boolean {
-  return JSON.stringify(obj1) === JSON.stringify(obj2);
-}
 
 export async function checkUnitSourceUrlsChanged(
   cacheStorageIo: RemoteUnitCacheStorageIo,

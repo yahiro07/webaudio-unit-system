@@ -155,6 +155,23 @@ export async function generateSummariesJson(
   return summariesJson;
 }
 
+export async function readSummariesJsonFromFile(
+  filePath: string,
+): Promise<UnitInventoriesJson | undefined> {
+  try {
+    const content = await fs.promises.readFile(filePath, "utf8");
+    const json = JSON.parse(content) as UnitInventoriesJson;
+    return json;
+  } catch (error) {
+    if ((error as any).code === "ENOENT") {
+      return undefined;
+    }
+    throw new Error(
+      `Failed to read summaries JSON from file ${filePath}: ${error}`,
+    );
+  }
+}
+
 export async function writeSummariesJsonToFile(
   summariesJson: UnitInventoriesJson,
   outputPath: string,
