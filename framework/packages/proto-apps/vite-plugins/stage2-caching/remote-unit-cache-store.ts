@@ -1,6 +1,7 @@
 import { ResolvedUnitEntry, UnitCacheEntry } from "../common/internal-types";
 import { UnitSourceUrls } from "../common/types";
 import { RemoteUnitCacheStorageIo } from "./remote-unit-cache-storage-io";
+import { downloadUnitsFromRemote } from "./remote-units-downloader";
 
 function checkDeepEquality(obj1: any, obj2: any): boolean {
   return JSON.stringify(obj1) === JSON.stringify(obj2);
@@ -45,25 +46,22 @@ export async function enumerateUnitEntriesToCache(
   );
 }
 
-type checkNeedRemoteUnitsCachingResult =
-  | { needUpdate: false }
-  | { needUpdate: true; unitEntriesToCache: UnitCacheEntry[] };
-
-export async function checkNeedRemoteUnitsCaching(
+export async function cacheRemoteUnitsIfNeed(
   cacheStorageIo: RemoteUnitCacheStorageIo,
-  unitSourceUrls: UnitSourceUrls,
   resolvedUnitEntries: ResolvedUnitEntry[],
-): Promise<checkNeedRemoteUnitsCachingResult> {
-  const urlsChanged = await checkUnitSourceUrlsChanged(
-    cacheStorageIo,
-    unitSourceUrls,
-  );
+  cacheFolderPath: string,
+): Promise<boolean> {
   const unitEntriesToCache = await enumerateUnitEntriesToCache(
     resolvedUnitEntries,
     cacheStorageIo,
   );
-  if (!urlsChanged && unitEntriesToCache.length === 0) {
-    return { needUpdate: false };
+  if (unitEntriesToCache.length > 0) {
+    await downloadUnitsFromRemote(
+      unitEntriesToCache,
+      cacheStorageIo.writeCachedPiece,
+      cacheFolderPath,
+    );
+    return true;
   }
-  return { needUpdate: true, unitEntriesToCache };
+  return false;
 }

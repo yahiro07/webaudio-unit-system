@@ -9,8 +9,7 @@ import {
 import { createResolvedUnitEntries } from "./stage1-input/unit-entry-resolver";
 import { formatUnitSourceUrlsToDictionary } from "./stage1-input/unit-source-urls-array-converter";
 import { createRemoteUnitCacheStorageIo } from "./stage2-caching/remote-unit-cache-storage-io";
-import { checkNeedRemoteUnitsCaching } from "./stage2-caching/remote-unit-cache-store";
-import { downloadUnitsFromRemote } from "./stage2-caching/remote-units-downloader";
+import { cacheRemoteUnitsIfNeed } from "./stage2-caching/remote-unit-cache-store";
 import {
   generateSummariesJson,
   writeSummariesJsonToFile,
@@ -45,28 +44,19 @@ export function unitLoaderPlugin(options: {
     },
     async processStage2() {
       //stage2 - check and download remote units if needed
-      const res = await checkNeedRemoteUnitsCaching(
+      return await cacheRemoteUnitsIfNeed(
         cacheStorageIo,
-        unitSourceUrls,
         resolvedUnitEntries,
+        cacheFolderPath,
       );
-      if (res.needUpdate) {
-        await downloadUnitsFromRemote(
-          res.unitEntriesToCache,
-          cacheStorageIo.writeCachedPiece,
-          cacheFolderPath,
-        );
-        return true;
-      }
-      return false;
     },
-    async processStage3(hasUpdated: boolean) {
+    async processStage3(cacheUpdated: boolean) {
       //stage3 - generate summaries json and write to file if needed
       const inventoriesJson = await iife(async () => {
         const cachedInventoriesJson =
           await cacheStorageIo.readCachedSummariesJson();
 
-        if (!hasUpdated && cachedInventoriesJson) {
+        if (!cacheUpdated && cachedInventoriesJson) {
           return cachedInventoriesJson;
         } else {
           const inventoriesJson =
@@ -77,11 +67,22 @@ export function unitLoaderPlugin(options: {
         }
       });
       const summaryFileExists = await checkFileExists(summaryOutputPath);
-      if (hasUpdated || !summaryFileExists) {
+      if (cacheUpdated || !summaryFileExists) {
         await writeSummariesJsonToFile(inventoriesJson, summaryOutputPath);
       }
     },
   };
+
+  let startingFlowPromise: Promise<void> | undefined;
+  async function runStartingFlow() {
+    async function createStaringFlowPromise() {
+      startingFlow.processStage1();
+      const cacheUpdated = await startingFlow.processStage2();
+      await startingFlow.processStage3(cacheUpdated);
+    }
+    startingFlowPromise ??= createStaringFlowPromise();
+    await startingFlowPromise;
+  }
 
   return {
     name: "unit-loader",
@@ -89,20 +90,25 @@ export function unitLoaderPlugin(options: {
       config = _config;
     },
     async buildStart() {
-      startingFlow.processStage1();
-      const hasUpdated = await startingFlow.processStage2();
-      await startingFlow.processStage3(hasUpdated);
+      console.log("buildStart...");
+      await runStartingFlow();
+      console.log("buildStart...done");
     },
-    configureServer(server) {
+    async configureServer(server) {
+      console.log("configureServer...");
+      await runStartingFlow();
       const middleware = createDevServerMiddleware(resolvedUnitEntries);
       server.middlewares.use(middleware);
+      console.log("configureServer...done");
     },
     async writeBundle(outputOptions) {
+      console.log("writeBundle");
       await writeBundleImpl(
         resolvedUnitEntries,
         config.root,
         outputOptions.dir ?? "dist",
       );
+      console.log("writeBundle...done");
     },
   };
 }

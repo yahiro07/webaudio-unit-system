@@ -40,9 +40,7 @@ export function createResolvedUnitEntries(
   sourceUrls: Record<string, string>,
   unitsCacheFolderPath: string,
 ): ResolvedUnitEntry[] {
-  return Object.fromEntries(
-    Object.entries(sourceUrls).map(([catalogKey, url]) => [
-      mapUrlToResolvedUnitEntry(catalogKey, url, unitsCacheFolderPath),
-    ]),
+  return Object.entries(sourceUrls).map(([catalogKey, url]) =>
+    mapUrlToResolvedUnitEntry(catalogKey, url, unitsCacheFolderPath),
   );
 }
