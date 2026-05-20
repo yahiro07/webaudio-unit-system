@@ -6,58 +6,97 @@ import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createStore } from "solid-js/store";
 import catalog from "../unit-inventories.json";
 
+type ScreenRecorder = {
+  doRecording(options: {
+    recordingDurationSec: number;
+    onStart?: () => void;
+    onComplete?: (recordedBlob: Blob) => void;
+  }): void;
+};
+
+function createScreenRecorder(): ScreenRecorder {
+  return {
+    doRecording(options) {},
+  };
+}
+
+const screenRecorder = createScreenRecorder();
+
 type StoreState = {
   bpm: number;
   playing: boolean;
   notes: number[];
 };
 
-function createAppModel() {
-  const audioContext = new AudioContext();
-  const hostSystem = createHostSystem(audioContext);
+const audioContext = new AudioContext();
+const hostSystem = createHostSystem(audioContext);
+
+function createAppStore() {
   const [state, setState] = createStore<StoreState>({
     bpm: 120,
     playing: false,
     notes: [],
   });
-  const actions = {
-    noteOn(noteNumber: number) {
-      setState("notes", (prev) => [...prev, noteNumber]);
-    },
-    noteOff(noteNumber: number) {
-      setState("notes", (prev) => prev.filter((p) => p !== noteNumber));
-    },
-    togglePlayState() {
-      setState("playing", (prev) => !prev);
-    },
-    setBpm(bpm: number) {
-      setState("bpm", bpm);
-    },
-  };
-  return { hostSystem, state, setState, ...actions };
+  return { state, setState };
 }
-const appModel = createAppModel();
+const store = createAppStore();
+
+const uiActions = {
+  noteOn(noteNumber: number) {
+    store.setState("notes", (prev) => [...prev, noteNumber]);
+  },
+  noteOff(noteNumber: number) {
+    store.setState("notes", (prev) => prev.filter((p) => p !== noteNumber));
+  },
+  togglePlayState() {
+    store.setState("playing", (prev) => !prev);
+  },
+  setPlayState(playing: boolean) {
+    store.setState("playing", playing);
+  },
+  setBpm(bpm: number) {
+    store.setState("bpm", bpm);
+  },
+  startRecording() {
+    //1 bars
+    const recordingDurationSec = (60 / store.state.bpm) * 4;
+    screenRecorder.doRecording({
+      recordingDurationSec,
+      onStart() {
+        console.log("Recording started");
+        uiActions.setPlayState(true);
+      },
+      onComplete(recordedBlob) {
+        console.log("Recording completed", recordedBlob);
+        uiActions.setPlayState(false);
+      },
+    });
+  },
+};
 
 const ctDrumMachine = catalog["drum-machine"];
 
 const PageRoot = () => {
   return (
-    <div class="w-dvw h-dvh flex-vc">
+    <div class="w-dvw h-dvh flex-vc gap-4">
       <div>screen recording dev</div>
       <UnitFrame
         destUnitId="$output"
         unitId="unit2"
         pageUrl={ctDrumMachine.loaderPageUrl}
         frameSize={ctDrumMachine.preferredSize}
-        hostSystem={appModel.hostSystem}
-        hostPlaying={appModel.state.playing}
-        hostBpm={appModel.state.bpm}
+        hostSystem={hostSystem}
+        hostPlaying={store.state.playing}
+        hostBpm={store.state.bpm}
       />
-      <Button
-        text="play"
-        active={appModel.state.playing}
-        onClick={appModel.togglePlayState}
-      />
+      <div class="flex-h gap-2">
+        <Button
+          text="play"
+          active={store.state.playing}
+          onClick={uiActions.togglePlayState}
+        />
+        <Button text="record" onClick={uiActions.startRecording} />
+      </div>
     </div>
   );
 };
