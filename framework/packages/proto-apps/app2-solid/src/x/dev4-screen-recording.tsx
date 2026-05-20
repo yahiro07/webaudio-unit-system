@@ -5,20 +5,7 @@ import { Button } from "@wus/mo-solid/components/button";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createStore } from "solid-js/store";
 import catalog from "../unit-inventories.json";
-
-type ScreenRecorder = {
-  doRecording(options: {
-    recordingDurationSec: number;
-    onStart?: () => void;
-    onComplete?: (recordedBlob: Blob) => void;
-  }): void;
-};
-
-function createScreenRecorder(): ScreenRecorder {
-  return {
-    doRecording(options) {},
-  };
-}
+import { createScreenRecorder } from "./screen-recorder";
 
 const screenRecorder = createScreenRecorder();
 
