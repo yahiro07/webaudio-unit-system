@@ -70,6 +70,8 @@ const UnitsSolid = () => {
         destUnitId="uf_effect"
         hostSystem={hostSystem}
         // frameSize="800,500"
+        hostBpm={vm.state().bpm}
+        hostPlaying={vm.state().playing}
       />
       <UnitFrame
         unitId="uf_keyboard"
