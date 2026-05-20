@@ -1,12 +1,20 @@
 import { UnitSourceUrls } from "./unit-inventories-generator";
+import { createSegmentsDecoder } from "./unit-url-helpers";
 
 function createUnitSourceUrlsDictionaryFromArray(
   unitSourceUrlsArray: string[],
 ): UnitSourceUrls {
   const items = unitSourceUrlsArray
     .map((url) => {
-      const segments = url.replace(/\/$/, "").split("/");
-      const catalogKey = segments.at(-1);
+      if (url.startsWith("/@direct/")) {
+        const segDecoder = createSegmentsDecoder(url, {
+          removeHeadSlash: true,
+        });
+        const catalogKey = segDecoder.getSegmentAt(1);
+        return { catalogKey, url };
+      }
+      const segDecoder = createSegmentsDecoder(url, { removeTailSlash: true });
+      const catalogKey = segDecoder.getSegmentAt(-1);
       if (catalogKey) {
         return { catalogKey, url } as const;
       }

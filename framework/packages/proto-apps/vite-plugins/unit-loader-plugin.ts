@@ -1,17 +1,18 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin, ResolvedConfig } from "vite";
+import { createRemoteUnitCacheStore } from "./remote-unit-cache-store";
 import {
-  createRemoteUnitCacheStore,
-  RemoteUnitCacheStore,
-} from "./remote-unit-cache-store";
+  createResolvedUnitEntries,
+  ResolvedUnitEntries,
+} from "./unit-entry-resolver";
 import {
   UnitSourceUrls,
   writeSummariesJsonToFile,
 } from "./unit-inventories-generator";
 import { UnitInventoriesJson } from "./unit-inventory-types";
 import { formatUnitSourceUrlsToDictionary } from "./unit-source-urls-array-converter";
-import { mapUnitUrlToBucketAndPieceNames } from "./unit-url-helpers";
+import { checkUnitSourceUrlFormat } from "./unit-url-helpers";
 
 function getContentType(filePath: string): string {
   switch (path.extname(filePath).toLowerCase()) {
@@ -42,40 +43,6 @@ function getContentType(filePath: string): string {
   }
 }
 
-function createUnitFolderPathMap(
-  sourceUrls: Record<string, string>,
-  remoteUnitCacheStore: RemoteUnitCacheStore,
-): Record<string, string> {
-  return Object.fromEntries(
-    Object.entries(sourceUrls).map(([catalogKey, url]) => {
-      if (url.startsWith("https://") || url.startsWith("http://")) {
-        const { bucketName, pieceName } = mapUnitUrlToBucketAndPieceNames(url);
-        const cachedFolderPath =
-          remoteUnitCacheStore.resolveCachedUnitFolderPath(
-            bucketName,
-            pieceName,
-          );
-        return [catalogKey, cachedFolderPath];
-      } else if (url.startsWith("file:///")) {
-        const filePath = url.replace("file:///", "/");
-        return [catalogKey, filePath];
-      } else {
-        throw new Error(`Unsupported URL format for unit source: ${url}`);
-      }
-    }),
-  );
-}
-
-function checkUnitSourceUrlFormat(url: string) {
-  const heads = ["http://", "https://", "file://"];
-  if (!heads.some((head) => url.startsWith(head))) {
-    throw new Error(`Unsupported URL format for unit source: ${url}`);
-  }
-  if (!url.endsWith("/")) {
-    throw new Error(`Unit source URL should end with '/': ${url}`);
-  }
-}
-
 async function checkFileExists(filePath: string): Promise<boolean> {
   return fs.promises
     .stat(filePath)
@@ -94,7 +61,7 @@ export function unitLoaderPlugin(options: {
   let config: ResolvedConfig;
   const remoteUnitCacheStore = createRemoteUnitCacheStore(cacheFolderPath);
   let inventoriesJson: UnitInventoriesJson;
-  let unitFolderPathMap: Record<string, string>;
+  let resolvedUnitEntries: ResolvedUnitEntries;
 
   return {
     name: "unit-loader",
@@ -106,14 +73,20 @@ export function unitLoaderPlugin(options: {
         options.unitSourceUrls,
       );
       Object.values(unitSourceUrls).forEach(checkUnitSourceUrlFormat);
-      const res =
-        await remoteUnitCacheStore.updateCachedContents(unitSourceUrls);
-      inventoriesJson = res.inventoriesJson;
-      const summaryFileExists = await checkFileExists(summaryOutputPath);
-      unitFolderPathMap = createUnitFolderPathMap(
+
+      resolvedUnitEntries = createResolvedUnitEntries(
         unitSourceUrls,
         remoteUnitCacheStore,
       );
+      console.log(resolvedUnitEntries);
+
+      const res = await remoteUnitCacheStore.updateCachedContents(
+        unitSourceUrls,
+        resolvedUnitEntries,
+      );
+      inventoriesJson = res.inventoriesJson;
+      const summaryFileExists = await checkFileExists(summaryOutputPath);
+
       if (res.updated || !summaryFileExists) {
         writeSummariesJsonToFile(inventoriesJson, summaryOutputPath);
       }
@@ -130,33 +103,56 @@ export function unitLoaderPlugin(options: {
         const requestPath = requestUrl.pathname;
 
         if (requestPath.startsWith("/inventory-units/")) {
+          debugger;
+
           const segments = requestPath
             .replace("/inventory-units/", "")
             .split("/");
           const catalogKey = segments[0];
           const pathInUnit = segments.slice(1).join("/");
-          const folderPath = unitFolderPathMap[catalogKey];
-          if (folderPath && pathInUnit) {
-            const targetFilePath = path.join(folderPath, pathInUnit);
-            console.log(
-              "--> resolved by unit loader:",
-              req.url,
-              "-->",
-              targetFilePath,
-            );
-            res.statusCode = 200;
-            res.setHeader("Content-Type", getContentType(targetFilePath));
-            fs.createReadStream(targetFilePath).pipe(res);
-            return;
+
+          const resolvedUnitEntry = resolvedUnitEntries[catalogKey];
+          if (resolvedUnitEntry && pathInUnit) {
+            if (resolvedUnitEntry.kind === "direct") {
+              return;
+            }
+            if (resolvedUnitEntry.kind === "public") {
+              return;
+            }
+            if (
+              resolvedUnitEntry.kind === "cache" ||
+              resolvedUnitEntry.kind === "file"
+            ) {
+              const targetFilePath = path.join(
+                resolvedUnitEntry.folderPath,
+                pathInUnit,
+              );
+              console.log(
+                "--> resolved by unit loader:",
+                req.url,
+                "-->",
+                targetFilePath,
+              );
+              res.statusCode = 200;
+              res.setHeader("Content-Type", getContentType(targetFilePath));
+              fs.createReadStream(targetFilePath).pipe(res);
+              return;
+            }
           }
         }
         next();
       });
     },
     async writeBundle(outputOptions) {
-      for (const [catalogKey, folderPath] of Object.entries(
-        unitFolderPathMap,
+      for (const [catalogKey, resolvedUnitEntry] of Object.entries(
+        resolvedUnitEntries,
       )) {
+        if (
+          resolvedUnitEntry.kind === "direct" ||
+          resolvedUnitEntry.kind === "public"
+        ) {
+          continue;
+        }
         const outputFolderPath = path.resolve(
           config.root,
           outputOptions.dir ?? "dist",
@@ -164,7 +160,9 @@ export function unitLoaderPlugin(options: {
           catalogKey,
         );
         await fs.promises.mkdir(outputFolderPath, { recursive: true });
-        await fs.promises.cp(folderPath, outputFolderPath, { recursive: true });
+        await fs.promises.cp(resolvedUnitEntry.folderPath, outputFolderPath, {
+          recursive: true,
+        });
       }
     },
   };

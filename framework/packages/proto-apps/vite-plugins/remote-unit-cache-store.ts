@@ -3,10 +3,12 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
+import { unitSourceUrls } from "../app2-solid/src/unit-source-urls";
 import {
   createRemoteUnitCacheStorageIo,
   RemoteUnitCacheStorageIo,
 } from "./remote-unit-cache-storage-io";
+import { ResolvedUnitEntries } from "./unit-entry-resolver";
 import { generateSummariesJson } from "./unit-inventories-generator";
 import { UnitInventoriesJson } from "./unit-inventory-types";
 import {
@@ -17,7 +19,10 @@ import {
 const execFileAsync = promisify(execFile);
 
 export type RemoteUnitCacheStore = {
-  updateCachedContents(unitSourceUrls: Record<string, string>): Promise<{
+  updateCachedContents(
+    unitSourceUrls: Record<string, string>,
+    resolvedUnitEntries: ResolvedUnitEntries,
+  ): Promise<{
     updated: boolean;
     inventoriesJson: UnitInventoriesJson;
   }>;
@@ -167,7 +172,7 @@ async function checkUnitSourceUrlsChanged(
 
 async function updateCachedContentsImpl(
   cacheStorageIo: RemoteUnitCacheStorageIo,
-  unitSourceUrls: Record<string, string>,
+  resolvedUnitEntries: ResolvedUnitEntries,
   unitEntriesToCache: UnitCacheEntry[],
   cacheFolderPath: string,
 ): Promise<UnitInventoriesJson> {
@@ -177,14 +182,7 @@ async function updateCachedContentsImpl(
     cacheFolderPath,
   );
 
-  const summariesJson = await generateSummariesJson(
-    unitSourceUrls,
-    (pageFolderUrl) => {
-      const { bucketName, pieceName } =
-        mapUnitUrlToBucketAndPieceNames(pageFolderUrl);
-      return cacheStorageIo.readCachedPieceMeta(bucketName, pieceName);
-    },
-  );
+  const summariesJson = await generateSummariesJson(resolvedUnitEntries);
   await cacheStorageIo.writePreviousUnitSourceUrlsInput(unitSourceUrls);
   await cacheStorageIo.writeCachedSummariesJson(summariesJson);
   return summariesJson;
@@ -195,7 +193,7 @@ export function createRemoteUnitCacheStore(
 ): RemoteUnitCacheStore {
   const cacheStorageIo = createRemoteUnitCacheStorageIo(cacheFolderPath);
   return {
-    async updateCachedContents(unitSourceUrls) {
+    async updateCachedContents(unitSourceUrls, resolvedUnitEntries) {
       const urlsChanged = await checkUnitSourceUrlsChanged(
         cacheStorageIo,
         unitSourceUrls,
@@ -213,7 +211,7 @@ export function createRemoteUnitCacheStore(
       }
       const inventoriesJson = await updateCachedContentsImpl(
         cacheStorageIo,
-        unitSourceUrls,
+        resolvedUnitEntries,
         unitEntriesToCache,
         cacheFolderPath,
       );

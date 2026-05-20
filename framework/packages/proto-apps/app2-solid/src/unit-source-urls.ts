@@ -33,9 +33,12 @@ export const unitSourceUrls_array = [
   `${repositoryRoot}framework/packages/units-dev/dist/mu1-instrument/`,
   `${repositoryRoot}framework/packages/units-dev/dist/mu2-sequencer/`,
   `${repositoryRoot}framework/packages/units-dev/dist/mu3-effect/`,
-  `${repositoryRoot}framework/packages/units-dev/dist/mu4-keyboard/`,
-  `${repositoryRoot}framework/packages/units-dev/dist/mu5-visualizer/`,
+  // `${repositoryRoot}framework/packages/units-dev/dist/mu4-keyboard/`,
+  // `${repositoryRoot}framework/packages/units-dev/dist/mu5-visualizer/`,
   // `${wusSelfUnitsLocalRoot}dist/wavicle/`,
+  `/@direct/debugLH3000/http://localhost:3000/`,
+  `/local-units/mu4-keyboard/`,
+  `/local-units/mu5-visualizer/`,
 ];
 
 console.log("unit sources:", unitSourceUrls_array);
