@@ -107,8 +107,8 @@ const PageRoot = () => {
           <UnitFrame
             destUnitId="$output"
             unitId="mu1"
-            // pageUrl={catalog.wavicle.loaderPageUrl}
-            pageUrl={catalog.additive.loaderPageUrl}
+            pageUrl={catalog.wavicle.loaderPageUrl}
+            // pageUrl={catalog.additive.loaderPageUrl}
             frameSize={commonSize}
             hostSystem={hostSystem}
           />

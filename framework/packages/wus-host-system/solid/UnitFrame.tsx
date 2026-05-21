@@ -53,6 +53,8 @@ export const UnitFrame = (props: {
   className?: string;
   style?: JSX.CSSProperties;
   frameSize?: FrameSizeInput;
+  iframeAttrs?: JSX.IframeHTMLAttributes<HTMLIFrameElement>;
+  onIframeMounted?(iframe: HTMLIFrameElement): void;
 }) => {
   console.log(`loading ${props.pageUrl}`);
   const [unitAgent, setUnitAgent] = createSignal<UnitAgentInHostSide>();
@@ -143,6 +145,7 @@ export const UnitFrame = (props: {
     let iframe: HTMLIFrameElement | undefined;
     onMount(async () => {
       if (!iframe) return;
+      props.onIframeMounted?.(iframe);
 
       const parentWindow = window as Window & {
         [HOST_INTERFACE_REGISTRY_KEY]?: Record<string, HostInterface>;
@@ -168,12 +171,18 @@ export const UnitFrame = (props: {
       iframe.srcdoc = content;
     });
     return (
-      <iframe class={props.className} style={mergedStyle()} ref={iframe} />
+      <iframe
+        class={props.className}
+        style={mergedStyle()}
+        ref={iframe}
+        {...props.iframeAttrs}
+      />
     );
   } else {
     let iframe: HTMLIFrameElement | undefined;
     onMount(async () => {
       if (!iframe) return;
+      props.onIframeMounted?.(iframe);
       const win = iframe.contentWindow;
       (win as any).hostInterface = hostInterface;
     });
@@ -183,6 +192,7 @@ export const UnitFrame = (props: {
         style={mergedStyle()}
         src={props.pageUrl}
         ref={iframe}
+        {...props.iframeAttrs}
       />
     );
   }
