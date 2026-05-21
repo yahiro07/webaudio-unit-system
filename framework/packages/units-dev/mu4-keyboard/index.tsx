@@ -1,5 +1,5 @@
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
-import { getHostInterface } from "@wus/unit-types";
+import { getHostInterface } from "wus-unit-types";
 import "@wus/mo/styles";
 import { seqNumbers } from "@wus/ax/array-utils";
 import { createStore } from "snap-store";

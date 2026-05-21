@@ -1,4 +1,4 @@
-import { UnitMetadata } from "@wus/unit-types";
+import { UnitMetadata } from "wus-unit-types";
 
 export type UnitSourceUrls = Record<string, string>;
 

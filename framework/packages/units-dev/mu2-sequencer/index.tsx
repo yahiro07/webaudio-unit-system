@@ -2,9 +2,9 @@
 
 import { seqNumbers } from "@wus/ax/array-utils";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
-import { getHostInterface } from "@wus/unit-types";
 import { createEffect } from "solid-js";
 import { createStore } from "solid-js/store";
+import { getHostInterface } from "wus-unit-types";
 import "@wus/mo/styles";
 import { createIntervalTimer } from "@wus/ax/timer-utils";
 import { Button } from "@wus/mo-solid/components/button";

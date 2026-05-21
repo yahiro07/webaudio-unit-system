@@ -1,4 +1,4 @@
-import { HostInterface } from "./unit-interfaces-2";
+import { HostInterface } from "./unit-interfaces";
 
 export function getHostInterface(): HostInterface | undefined {
   type WindowWithHostInterface = {

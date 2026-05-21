@@ -1,6 +1,6 @@
 import "@wus/mo/styles";
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
-import { getHostInterface } from "@wus/unit-types";
+import { getHostInterface } from "wus-unit-types";
 
 const hostInterface = getHostInterface();
 const audioContext = hostInterface?.audioContext ?? new AudioContext();

@@ -1,1 +1,1 @@
-export * from "@wus/unit-types";
+export * from "wus-unit-types";
