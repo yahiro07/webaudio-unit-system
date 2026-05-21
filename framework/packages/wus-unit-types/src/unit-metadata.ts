@@ -1,4 +1,4 @@
-import { UnitCategoryHint, UnitType } from "./unit-interfaces-2";
+import { UnitCategoryHint, UnitType } from "./unit-interfaces";
 
 export type UnitMetadata = {
   name: string;

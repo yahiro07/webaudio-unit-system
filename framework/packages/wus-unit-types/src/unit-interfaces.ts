@@ -53,6 +53,11 @@ export type PersistenceInterface = {
   loadState(state: object): void;
 };
 
+export type TransportHandlingInterface = {
+  processTickRange?(tickFrom: number, tickTo: number): void; //480PPQ based tick from song start
+  processStep?(stepIndex: number): void; //16th note based step from song start
+};
+
 export type DestinationUnitAgent = {
   queryPersistenceInterface(): PersistenceInterface | undefined;
   queryNoteInputInterface(): NoteInputInterface | undefined;
@@ -73,6 +78,7 @@ export type UnitAgent = {
   setMetaAttrs?(metaAttrs: MetaAttributes): void;
   persistence?: PersistenceInterface;
   noteInput?: NoteInputInterface;
+  transportHandling?: TransportHandlingInterface;
   extraCapabilities?: {
     instrumentMultiChannelsInterface?: InstrumentMultiChannelsInterface;
     assignableTonePlaybackInterface?: AssignableTonePlaybackInterface;
