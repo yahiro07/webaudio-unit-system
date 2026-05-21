@@ -16,11 +16,10 @@ export function createScreenRecorder(): ScreenRecorder {
         const stream = await navigator.mediaDevices.getDisplayMedia({
           preferCurrentTab: true,
           audio: true,
+          systemAudio: "exclude",
         } as DisplayMediaStreamOptions);
 
-        const mimeType = MediaRecorder.isTypeSupported("video/webm; codecs=vp9")
-          ? "video/webm; codecs=vp9"
-          : "video/webm";
+        const mimeType = "video/webm";
 
         const recorder = new MediaRecorder(stream, {
           mimeType,
