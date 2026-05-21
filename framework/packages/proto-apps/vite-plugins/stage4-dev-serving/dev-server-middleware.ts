@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Connect } from "vite";
+import { getContentType } from "../common/common-helper";
 import { ResolvedUnitEntry } from "../common/internal-types";
-import { getContentType } from "../common/unit-url-helpers";
 
 export function createDevServerMiddleware(
   resolvedUnitEntries: ResolvedUnitEntry[],

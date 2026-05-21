@@ -49,12 +49,12 @@ function createUnitTemplateEntry(
 }
 
 const unitTemplates: UnitTemplate[] = [
-  createUnitTemplateEntry("mu1-instrument", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu2-sequencer", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu3-effect", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu4-keyboard", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu5-visualizer", { scaling: 0.6 }),
-  createUnitTemplateEntry("my-drum-machine", {
+  createUnitTemplateEntry("mu1_instrument", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu2_sequencer", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu3_effect", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu4_keyboard", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu5_visualizer", { scaling: 0.6 }),
+  createUnitTemplateEntry("my_drum_machine", {
     scaling: 0.3,
   }),
   // createUnitTemplateEntry("debugLH3000", {scaling: 0.2}),
@@ -64,14 +64,14 @@ const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("wavicle", {
     scaling: 0.25,
   }),
-  createUnitTemplateEntry("bc-010", {
+  createUnitTemplateEntry("bc_010", {
     scaling: 0.25,
   }),
-  createUnitTemplateEntry("webaudio-tinysynth-simple", {
+  createUnitTemplateEntry("webaudio_tinysynth_simple", {
     scaling: 0.35,
   }),
-  createUnitTemplateEntry("wasyn-1", { scaling: 0.25 }),
-  createUnitTemplateEntry("webaudio-synth-v2", {
+  createUnitTemplateEntry("wasyn_1", { scaling: 0.25 }),
+  createUnitTemplateEntry("webaudio_synth_v2", {
     scaling: 0.25,
   }),
   createUnitTemplateEntry("koodori", {
@@ -183,7 +183,7 @@ const appModel = createAppModel();
 
 const presetScenes = {
   setupScenePreset1() {
-    appModel.actions.assignUnit("lane0-instrument", "mu1-instrument");
+    appModel.actions.assignUnit("lane0-instrument", "mu1_instrument");
   },
 };
 

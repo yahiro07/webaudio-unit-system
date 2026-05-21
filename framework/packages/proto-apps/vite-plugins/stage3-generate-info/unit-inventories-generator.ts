@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { UnitMetadata } from "../../../wus-unit-types/unit-metadata";
+import { UnitMetadata } from "../../../wus-host-system/contract";
 import { ResolvedUnitEntry } from "../common/internal-types";
 import { UnitInventoriesJson, UnitInventorySpec } from "../common/types";
 

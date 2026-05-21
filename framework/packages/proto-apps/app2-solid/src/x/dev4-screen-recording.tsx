@@ -65,9 +65,9 @@ const uiActions = {
   },
 };
 
-// const ctDrumMachine = catalog["drum-machine"];
+// const ctDrumMachine = catalog["drum_machine"];
 // const ctDrumMachine = catalog["koodori"];
-const ctDrumMachine = catalog["my-drum-machine"];
+const ctDrumMachine = catalog["my_drum_machine"];
 
 const PageRoot = () => {
   return (

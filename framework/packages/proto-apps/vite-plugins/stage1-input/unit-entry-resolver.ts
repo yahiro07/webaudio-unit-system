@@ -1,4 +1,5 @@
 import path from "node:path";
+import { normalizeCasing } from "../common/common-helper";
 import { ResolvedUnitEntry } from "../common/internal-types";
 import {
   extractDirectTargetUrl,
@@ -6,10 +7,11 @@ import {
 } from "../common/unit-url-helpers";
 
 function mapUrlToResolvedUnitEntry(
-  catalogKey: string,
+  catalogKeyInput: string,
   url: string,
   unitsCacheFolderPath: string,
 ): ResolvedUnitEntry {
+  const catalogKey = normalizeCasing(catalogKeyInput, "snake");
   const sourceUrlSpec = url;
   if (url.startsWith("/@direct/")) {
     const targetUrl = extractDirectTargetUrl(url);

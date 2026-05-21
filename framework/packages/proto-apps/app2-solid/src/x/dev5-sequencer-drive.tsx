@@ -8,7 +8,7 @@ import { Button } from "@wus/mo-solid/components/button";
 import { FeNumberSliderBox } from "@wus/mo-solid/components/number-slider-box";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createStore } from "solid-js/store";
-import unitInventories from "../unit-inventories.json";
+import catalog from "../unit-inventories.json";
 import { createScreenRecorder, openVideoInNewTab } from "./screen-recorder";
 
 const screenRecorder = createScreenRecorder();
@@ -76,16 +76,6 @@ const uiActions = {
   },
 };
 
-const catalog = {
-  myDrumMachine: unitInventories["my-drum-machine"],
-  mu1: unitInventories["mu1-instrument"],
-  mu2: unitInventories["mu2-sequencer"],
-  mu5: unitInventories["mu5-visualizer"],
-  drumMachine: unitInventories["drum-machine"],
-  koodori: unitInventories["koodori"],
-  wavicle: unitInventories["wavicle"],
-};
-
 const commonSize = [240, 150] as [number, number];
 
 const PageRoot = () => {
@@ -96,7 +86,7 @@ const PageRoot = () => {
           <UnitFrame
             destUnitId="$output"
             unitId="mu5"
-            pageUrl={catalog.mu5.loaderPageUrl}
+            pageUrl={catalog.mu5_visualizer.loaderPageUrl}
             frameSize={commonSize}
             hostSystem={hostSystem}
             className="w-full h-[180px]"
@@ -117,14 +107,15 @@ const PageRoot = () => {
           <UnitFrame
             destUnitId="$output"
             unitId="mu1"
-            pageUrl={catalog.wavicle.loaderPageUrl}
+            // pageUrl={catalog.wavicle.loaderPageUrl}
+            pageUrl={catalog.additive.loaderPageUrl}
             frameSize={commonSize}
             hostSystem={hostSystem}
           />
           <UnitFrame
             destUnitId="mu1"
             unitId="mu2"
-            pageUrl={catalog.mu2.loaderPageUrl}
+            pageUrl={catalog.mu2_sequencer.loaderPageUrl}
             frameSize={commonSize}
             hostBpm={store.state.bpm}
             hostPlaying={store.state.playing}
