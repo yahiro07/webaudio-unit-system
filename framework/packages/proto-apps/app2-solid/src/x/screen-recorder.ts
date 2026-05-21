@@ -15,7 +15,13 @@ export function createScreenRecorder(): ScreenRecorder {
       try {
         const stream = await navigator.mediaDevices.getDisplayMedia({
           preferCurrentTab: true,
-          audio: true,
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+            channelCount: 2,
+            sampleRate: 48000,
+          },
           systemAudio: "exclude",
         } as DisplayMediaStreamOptions);
 
@@ -23,6 +29,7 @@ export function createScreenRecorder(): ScreenRecorder {
 
         const recorder = new MediaRecorder(stream, {
           mimeType,
+          audioBitsPerSecond: 256000,
         });
 
         const chunks: Blob[] = [];
