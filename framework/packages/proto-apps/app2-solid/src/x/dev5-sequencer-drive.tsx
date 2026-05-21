@@ -86,7 +86,7 @@ const catalog = {
   wavicle: unitInventories["wavicle"],
 };
 
-const commonSize = [400, 200] as [number, number];
+const commonSize = [240, 150] as [number, number];
 
 const PageRoot = () => {
   return (

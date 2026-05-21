@@ -13,7 +13,7 @@ const wusCustomUnitsLocalRoot = new URL(
 // console.log({ repositoryRoot, wusCustomUnitsLocalRoot });
 
 export const unitSourceUrls_array = [
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r3/wavicle/",
+  // "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r3/wavicle/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/additive/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/drum-machine/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/wasyn-1/",
@@ -35,7 +35,7 @@ export const unitSourceUrls_array = [
   `${repositoryRoot}framework/packages/units-dev/dist/mu3-effect/`,
   // `${repositoryRoot}framework/packages/units-dev/dist/mu4-keyboard/`,
   // `${repositoryRoot}framework/packages/units-dev/dist/mu5-visualizer/`,
-  // `${wusSelfUnitsLocalRoot}dist/wavicle/`,
+  `${wusSelfUnitsLocalRoot}dist/wavicle/`,
   // `/@direct/debugLH3000/http://localhost:3000/`,
   `/local-units/mu4-keyboard/`,
   `/local-units/mu5-visualizer/`,
