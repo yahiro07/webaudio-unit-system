@@ -86,6 +86,8 @@ const catalog = {
   wavicle: unitInventories["wavicle"],
 };
 
+const commonSize = [400, 200] as [number, number];
+
 const PageRoot = () => {
   return (
     <div class="w-dvw h-dvh flex-vc gap-4">
@@ -95,6 +97,7 @@ const PageRoot = () => {
             destUnitId="$output"
             unitId="mu5"
             pageUrl={catalog.mu5.loaderPageUrl}
+            frameSize={commonSize}
             hostSystem={hostSystem}
             className="w-full h-[180px]"
           />
@@ -102,7 +105,7 @@ const PageRoot = () => {
             destUnitId="mu5"
             unitId="unit2"
             pageUrl={catalog.myDrumMachine.loaderPageUrl}
-            frameSize={catalog.myDrumMachine.preferredSize}
+            frameSize={commonSize}
             hostSystem={hostSystem}
             hostPlaying={store.state.playing}
             hostBpm={store.state.bpm}
@@ -114,14 +117,14 @@ const PageRoot = () => {
             destUnitId="$output"
             unitId="mu1"
             pageUrl={catalog.wavicle.loaderPageUrl}
-            frameSize={[520, 300]}
+            frameSize={commonSize}
             hostSystem={hostSystem}
           />
           <UnitFrame
             destUnitId="mu1"
             unitId="mu2"
             pageUrl={catalog.mu2.loaderPageUrl}
-            frameSize={[520, 200]}
+            frameSize={commonSize}
             hostBpm={store.state.bpm}
             hostPlaying={store.state.playing}
             hostSystem={hostSystem}
