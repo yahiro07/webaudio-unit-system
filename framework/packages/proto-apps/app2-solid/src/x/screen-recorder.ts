@@ -9,6 +9,19 @@ type ScreenRecorder = {
   }): void;
 };
 
+function checkMimeTypeSupport() {
+  const types = [
+    "video/webm; codecs=av1, opus",
+    "video/webm; codecs=vp9, opus",
+    "video/webm; codecs=vp8, opus",
+    "video/mp4; codecs=avc1",
+  ];
+  types.forEach((type) => {
+    console.log(`${type}: ${MediaRecorder.isTypeSupported(type)}`);
+  });
+}
+// checkMimeTypeSupport();
+
 export function createScreenRecorder(): ScreenRecorder {
   return {
     async doRecording(options) {
@@ -25,7 +38,12 @@ export function createScreenRecorder(): ScreenRecorder {
           systemAudio: "exclude",
         } as DisplayMediaStreamOptions);
 
-        const mimeType = "video/webm";
+        const mimeTypePreferred = "video/webm; codecs=av1, opus";
+        // const mimeTypePreferred = "video/mp4; codecs=avc3";
+        const mimeType = MediaRecorder.isTypeSupported(mimeTypePreferred)
+          ? mimeTypePreferred
+          : "video/webm";
+        console.log({ mimeType });
 
         const recorder = new MediaRecorder(stream, {
           mimeType,
