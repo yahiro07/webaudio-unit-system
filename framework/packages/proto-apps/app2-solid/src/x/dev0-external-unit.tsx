@@ -1,7 +1,4 @@
-import {
-  createAudioContextDestinationProxied,
-  UnitAgent,
-} from "@wus/host-system/host";
+import { UnitAgent } from "@wus/host-system/host";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { onMount } from "solid-js";
 
@@ -39,16 +36,13 @@ const IFrameExp1 = () => {
     const gainNode = audioContext.createGain();
     gainNode.gain.value = 0.1;
     gainNode.connect(audioContext.destination);
-    const innerAudioContext = createAudioContextDestinationProxied(
-      audioContext,
-      gainNode,
-    );
 
     setTimeout(() => {
       const win = iframe.contentWindow;
       if (!win) return;
       (win as any).hostInterface = {
-        audioContext: innerAudioContext,
+        audioContext: audioContext,
+        audioDestinationNode: gainNode,
         setupUnitAgent(unitAgent: UnitAgent) {
           console.log("setup", unitAgent);
         },
