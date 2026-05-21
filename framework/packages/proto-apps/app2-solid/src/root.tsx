@@ -1,5 +1,8 @@
 import "@wus/mo/styles";
-import { createHostSystem } from "@wus/host-system/host";
+import {
+  createHostSystem,
+  createSequenceTickDriver,
+} from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
 import { setupMidiKeyboardInput } from "@wus/mo/midi-keyboard-input";
 import { Button } from "@wus/mo-solid/components/button";
@@ -17,11 +20,15 @@ type StoreState = {
 function createAppModel() {
   const audioContext = new AudioContext();
   const hostSystem = createHostSystem(audioContext);
+  const sequenceTickDriver = createSequenceTickDriver(hostSystem);
+
   const [state, setState] = createStore<StoreState>({
     bpm: 120,
     playing: false,
     notes: [],
   });
+  sequenceTickDriver.setBpm(state.bpm);
+
   const actions = {
     noteOn(noteNumber: number) {
       setState("notes", (prev) => [...prev, noteNumber]);
@@ -29,11 +36,20 @@ function createAppModel() {
     noteOff(noteNumber: number) {
       setState("notes", (prev) => prev.filter((p) => p !== noteNumber));
     },
+    setPlayState(playing: boolean) {
+      setState("playing", playing);
+      if (playing) {
+        sequenceTickDriver.start();
+      } else {
+        sequenceTickDriver.stop();
+      }
+    },
     togglePlayState() {
-      setState("playing", (prev) => !prev);
+      actions.setPlayState(!state.playing);
     },
     setBpm(bpm: number) {
       setState("bpm", bpm);
+      sequenceTickDriver.setBpm(bpm);
     },
   };
   return { hostSystem, state, setState, ...actions };

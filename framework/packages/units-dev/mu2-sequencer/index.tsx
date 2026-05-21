@@ -14,11 +14,10 @@ const hostInterface = getHostInterface();
 function createAppModel() {
   const [state, setState] = createStore({
     stepPos: 0,
-    playing: false,
+    internalPlaying: false,
   });
 
-  const onStep = () => {
-    const stepPos = (state.stepPos + 1) % 16;
+  function onStep(stepPos: number) {
     if (stepPos % 4 === 0) {
       console.log("note on");
       hostInterface?.noteOutputPort.noteOn(48, 0.8);
@@ -27,7 +26,7 @@ function createAppModel() {
       hostInterface?.noteOutputPort.noteOff(48);
     }
     setState({ stepPos });
-  };
+  }
   return {
     state,
     onStep,
@@ -39,8 +38,10 @@ const appModel = createAppModel();
 function setupUnitInstance() {
   hostInterface?.setupUnitAgent({
     type: "sequencer",
-    setPlayState(playing) {
-      appModel.setState({ playing });
+    transportHandling: {
+      processStep(stepIndex) {
+        appModel.onStep(stepIndex);
+      },
     },
   });
 }
@@ -66,33 +67,46 @@ function StepIndicator() {
   );
 }
 
-function App() {
-  const vm = {
-    playing() {
-      return appModel.state.playing;
-    },
-    togglePlayState() {
-      const playing = appModel.state.playing;
-      appModel.setState({ playing: !playing });
-    },
-  };
-
+function setupInternalDriver() {
+  let stepPos = 0;
   const intervalTimer = createIntervalTimer();
   createEffect(() => {
-    if (appModel.state.playing) {
-      intervalTimer.start(appModel.onStep, 200);
+    if (appModel.state.internalPlaying) {
+      intervalTimer.start(() => {
+        stepPos = (stepPos + 1) % 16;
+        appModel.onStep(stepPos);
+      }, 200);
     } else {
       intervalTimer.stop();
     }
   });
+}
 
+function MainView() {
+  const vm = {
+    internalPlaying() {
+      return appModel.state.internalPlaying;
+    },
+    toggleInternalPlayState() {
+      appModel.setState({ internalPlaying: !appModel.state.internalPlaying });
+    },
+  };
   return (
     <div class="w-dvw h-dvh flex-vc gap-4 bg-blue-200">
       <div>mu2-sequencer</div>
       <StepIndicator />
-      <Button text="play" active={vm.playing()} onClick={vm.togglePlayState} />
+      <Button
+        text="play"
+        active={vm.internalPlaying()}
+        onClick={vm.toggleInternalPlayState}
+      />
     </div>
   );
+}
+
+function App() {
+  setupInternalDriver();
+  return <MainView />;
 }
 
 mountAppRoot(() => <App />);
