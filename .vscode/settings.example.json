@@ -1,0 +1,11 @@
+{
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptReact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  }
+}
