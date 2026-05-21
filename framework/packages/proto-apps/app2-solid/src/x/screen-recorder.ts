@@ -9,7 +9,7 @@ type ScreenRecorder = {
   }): void;
 };
 
-function checkMimeTypeSupport() {
+function _checkMimeTypeSupport() {
   const types = [
     "video/webm; codecs=av1, opus",
     "video/webm; codecs=vp9, opus",
@@ -28,6 +28,7 @@ export function createScreenRecorder(): ScreenRecorder {
       try {
         const stream = await navigator.mediaDevices.getDisplayMedia({
           preferCurrentTab: true,
+          video: { frameRate: { ideal: 60 } },
           audio: {
             echoCancellation: false,
             noiseSuppression: false,
