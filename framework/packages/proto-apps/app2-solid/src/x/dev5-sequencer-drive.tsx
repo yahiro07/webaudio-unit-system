@@ -25,7 +25,7 @@ const sequenceTickDriver = createSequenceTickDriver(hostSystem);
 
 function createAppStore() {
   const [state, setState] = createStore<StoreState>({
-    bpm: 120,
+    bpm: 130,
     playing: false,
     notes: [],
   });
@@ -80,36 +80,48 @@ const catalog = {
   myDrumMachine: unitInventories["my-drum-machine"],
   mu1: unitInventories["mu1-instrument"],
   mu2: unitInventories["mu2-sequencer"],
+  mu5: unitInventories["mu5-visualizer"],
   drumMachine: unitInventories["drum-machine"],
   koodori: unitInventories["koodori"],
+  wavicle: unitInventories["wavicle"],
 };
 
 const PageRoot = () => {
   return (
     <div class="w-dvw h-dvh flex-vc gap-4">
-      <div class="flex-h">
-        <UnitFrame
-          destUnitId="$output"
-          unitId="unit2"
-          pageUrl={catalog.drumMachine.loaderPageUrl}
-          frameSize={catalog.drumMachine.preferredSize}
-          hostSystem={hostSystem}
-          hostPlaying={store.state.playing}
-          hostBpm={store.state.bpm}
-        />
-        <div>
+      <div class="flex-ha gap-6">
+        <div class="flex-vc gap-2">
+          <UnitFrame
+            destUnitId="$output"
+            unitId="mu5"
+            pageUrl={catalog.mu5.loaderPageUrl}
+            hostSystem={hostSystem}
+            className="w-full h-[180px]"
+          />
+          <UnitFrame
+            destUnitId="mu5"
+            unitId="unit2"
+            pageUrl={catalog.myDrumMachine.loaderPageUrl}
+            frameSize={catalog.myDrumMachine.preferredSize}
+            hostSystem={hostSystem}
+            hostPlaying={store.state.playing}
+            hostBpm={store.state.bpm}
+          />
+        </div>
+
+        <div class="flex-vc gap-2">
           <UnitFrame
             destUnitId="$output"
             unitId="mu1"
-            pageUrl={catalog.mu1.loaderPageUrl}
-            frameSize={catalog.mu1.preferredSize}
+            pageUrl={catalog.wavicle.loaderPageUrl}
+            frameSize={[520, 300]}
             hostSystem={hostSystem}
           />
           <UnitFrame
             destUnitId="mu1"
             unitId="mu2"
             pageUrl={catalog.mu2.loaderPageUrl}
-            frameSize={catalog.mu2.preferredSize}
+            frameSize={[520, 200]}
             hostBpm={store.state.bpm}
             hostPlaying={store.state.playing}
             hostSystem={hostSystem}
@@ -117,7 +129,7 @@ const PageRoot = () => {
         </div>
       </div>
 
-      <div class="flex-h gap-2">
+      <div class="flex-ha gap-4">
         <Button
           text="play"
           active={store.state.playing}
