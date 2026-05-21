@@ -57,8 +57,8 @@ const uiActions = {
     sequenceTickDriver.setBpm(bpm);
   },
   startRecording() {
-    //1 bar
-    const recordingDurationSec = (60 / store.state.bpm) * 4;
+    const bars = 2;
+    const recordingDurationSec = (60 / store.state.bpm) * 4 * bars;
     screenRecorder.doRecording({
       recordingDurationSec,
       onStart() {

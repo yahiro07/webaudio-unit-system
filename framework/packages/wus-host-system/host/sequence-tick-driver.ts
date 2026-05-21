@@ -74,7 +74,7 @@ export function createSequenceTickDriver(
       intervalTimer.start(() => {
         const currentTime = hostSystem.audioContext.currentTime;
         advanceTime(currentTime);
-      }, 50);
+      }, 5);
     },
     stop() {
       intervalTimer.stop();
