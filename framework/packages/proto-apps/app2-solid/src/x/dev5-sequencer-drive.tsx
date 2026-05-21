@@ -104,7 +104,8 @@ const PageRoot = () => {
           <UnitFrame
             destUnitId="mu5"
             unitId="unit2"
-            pageUrl={catalog.myDrumMachine.loaderPageUrl}
+            // pageUrl={catalog.myDrumMachine.loaderPageUrl}
+            pageUrl="http://localhost:3000/index.html"
             frameSize={commonSize}
             hostSystem={hostSystem}
             hostPlaying={store.state.playing}
