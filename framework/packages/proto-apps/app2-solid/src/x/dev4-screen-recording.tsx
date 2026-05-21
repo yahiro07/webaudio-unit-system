@@ -2,6 +2,7 @@ import "@wus/mo/styles";
 import { createHostSystem } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
 import { Button } from "@wus/mo-solid/components/button";
+import { FeNumberSliderBox } from "@wus/mo-solid/components/number-slider-box";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createStore } from "solid-js/store";
 import catalog from "../unit-inventories.json";
@@ -45,7 +46,7 @@ const uiActions = {
     store.setState("bpm", bpm);
   },
   startRecording() {
-    //1 bars
+    //1 bar
     const recordingDurationSec = (60 / store.state.bpm) * 4;
     screenRecorder.doRecording({
       recordingDurationSec,
@@ -53,16 +54,20 @@ const uiActions = {
         console.log("Recording started");
         uiActions.setPlayState(true);
       },
+      onEnd() {
+        uiActions.setPlayState(false);
+      },
       onComplete(recordedBlob) {
         console.log("Recording completed", recordedBlob);
-        uiActions.setPlayState(false);
         openVideoInNewTab(recordedBlob);
       },
     });
   },
 };
 
-const ctDrumMachine = catalog["drum-machine"];
+// const ctDrumMachine = catalog["drum-machine"];
+// const ctDrumMachine = catalog["koodori"];
+const ctDrumMachine = catalog["my-drum-machine"];
 
 const PageRoot = () => {
   return (
@@ -82,6 +87,15 @@ const PageRoot = () => {
           text="play"
           active={store.state.playing}
           onClick={uiActions.togglePlayState}
+        />
+        <FeNumberSliderBox
+          label="bpm"
+          value={store.state.bpm}
+          min={60}
+          max={180}
+          step={1}
+          onChange={uiActions.setBpm}
+          fracDigits={0}
         />
         <Button text="record" onClick={uiActions.startRecording} />
       </div>

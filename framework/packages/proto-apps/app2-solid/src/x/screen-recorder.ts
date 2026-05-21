@@ -4,6 +4,7 @@ type ScreenRecorder = {
   doRecording(options: {
     recordingDurationSec: number;
     onStart?: () => void;
+    onEnd?: () => void;
     onComplete?: (recordedBlob: Blob) => void;
   }): void;
 };
@@ -38,6 +39,7 @@ export function createScreenRecorder(): ScreenRecorder {
           if (timerId) {
             clearTimeout(timerId);
           }
+          options?.onEnd?.();
           const blob = new Blob(chunks, { type: mimeType });
           options.onComplete?.(blob);
 
@@ -52,16 +54,19 @@ export function createScreenRecorder(): ScreenRecorder {
             recorder.stop();
           }
         };
-        await delayMs(100);
+        await delayMs(1000);
 
-        recorder.start();
         options.onStart?.();
+        recorder.start();
 
-        timerId = setTimeout(() => {
-          if (recorder.state === "recording") {
-            recorder.stop();
-          }
-        }, options.recordingDurationSec * 1000);
+        timerId = setTimeout(
+          () => {
+            if (recorder.state === "recording") {
+              recorder.stop();
+            }
+          },
+          options.recordingDurationSec * 1000 - 50,
+        );
       } catch (e) {
         console.error("Failed to start recording:", e);
       }
