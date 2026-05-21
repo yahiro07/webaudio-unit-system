@@ -87,34 +87,36 @@ const catalog = {
 const PageRoot = () => {
   return (
     <div class="w-dvw h-dvh flex-vc gap-4">
-      <div>screen recording dev</div>
       <div class="flex-h">
         <UnitFrame
           destUnitId="$output"
-          unitId="mu1"
-          pageUrl={catalog.mu1.loaderPageUrl}
-          frameSize={catalog.mu1.preferredSize}
+          unitId="unit2"
+          pageUrl={catalog.drumMachine.loaderPageUrl}
+          frameSize={catalog.drumMachine.preferredSize}
           hostSystem={hostSystem}
-        />
-        <UnitFrame
-          destUnitId="mu1"
-          unitId="mu2"
-          pageUrl={catalog.mu2.loaderPageUrl}
-          frameSize={catalog.mu2.preferredSize}
-          hostBpm={store.state.bpm}
           hostPlaying={store.state.playing}
-          hostSystem={hostSystem}
+          hostBpm={store.state.bpm}
         />
+        <div>
+          <UnitFrame
+            destUnitId="$output"
+            unitId="mu1"
+            pageUrl={catalog.mu1.loaderPageUrl}
+            frameSize={catalog.mu1.preferredSize}
+            hostSystem={hostSystem}
+          />
+          <UnitFrame
+            destUnitId="mu1"
+            unitId="mu2"
+            pageUrl={catalog.mu2.loaderPageUrl}
+            frameSize={catalog.mu2.preferredSize}
+            hostBpm={store.state.bpm}
+            hostPlaying={store.state.playing}
+            hostSystem={hostSystem}
+          />
+        </div>
       </div>
-      <UnitFrame
-        destUnitId="$output"
-        unitId="unit2"
-        pageUrl={catalog.drumMachine.loaderPageUrl}
-        frameSize={catalog.drumMachine.preferredSize}
-        hostSystem={hostSystem}
-        hostPlaying={store.state.playing}
-        hostBpm={store.state.bpm}
-      />
+
       <div class="flex-h gap-2">
         <Button
           text="play"
