@@ -25,6 +25,23 @@ function getCrossedStepIndices(ppqFrom: number, ppqTo: number): number[] {
   return stepIndices;
 }
 
+function processAllUnits(
+  hostSystem: HostSystem,
+  ppqFrom: number,
+  ppqTo: number,
+  crossedStepIndices: number[],
+) {
+  const units = hostSystem.getUnits().values();
+  for (const crossedStepIndex of crossedStepIndices) {
+    for (const unit of units) {
+      unit.transportHandling?.processStep?.(crossedStepIndex);
+    }
+  }
+  for (const unit of units) {
+    unit.transportHandling?.processTickRange?.(ppqFrom, ppqTo);
+  }
+}
+
 export function createSequenceTickDriver(
   hostSystem: HostSystem,
 ): SequenceTickDriver {
@@ -35,32 +52,29 @@ export function createSequenceTickDriver(
       state.bpm = bpm;
     },
     start() {
-      state.previousTime = hostSystem.audioContext.currentTime;
+      const startTime = hostSystem.audioContext.currentTime;
+      state.previousTime = startTime;
       state.ppqTick = 0;
 
-      intervalTimer.start(() => {
-        const currentTime = hostSystem.audioContext.currentTime;
+      function advanceTime(currentTime: number) {
         const timeElapsed = currentTime - state.previousTime;
         const ppqElapsed = mapTimeMsToPpq(timeElapsed * 1000, state.bpm);
 
         const ppqFrom = state.ppqTick;
         const ppqTo = ppqFrom + ppqElapsed;
-
-        const units = hostSystem.getUnits().values();
         const crossedStepIndices = getCrossedStepIndices(ppqFrom, ppqTo);
 
-        for (const crossedStepIndex of crossedStepIndices) {
-          for (const unit of units) {
-            unit.transportHandling?.processStep?.(crossedStepIndex);
-          }
-        }
-        for (const unit of units) {
-          unit.transportHandling?.processTickRange?.(ppqFrom, ppqTo);
-        }
-
+        processAllUnits(hostSystem, ppqFrom, ppqTo, crossedStepIndices);
         state.ppqTick = ppqTo;
         state.previousTime = currentTime;
-      }, 5);
+      }
+
+      processAllUnits(hostSystem, 0, 0, [0]);
+
+      intervalTimer.start(() => {
+        const currentTime = hostSystem.audioContext.currentTime;
+        advanceTime(currentTime);
+      }, 50);
     },
     stop() {
       intervalTimer.stop();
