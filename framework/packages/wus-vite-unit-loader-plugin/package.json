@@ -1,4 +1,7 @@
 {
   "name": "wus-vite-unit-loader-plugin",
-  "type": "module"
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  }
 }
