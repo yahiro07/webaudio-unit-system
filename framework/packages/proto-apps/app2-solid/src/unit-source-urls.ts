@@ -21,9 +21,6 @@ export const unitSourceUrls_array = [
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/bc-010/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/koodori/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/webaudio-synth-v2/",
-  "file:///Users/ore/Documents/projects/yahiro/synth-internal-2604/si2605/drum-machine/dist/my-drum-machine/",
-  "file:///Users/ore/Documents/projects/yahiro/synth-internal-2604/si2605/car-audio/proto-engine/dist/proto-engine/",
-
   // `${wusCustomUnitsLocalRoot}/dist/koodori/`,
   // `${wusCustomUnitsLocalRoot}/dist/webaudio-synth-v2/`,
   // "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev/mu1-instrument/",
@@ -40,6 +37,9 @@ export const unitSourceUrls_array = [
   // `/@direct/debugLH3000/http://localhost:3000/`,
   `/local-units/mu4-keyboard/`,
   `/local-units/mu5-visualizer/`,
+  "/my-units/my-drum-machine/",
+  "/my-units/proto-engine/",
+  "/my-units/mini-synth/",
 ];
 
 console.log("unit sources:", unitSourceUrls_array);
