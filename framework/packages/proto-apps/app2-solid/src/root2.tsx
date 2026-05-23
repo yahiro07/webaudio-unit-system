@@ -54,32 +54,19 @@ const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("mu3_effect", { scaling: 0.6 }),
   createUnitTemplateEntry("mu4_keyboard", { scaling: 0.6 }),
   createUnitTemplateEntry("mu5_visualizer", { scaling: 0.6 }),
-  createUnitTemplateEntry("my_drum_machine", {
-    scaling: 0.3,
-  }),
+  createUnitTemplateEntry("my_drum_machine", { scaling: 0.3 }),
   // createUnitTemplateEntry("debugLH3000", {scaling: 0.2}),
-  createUnitTemplateEntry("additive", {
-    scaling: 0.2,
-  }),
-  createUnitTemplateEntry("wavicle", {
-    scaling: 0.25,
-  }),
-  createUnitTemplateEntry("proto_engine", {
-    scaling: 0.2,
-  }),
-  createUnitTemplateEntry("bc_010", {
-    scaling: 0.25,
-  }),
-  createUnitTemplateEntry("webaudio_tinysynth_simple", {
-    scaling: 0.35,
-  }),
+  createUnitTemplateEntry("additive", { scaling: 0.2 }),
+  createUnitTemplateEntry("wavicle", { scaling: 0.25 }),
+  createUnitTemplateEntry("proto_engine", { scaling: 0.17 }),
+  createUnitTemplateEntry("mini_synth", { scaling: 0.3 }),
+  createUnitTemplateEntry("mini_synth_ge", { scaling: 0.3 }),
+  createUnitTemplateEntry("mini_synth_gp", { scaling: 0.25 }),
+  createUnitTemplateEntry("bc_010", { scaling: 0.25 }),
+  createUnitTemplateEntry("webaudio_tinysynth_simple", { scaling: 0.35 }),
   createUnitTemplateEntry("wasyn_1", { scaling: 0.25 }),
-  createUnitTemplateEntry("webaudio_synth_v2", {
-    scaling: 0.25,
-  }),
-  createUnitTemplateEntry("koodori", {
-    scaling: 0.2,
-  }),
+  createUnitTemplateEntry("webaudio_synth_v2", { scaling: 0.25 }),
+  createUnitTemplateEntry("koodori", { scaling: 0.2 }),
 ];
 
 type UnitAssignment = {

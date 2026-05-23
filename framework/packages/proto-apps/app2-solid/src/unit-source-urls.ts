@@ -40,6 +40,8 @@ export const unitSourceUrls_array = [
   "/my-units/my-drum-machine/",
   "/my-units/proto-engine/",
   "/my-units/mini-synth/",
+  "/my-units/mini-synth-ge/",
+  "/my-units/mini-synth-gp/",
 ];
 
 console.log("unit sources:", unitSourceUrls_array);
