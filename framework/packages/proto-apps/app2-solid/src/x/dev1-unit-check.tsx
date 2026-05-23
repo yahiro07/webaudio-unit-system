@@ -7,6 +7,9 @@ import { FeNumberSliderBox } from "@wus/mo-solid/components/number-slider-box";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { onCleanup } from "solid-js";
 import { createStore } from "solid-js/store";
+import catalog from "../unit-inventories.json";
+
+catalog;
 
 type StoreState = {
   bpm: number;
@@ -40,8 +43,7 @@ function createAppModel() {
 }
 const appModel = createAppModel();
 
-const devUnitsBase =
-  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@load-remote-units/units/dist/dev";
+const devUnitsBase = "/public/local-units";
 
 const UnitsSolid = () => {
   const { hostSystem } = appModel;
@@ -59,13 +61,14 @@ const UnitsSolid = () => {
       />
       <UnitFrame
         unitId="uf_instrument"
-        pageUrl="http://localhost:3000/index.html"
+        // pageUrl="http://localhost:3000/index.html"
         // pageUrl="/local-units/mu1-instrument/index.html"
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/koodori/index.html"
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-synth-v2/index.html"
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/bc-010/index.html"
         // pageUrl={catalog.wavicle.loaderPageUrl}
-        frameSize={[800, 450]}
+        pageUrl={catalog.proto_engine.loaderPageUrl}
+        frameSize={[1100, 450]}
         // frameSize={catalog.wavicle.preferredSize}
         destUnitId="uf_effect"
         hostSystem={hostSystem}

@@ -22,6 +22,7 @@ export const unitSourceUrls_array = [
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/koodori/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r7/webaudio-synth-v2/",
   "file:///Users/ore/Documents/projects/yahiro/synth-internal-2604/si2605/drum-machine/dist/my-drum-machine/",
+  "file:///Users/ore/Documents/projects/yahiro/synth-internal-2604/si2605/car-audio/proto-engine/dist/proto-engine/",
 
   // `${wusCustomUnitsLocalRoot}/dist/koodori/`,
   // `${wusCustomUnitsLocalRoot}/dist/webaudio-synth-v2/`,

@@ -64,6 +64,9 @@ const unitTemplates: UnitTemplate[] = [
   createUnitTemplateEntry("wavicle", {
     scaling: 0.25,
   }),
+  createUnitTemplateEntry("proto_engine", {
+    scaling: 0.2,
+  }),
   createUnitTemplateEntry("bc_010", {
     scaling: 0.25,
   }),
