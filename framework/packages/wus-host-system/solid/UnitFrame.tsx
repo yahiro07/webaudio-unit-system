@@ -17,30 +17,13 @@ import {
   hostSystem_wrapAddUnitAgent,
   UnitAgentInHostSide,
 } from "../host";
+import {
+  FrameSizeInput,
+  mergeStyleWithFrameSize,
+  normalizeFrameSize,
+} from "./frame-size";
 
 const HOST_INTERFACE_REGISTRY_KEY = "__wusHostInterfaceRegistry";
-
-type Size = { width: number; height: number };
-type FrameSizeInput = Size | [number, number] | string;
-
-function normalizeFrameSize(
-  size: FrameSizeInput | undefined,
-): Size | undefined {
-  if (Array.isArray(size)) {
-    return { width: size[0], height: size[1] };
-  } else if (typeof size === "string") {
-    if (size.includes(",")) {
-      const [width, height] = size.split(",").map((s) => Number(s.trim()));
-      return { width, height };
-    } else if (size.includes("x")) {
-      const [width, height] = size.split("x").map((s) => Number(s.trim()));
-      return { width, height };
-    }
-  } else if (typeof size === "object") {
-    return size;
-  }
-  return undefined;
-}
 
 export const UnitFrame = (props: {
   unitId: string;
@@ -64,12 +47,9 @@ export const UnitFrame = (props: {
 
   const frameSize = createMemo(() => normalizeFrameSize(props.frameSize));
 
-  const mergedStyle = createMemo<JSX.CSSProperties>(() => {
+  const mergedStyle = createMemo(() => {
     const size = frameSize();
-    return {
-      ...(props.style ?? {}),
-      ...(size ? { width: `${size.width}px`, height: `${size.height}px` } : {}),
-    };
+    return mergeStyleWithFrameSize(props.style, size);
   });
 
   createEffect(() => {
