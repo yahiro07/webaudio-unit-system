@@ -2,6 +2,17 @@
   "name": "wus-vite-unit-loader-plugin",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --clean --dts --out-dir dist"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.2",
+    "wus-unit-types": "*"
   }
 }
