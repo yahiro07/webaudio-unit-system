@@ -21,6 +21,18 @@ function setupUnitInstance() {
     });
     hostInterface.setupUnitAgent({
       type: "effect",
+      persistence: {
+        emitStateB() {
+          const g = (store.state.gain * 255) >>> 0;
+          return new Uint8Array([g]);
+        },
+        loadStateB(state) {
+          if (state.length === 1) {
+            const g = state[0] / 255;
+            store.setGain(g);
+          }
+        },
+      },
     });
   }
 }
