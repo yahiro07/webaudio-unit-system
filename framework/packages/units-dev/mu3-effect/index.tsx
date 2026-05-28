@@ -22,11 +22,11 @@ function setupUnitInstance() {
     hostInterface.setupUnitAgent({
       type: "effect",
       persistence: {
-        emitStateB() {
+        emitStateBytes() {
           const g = (store.state.gain * 255) >>> 0;
           return new Uint8Array([g]);
         },
-        loadStateB(state) {
+        loadStateBytes(state) {
           if (state.length === 1) {
             const g = state[0] / 255;
             store.setGain(g);
