@@ -49,8 +49,10 @@ export type NoteInputInterface = {
 };
 
 export type PersistenceInterface = {
-  emitState(): object;
-  loadState(state: object): void;
+  emitState?(): Record<string, any>;
+  loadState?(state: Record<string, any>): void;
+  emitStateB?(): Uint8Array;
+  loadStateB?(bytes: Uint8Array): void;
 };
 
 export type TransportHandlingInterface = {
