@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ],
+    "types": [
+      "node"
+    ],
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
+    "preserveSymlinks": true
+  },
+  "include": [
+    "host",
+    "react",
+    "node_modules/beams/**/*"
+  ],
+  "exclude": [
+    "node_modules/beams/ax-solid/**/*",
+    "node_modules/beams/mo-solid/**/*"
+  ]
+}

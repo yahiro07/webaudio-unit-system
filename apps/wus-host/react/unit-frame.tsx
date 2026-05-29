@@ -1,10 +1,7 @@
-import { useEffect, useMemo, useRef } from "react";
-import {
-  FrameSizeInput,
-  mergeStyleWithFrameSize,
-} from "@/host-system/react/frame-size";
-import { createUnitFrameModel } from "@/host-system/react/unit-frame-model";
+import { CSSProperties, useEffect, useMemo, useRef } from "react";
 import { HostSystem } from "../host";
+import { FrameSizeInput, mergeStyleWithFrameSize } from "./frame-size";
+import { createUnitFrameModel } from "./unit-frame-model";
 
 type Props = {
   unitId: string;
@@ -15,7 +12,7 @@ type Props = {
   inputNotes?: number[];
   hostSystem: HostSystem;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   frameSize?: FrameSizeInput;
   // iframeAttrs?: Omit<JSX.IntrinsicElements["iframe"], "src" | "title" | "ref">;
   onIframeMounted?(iframe: HTMLIFrameElement): (() => void) | undefined;

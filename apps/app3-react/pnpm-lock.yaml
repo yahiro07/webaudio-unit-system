@@ -51,6 +51,9 @@ importers:
       vite:
         specifier: ^8.0.12
         version: 8.0.14(@types/node@25.9.1)(jiti@2.7.0)
+      wus-host:
+        specifier: file:../wus-host
+        version: file:../wus-host
       wus-unit-types:
         specifier: file:../../framework/packages/wus-unit-types
         version: file:../../framework/packages/wus-unit-types
@@ -558,6 +561,9 @@ packages:
       yaml:
         optional: true
 
+  wus-host@file:../wus-host:
+    resolution: {directory: ../wus-host, type: directory}
+
   wus-unit-types@file:../../framework/packages/wus-unit-types:
     resolution: {directory: ../../framework/packages/wus-unit-types, type: directory}
 
@@ -916,6 +922,12 @@ snapshots:
       '@types/node': 25.9.1
       fsevents: 2.3.3
       jiti: 2.7.0
+
+  wus-host@file:../wus-host:
+    dependencies:
+      clsx: 2.1.1
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
 
   wus-unit-types@file:../../framework/packages/wus-unit-types: {}
 

@@ -1,4 +1,4 @@
-import { HostSystem, UnitAgentInHostSide } from "@/host-system/host";
+import { HostSystem, UnitAgentInHostSide } from "../host";
 
 type UnitAttributes = {
   destUnitId?: string;

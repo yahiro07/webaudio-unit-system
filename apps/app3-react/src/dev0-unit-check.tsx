@@ -2,10 +2,10 @@ import { mountAppRoot } from "beams/ax-react/mount-app-root";
 import { setupMidiKeyboardInput } from "beams/mx-audio/midi-keyboard-input";
 import { useEffect } from "react";
 import { createStore } from "snap-store";
+import { createHostSystem } from "wus-host/host";
+import { UnitFrame } from "wus-host/react";
 import { Button } from "@/components/button";
 import { NumberSliderBox } from "@/components/number-slider-box";
-import { createHostSystem } from "@/host-system/host";
-import { UnitFrame } from "@/host-system/react";
 import catalog from "./unit-inventories.json";
 
 catalog;

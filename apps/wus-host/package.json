@@ -1,0 +1,18 @@
+{
+  "name": "wus-host",
+  "private": "true",
+  "type": "module",
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.7.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "~6.0.3",
+    "wus-unit-types": "file:../../framework/packages/wus-unit-types",
+    "beams": "file:../../../beam/beams"
+  }
+}

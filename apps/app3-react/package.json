@@ -24,6 +24,7 @@
     "vite": "^8.0.12",
     "wus-unit-types": "file:../../framework/packages/wus-unit-types",
     "wus-vite-unit-loader-plugin": "file:../../framework/packages/wus-vite-unit-loader-plugin",
-    "beams": "file:../../../beam/beams"
+    "beams": "file:../../../beam/beams",
+    "wus-host": "file:../wus-host"
   }
 }

@@ -1,3 +1,5 @@
+import { CSSProperties } from "react";
+
 export type Size = { width: number; height: number };
 export type FrameSizeInput = Size | [number, number] | string;
 
@@ -21,9 +23,9 @@ export function normalizeFrameSize(
 }
 
 export function mergeStyleWithFrameSize(
-  style?: React.CSSProperties,
+  style?: CSSProperties,
   size?: FrameSizeInput,
-): React.CSSProperties | undefined {
+): CSSProperties | undefined {
   if (!style && !size) return undefined;
   const normalizedSize = normalizeFrameSize(size);
   if (!normalizedSize) return style;

@@ -1,9 +1,9 @@
 import { mountAppRoot } from "beams/ax-react/mount-app-root";
 import { useEffect } from "react";
 import { createStore } from "snap-store";
+import { createHostSystem, UnitStateData } from "wus-host/host";
+import { UnitFrame } from "wus-host/react";
 import { Button } from "@/components/button";
-import { createHostSystem, UnitStateData } from "@/host-system/host";
-import { UnitFrame } from "@/host-system/react";
 import catalog from "./unit-inventories.json";
 
 function loadDataFromUrl(): ProjectData | undefined {
