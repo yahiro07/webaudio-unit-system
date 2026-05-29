@@ -52,15 +52,15 @@ function buildUnitPageId(
   }
 }
 
-function checkPageIdsUnique(metaList: UnitInventorySpec[]) {
-  const pageIds = metaList.map((m) => m.canonicalPageId);
-  for (let i = 0; i < pageIds.length; i++) {
-    const id = pageIds[i];
-    if (pageIds.indexOf(id) !== i) {
-      throw new Error(`Duplicate page ID detected: ${id}`);
-    }
-  }
-}
+// function checkPageIdsUnique(metaList: UnitInventorySpec[]) {
+//   const pageIds = metaList.map((m) => m.canonicalPageId);
+//   for (let i = 0; i < pageIds.length; i++) {
+//     const id = pageIds[i];
+//     if (pageIds.indexOf(id) !== i) {
+//       throw new Error(`Duplicate page ID detected: ${id}`);
+//     }
+//   }
+// }
 
 async function readUnitMetaFromFolder(
   folderPath: string,
@@ -138,7 +138,7 @@ function createUnitInventorySpec(
   return {
     catalogKey,
     // canonicalPageId: buildUnitPageId(meta, resolvedUnitEntry),
-    canonicalPageId: "OMIT_AT_THIS_POINT_" + (counter++).toString(),
+    // canonicalPageId: "OMIT_AT_THIS_POINT_" + (counter++).toString(),
     ...meta,
     originalPageUrl: `${pageFolderUrl}index.html`,
     loaderPageUrl: getLoaderPageUrl(resolvedUnitEntry),
@@ -155,7 +155,7 @@ export async function generateSummariesJson(
       return createUnitInventorySpec(resolvedUnitEntry, meta);
     }),
   );
-  checkPageIdsUnique(inventorySpecs);
+  // checkPageIdsUnique(inventorySpecs);
   const summariesJson: UnitInventoriesJson = Object.fromEntries(
     inventorySpecs.map((spec) => [spec.catalogKey, spec]),
   );

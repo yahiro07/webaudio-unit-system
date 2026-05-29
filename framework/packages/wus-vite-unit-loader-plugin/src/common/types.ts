@@ -4,7 +4,7 @@ export type UnitSourceUrls = Record<string, string>;
 
 export type UnitInventorySpec = Omit<UnitMetadata, "preferredSize"> & {
   catalogKey: string;
-  canonicalPageId: string;
+  // canonicalPageId: string;
   originalPageUrl: string;
   loaderPageUrl: string;
   preferredSize: { width: number; height: number };
