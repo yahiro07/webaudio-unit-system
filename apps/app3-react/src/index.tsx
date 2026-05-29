@@ -1,1 +1,6 @@
-console.log("hello");
+import "./page.css";
+import "beams/ax-ui/utility-classes.css";
+//
+import "./dev0-unit-check";
+// import "./dev1-capture-thumbnail";
+// import "./dev2-show-thumbnails";
