@@ -19,6 +19,9 @@ const store = createStore<StoreState>({
 
 const PageRoot = () => {
   const { catalogKey } = store.useSnapshot();
+
+  const instrumentUnitId = `uf_instrument_${catalogKey}`;
+  const keyboardUnitId = `uf_keyboard_${catalogKey}`;
   return (
     <div className="w-dvw h-dvh flex-c">
       <div className="flex-v gap-6 w-[1000px]">
@@ -48,15 +51,17 @@ const PageRoot = () => {
             hostSystem={hostSystem}
           />
           <UnitFrame
-            unitId="uf_instrument"
+            key={instrumentUnitId}
+            unitId={instrumentUnitId}
             destUnitId="uf_visualizer"
             pageUrl={catalog[catalogKey].loaderPageUrl}
             frameSize={catalog[catalogKey].preferredSize}
             hostSystem={hostSystem}
           />
           <UnitFrame
-            unitId="uf_keyboard"
-            destUnitId="uf_instrument"
+            key={keyboardUnitId}
+            unitId={keyboardUnitId}
+            destUnitId={instrumentUnitId}
             pageUrl={catalog.mu4_keyboard.loaderPageUrl}
             frameSize={catalog.mu4_keyboard.preferredSize}
             hostSystem={hostSystem}
