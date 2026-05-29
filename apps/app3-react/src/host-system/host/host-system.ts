@@ -1,12 +1,11 @@
 import { removeArrayItem } from "beams/ax/array-utils";
+import { base64Helper, isUint8ArrayLike } from "beams/mo/binary-helper";
 import {
   HostInterface,
   NoteOutputPort,
   UnitAgent,
   UnitType,
 } from "wus-unit-types";
-import { base64Helper, isUint8ArrayLike } from "@/host-system/host/helpers";
-
 export type UnitAgentInHostSide = UnitAgent & {
   unitId: string;
   unitDestinationNode: AudioNode;
