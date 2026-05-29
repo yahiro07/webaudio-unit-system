@@ -22,7 +22,7 @@ export type HostSystem = {
   currentConnections: Map<string, string>;
   getUnitAgent(unitId: string): UnitAgentInHostSide | undefined;
   addUnitAgent(unitAgent: UnitAgentInHostSide): void;
-  getUnits: () => Map<string, UnitAgentInHostSide>;
+  getUnits: () => UnitAgentInHostSide[];
 };
 
 export type NoteOutputPortImpl = NoteOutputPort & {
@@ -62,7 +62,7 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
       units.set(unitAgent.unitId, unitAgent);
     },
     getUnits() {
-      return units;
+      return Array.from(units.values());
     },
   };
 }

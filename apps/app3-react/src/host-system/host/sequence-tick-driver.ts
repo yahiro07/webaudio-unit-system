@@ -31,7 +31,7 @@ function processAllUnits(
   ppqTo: number,
   crossedStepIndices: number[],
 ) {
-  const units = [...hostSystem.getUnits().values()];
+  const units = hostSystem.getUnits();
   for (const crossedStepIndex of crossedStepIndices) {
     for (const unit of units) {
       unit.transportHandling?.processStep?.(crossedStepIndex);
