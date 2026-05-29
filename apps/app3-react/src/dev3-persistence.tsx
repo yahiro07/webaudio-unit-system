@@ -6,6 +6,21 @@ import { createHostSystem, UnitStateData } from "@/host-system/host";
 import { UnitFrame } from "@/host-system/react";
 import catalog from "./unit-inventories.json";
 
+function loadDataFromUrl(): ProjectData | undefined {
+  const params = new URLSearchParams(location.search);
+  const dataParam = params.get("data");
+  if (dataParam) {
+    try {
+      const json = atob(dataParam);
+      const data = JSON.parse(json) as ProjectData;
+      return data;
+    } catch (e) {
+      console.warn(`Failed to load data from URL:`, e);
+      return undefined;
+    }
+  }
+}
+
 function loadSavedData(): ProjectData | undefined {
   const text = localStorage.getItem(`dev3-persistence-saved-data`);
   if (text) {
@@ -18,7 +33,7 @@ function loadSavedData(): ProjectData | undefined {
     }
   }
 }
-const savedData = loadSavedData();
+const initialData = loadDataFromUrl() ?? loadSavedData();
 
 type CatalogKey = keyof typeof catalog;
 
@@ -29,10 +44,10 @@ type StoreState = {
 const audioContext = new AudioContext();
 const hostSystem = createHostSystem(audioContext);
 const store = createStore<StoreState>({
-  catalogKey: savedData?.catalogKey ?? "mini_synth",
+  catalogKey: initialData?.catalogKey ?? "mini_synth",
 });
-if (savedData) {
-  hostSystem.importUnitStates(savedData.unitStates);
+if (initialData) {
+  hostSystem.importUnitStates(initialData.unitStates);
 }
 
 type ProjectData = {
@@ -40,11 +55,24 @@ type ProjectData = {
   unitStates: UnitStateData[];
 };
 
-const actions = {
-  saveSceneStates() {
+function mapSongDataEmbeddedUrl(projectData: ProjectData): string {
+  const json = JSON.stringify(projectData);
+  const base64 = btoa(json);
+  const base = location.origin + location.pathname;
+  return `${base}?data=${base64}`;
+}
+
+const actionsInternal = {
+  makeProjectData() {
     const { catalogKey } = store.state;
     const unitStates = hostSystem.exportUnitStates();
     const projectData: ProjectData = { catalogKey, unitStates };
+    return projectData;
+  },
+};
+const actions = {
+  saveSceneStates() {
+    const projectData = actionsInternal.makeProjectData();
     localStorage.setItem(
       `dev3-persistence-saved-data`,
       JSON.stringify(projectData),
@@ -53,6 +81,12 @@ const actions = {
   },
   reloadPage() {
     location.reload();
+  },
+  generateShareUrl() {
+    const projectData = actionsInternal.makeProjectData();
+    const url = mapSongDataEmbeddedUrl(projectData);
+    navigator.clipboard.writeText(url);
+    alert("share url copied to clipboard");
   },
 };
 
@@ -79,6 +113,7 @@ const PageRoot = () => {
           </select>
           <div className="flex-ha gap-4">
             <Button text="reload page" onClick={actions.reloadPage} />
+            <Button text="share url" onClick={actions.generateShareUrl} />
             <Button text="save states" onClick={actions.saveSceneStates} />
           </div>
         </div>
