@@ -1,10 +1,4 @@
-import {
-  HostSystem,
-  hostSystem_createHostInterfaceForUnit,
-  hostSystem_setUnitDestination,
-  hostSystem_wrapAddUnitAgent,
-  UnitAgentInHostSide,
-} from "@/host-system/host";
+import { HostSystem, UnitAgentInHostSide } from "@/host-system/host";
 
 type UnitAttributes = {
   destUnitId?: string;
@@ -24,7 +18,7 @@ export function createUnitFrameModel(hostSystem: HostSystem, unitId: string) {
   const core = {
     setDestUnitId(destUnitId?: string) {
       // console.log(`setting destUnitId for ${unitId}: ${destUnitId}`);
-      hostSystem_setUnitDestination(hostSystem, unitId, destUnitId);
+      hostSystem.setUnitDestination(unitId, destUnitId);
     },
     setBpm(bpm?: number) {
       if (bpm) {
@@ -83,7 +77,7 @@ export function createUnitFrameModel(hostSystem: HostSystem, unitId: string) {
     },
     handleUnitAgentLoaded(_unitAgent: UnitAgentInHostSide) {
       unitAgent = _unitAgent;
-      hostSystem_wrapAddUnitAgent(hostSystem, unitAgent);
+      hostSystem.wrapAddUnitAgent(unitAgent);
       console.log(`unitAgent loaded for ${unitId}`);
       agentLoaded = true;
       if (pendingAttributes) {
@@ -92,8 +86,7 @@ export function createUnitFrameModel(hostSystem: HostSystem, unitId: string) {
       }
     },
     handleIframeMounted(iframe: HTMLIFrameElement) {
-      const hostInterface = hostSystem_createHostInterfaceForUnit(
-        hostSystem,
+      const hostInterface = hostSystem.createHostInterfaceForUnit(
         unitId,
         core.handleUnitAgentLoaded,
       );

@@ -13,7 +13,7 @@ export type UnitAgentInHostSide = UnitAgent & {
   effectSourceNode: AudioNode;
 };
 
-export type HostSystem = {
+type HostSystemBus = {
   audioContext: AudioContext;
   pendingConnectionRules: {
     sourceUnitId: string;
@@ -25,11 +25,24 @@ export type HostSystem = {
   getUnits: () => UnitAgentInHostSide[];
 };
 
-export type NoteOutputPortImpl = NoteOutputPort & {
+export type HostSystem = {
+  audioContext: AudioContext;
+  getUnits: () => UnitAgentInHostSide[];
+  createHostInterfaceForUnit(
+    unitId: string,
+    registeredCallback: (unitAgent: UnitAgentInHostSide) => void,
+  ): HostInterface;
+  setUnitDestination(unitId: string, destUnitId?: string): void;
+  wrapAddUnitAgent(unitAgent: UnitAgentInHostSide): void;
+  wrapConnectUnits(unitId: string, destUnitId: string): void;
+  wrapDisconnectUnits(unitId: string, destUnitId: string): void;
+};
+
+type NoteOutputPortImpl = NoteOutputPort & {
   setDestinationAgent(noteDestinationAgent?: UnitAgentInHostSide): void;
 };
 
-export function createNoteOutputPortImpl(): NoteOutputPortImpl {
+function createNoteOutputPortImpl(): NoteOutputPortImpl {
   let destinationAgent: UnitAgentInHostSide | undefined;
   return {
     noteOn(noteNumber, velocity) {
@@ -44,7 +57,7 @@ export function createNoteOutputPortImpl(): NoteOutputPortImpl {
   };
 }
 
-export function createHostSystem(audioContext: AudioContext): HostSystem {
+function createHostSystemBus(audioContext: AudioContext): HostSystemBus {
   const units: Map<string, UnitAgentInHostSide> = new Map();
   const pendingConnectionRules: {
     sourceUnitId: string;
@@ -67,16 +80,16 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
   };
 }
 
-export function hostSystem_createHostInterfaceForUnit(
-  hostSystem: HostSystem,
+function hostSystemBus_createHostInterfaceForUnit(
+  bus: HostSystemBus,
   unitId: string,
   registeredCallback: (unitAgent: UnitAgentInHostSide) => void,
 ) {
-  const unitDestinationNode = hostSystem.audioContext.createGain();
-  const effectSourceNode = hostSystem.audioContext.createGain();
+  const unitDestinationNode = bus.audioContext.createGain();
+  const effectSourceNode = bus.audioContext.createGain();
   const noteOutputPortImpl = createNoteOutputPortImpl();
   const hostInterface: HostInterface = {
-    audioContext: hostSystem.audioContext,
+    audioContext: bus.audioContext,
     audioDestinationNode: unitDestinationNode,
     audioSourceNode: effectSourceNode,
     noteOutputPort: noteOutputPortImpl,
@@ -98,62 +111,58 @@ export function hostSystem_createHostInterfaceForUnit(
   return hostInterface;
 }
 
-export function hostSystem_connectUnits(
-  hostSystem: HostSystem,
+function hostSystemBus_connectUnits(
+  bus: HostSystemBus,
   unitId: string,
   destUnitId: string,
 ) {
-  const sourceUnit = hostSystem.getUnitAgent(unitId);
+  const sourceUnit = bus.getUnitAgent(unitId);
 
   if (sourceUnit && destUnitId === "$output") {
     if ((["instrument", "effect"] as UnitType[]).includes(sourceUnit.type)) {
-      sourceUnit.unitDestinationNode.connect(
-        hostSystem.audioContext.destination,
-      );
-      hostSystem.currentConnections.set(unitId, destUnitId);
+      sourceUnit.unitDestinationNode.connect(bus.audioContext.destination);
+      bus.currentConnections.set(unitId, destUnitId);
       console.log(`connected audio: ${unitId} --> output`);
     }
     return;
   }
 
-  const destUnit = hostSystem.getUnitAgent(destUnitId);
+  const destUnit = bus.getUnitAgent(destUnitId);
 
   if (sourceUnit && destUnit) {
     const destType = destUnit.type;
     if (destType === "effect") {
       sourceUnit.unitDestinationNode.connect(destUnit.effectSourceNode);
-      hostSystem.currentConnections.set(unitId, destUnitId);
+      bus.currentConnections.set(unitId, destUnitId);
       console.log(`connected audio: ${unitId} --> ${destUnitId}`);
     } else if (destType === "instrument" || destType === "sequencer") {
       sourceUnit.noteOutputPortImpl.setDestinationAgent(destUnit);
-      hostSystem.currentConnections.set(unitId, destUnitId);
+      bus.currentConnections.set(unitId, destUnitId);
       console.log(`connected note: ${unitId} --> ${destUnitId}`);
     }
   }
 }
 
-export function hostSystem_disconnectUnits(
-  hostSystem: HostSystem,
+function hostSystemBus_disconnectUnits(
+  bus: HostSystemBus,
   unitId: string,
   destUnitId: string,
 ) {
-  const sourceUnit = hostSystem.getUnitAgent(unitId);
+  const sourceUnit = bus.getUnitAgent(unitId);
   if (!sourceUnit) return;
 
   if (destUnitId === "$output") {
     if ((["instrument", "effect"] as UnitType[]).includes(sourceUnit.type)) {
-      sourceUnit.unitDestinationNode.disconnect(
-        hostSystem.audioContext.destination,
-      );
+      sourceUnit.unitDestinationNode.disconnect(bus.audioContext.destination);
       console.log(`disconnected audio: ${unitId} --> output`);
     }
-    hostSystem.currentConnections.delete(unitId);
+    bus.currentConnections.delete(unitId);
     return;
   }
 
-  const destUnit = hostSystem.getUnitAgent(destUnitId);
+  const destUnit = bus.getUnitAgent(destUnitId);
   if (!destUnit) {
-    hostSystem.currentConnections.delete(unitId);
+    bus.currentConnections.delete(unitId);
     return;
   }
 
@@ -164,56 +173,56 @@ export function hostSystem_disconnectUnits(
     sourceUnit.noteOutputPortImpl.setDestinationAgent(undefined);
     console.log(`disconnected note: ${unitId} --> ${destUnitId}`);
   }
-  hostSystem.currentConnections.delete(unitId);
+  bus.currentConnections.delete(unitId);
 }
 
-export function hostSystem_wrapAddUnitAgent(
-  hostSystem: HostSystem,
+function hostSystemBus_wrapAddUnitAgent(
+  bus: HostSystemBus,
   unitAgent: UnitAgentInHostSide,
 ) {
-  hostSystem.addUnitAgent(unitAgent);
-  for (const rule of hostSystem.pendingConnectionRules) {
+  bus.addUnitAgent(unitAgent);
+  for (const rule of bus.pendingConnectionRules) {
     if (rule.destUnitId === unitAgent.unitId) {
-      hostSystem_setUnitDestination(
-        hostSystem,
+      hostSystemBus_setUnitDestination(
+        bus,
         rule.sourceUnitId,
         unitAgent.unitId,
       );
-      removeArrayItem(hostSystem.pendingConnectionRules, rule);
+      removeArrayItem(bus.pendingConnectionRules, rule);
     }
   }
 }
 
-export function hostSystem_wrapConnectUnits(
-  hostSystem: HostSystem,
+function hostSystemBus_wrapConnectUnits(
+  bus: HostSystemBus,
   unitId: string,
   destUnitId: string,
 ) {
-  const sourceUnit = hostSystem.getUnitAgent(unitId);
-  const destUnit = hostSystem.getUnitAgent(destUnitId);
+  const sourceUnit = bus.getUnitAgent(unitId);
+  const destUnit = bus.getUnitAgent(destUnitId);
   if (sourceUnit && (destUnit || destUnitId === "$output")) {
-    hostSystem_connectUnits(hostSystem, unitId, destUnitId);
+    hostSystemBus_connectUnits(bus, unitId, destUnitId);
     return;
   }
-  hostSystem.pendingConnectionRules.push({
+  bus.pendingConnectionRules.push({
     sourceUnitId: unitId,
     destUnitId: destUnitId,
   });
 }
 
-export function hostSystem_setUnitDestination(
-  hostSystem: HostSystem,
+export function hostSystemBus_setUnitDestination(
+  bus: HostSystemBus,
   unitId: string,
   destUnitId?: string,
 ) {
-  const previousDestUnitId = hostSystem.currentConnections.get(unitId);
+  const previousDestUnitId = bus.currentConnections.get(unitId);
   if (previousDestUnitId && previousDestUnitId !== destUnitId) {
-    hostSystem_disconnectUnits(hostSystem, unitId, previousDestUnitId);
+    hostSystemBus_disconnectUnits(bus, unitId, previousDestUnitId);
   }
 
-  for (const rule of [...hostSystem.pendingConnectionRules]) {
+  for (const rule of [...bus.pendingConnectionRules]) {
     if (rule.sourceUnitId === unitId) {
-      removeArrayItem(hostSystem.pendingConnectionRules, rule);
+      removeArrayItem(bus.pendingConnectionRules, rule);
     }
   }
 
@@ -221,5 +230,34 @@ export function hostSystem_setUnitDestination(
     return;
   }
 
-  hostSystem_wrapConnectUnits(hostSystem, unitId, destUnitId);
+  hostSystemBus_wrapConnectUnits(bus, unitId, destUnitId);
+}
+
+export function createHostSystem(audioContext: AudioContext): HostSystem {
+  const bus = createHostSystemBus(audioContext);
+  return {
+    audioContext,
+    getUnits() {
+      return bus.getUnits();
+    },
+    createHostInterfaceForUnit(unitId, registeredCallback) {
+      return hostSystemBus_createHostInterfaceForUnit(
+        bus,
+        unitId,
+        registeredCallback,
+      );
+    },
+    setUnitDestination(unitId, destUnitId) {
+      hostSystemBus_setUnitDestination(bus, unitId, destUnitId);
+    },
+    wrapAddUnitAgent(unitAgent) {
+      hostSystemBus_wrapAddUnitAgent(bus, unitAgent);
+    },
+    wrapConnectUnits(unitId, destUnitId) {
+      hostSystemBus_wrapConnectUnits(bus, unitId, destUnitId);
+    },
+    wrapDisconnectUnits(unitId, destUnitId) {
+      hostSystemBus_disconnectUnits(bus, unitId, destUnitId);
+    },
+  };
 }
