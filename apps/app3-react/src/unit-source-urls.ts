@@ -1,5 +1,10 @@
 const homeDir = process.env.HOME;
 
+const unitsDevDistDir = new URL(
+  "../../../framework/packages/units-dev/dist",
+  import.meta.url,
+).pathname;
+
 export const unitSourceUrls = [
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r6/wavicle/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r6/specbar/",
@@ -18,11 +23,11 @@ export const unitSourceUrls = [
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r8/bc-010/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r8/koodori/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r8/webaudio-synth-v2/",
-  // `/dev-units/mu1-instrument/`,
-  // `/dev-units/mu2-sequencer/`,
-  // `/dev-units/mu3-effect/`,
-  // `/dev-units/mu4-keyboard/`,
-  // `/dev-units/mu5-visualizer/`,
-  `file://${homeDir}/wus-my-units/my-drum-machine/`,
-  `file://${homeDir}/wus-my-units/twsq1/`,
+  `file://${homeDir}/wus-units/my-drum-machine/`,
+  `file://${homeDir}/wus-units/twsq1/`,
+  `file://${unitsDevDistDir}/mu1-instrument/`,
+  `file://${unitsDevDistDir}/mu2-sequencer/`,
+  `file://${unitsDevDistDir}/mu3-effect/`,
+  `file://${unitsDevDistDir}/mu4-keyboard/`,
+  `file://${unitsDevDistDir}/mu5-visualizer/`,
 ];
