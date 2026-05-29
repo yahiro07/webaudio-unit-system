@@ -6,5 +6,7 @@ export type UnitMetadata = {
   category?: UnitCategoryHint;
   repositoryUrl: string;
   preferredSize: string;
-  unitTypesVersion: string;
+  unitTypesVersion?: string;
+  inputSignalTypes?: string; //audio,note,cvgate,state,params,pad
+  outputSignalTypes?: string; //audio,note,cvgate,state,params,pad
 };
