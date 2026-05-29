@@ -6,15 +6,15 @@ const unitsDevDistDir = new URL(
 ).pathname;
 
 export const unitSourceUrls = [
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r6/wavicle/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r6/specbar/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r6/proto-engine-ptm-osc/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r6/proto-engine-pd-fm/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r6/mini-synth/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r6/mini-synth-ge/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r6/mini-synth-gp/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r6/useq/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r6/lseq1/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/wavicle/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/specbar/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/proto-engine-ptm-osc/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/proto-engine-pd-fm/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/mini-synth/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/mini-synth-ge/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/mini-synth-gp/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/useq/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/lseq1/",
 
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r8/additive/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r8/drum-machine/",
