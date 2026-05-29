@@ -1,11 +1,11 @@
 import { CSSProperties } from "react";
 
-export type Size = { width: number; height: number };
-export type FrameSizeInput = Size | [number, number] | string;
+export type FrameSize = { width: number; height: number };
+export type FrameSizeInput = FrameSize | [number, number] | string;
 
 export function normalizeFrameSize(
   size: FrameSizeInput | undefined,
-): Size | undefined {
+): FrameSize | undefined {
   if (Array.isArray(size)) {
     return { width: size[0], height: size[1] };
   } else if (typeof size === "string") {
