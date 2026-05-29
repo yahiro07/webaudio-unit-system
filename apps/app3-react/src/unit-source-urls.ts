@@ -1,13 +1,17 @@
 const homeDir = process.env.HOME;
 
-const unitsDevDistDir = new URL(
+function toAbsolutePath(path: string): string {
+  return new URL(path, import.meta.url).pathname;
+}
+
+const unitsDevDistDir = toAbsolutePath(
   "../../../framework/packages/units-dev/dist",
-  import.meta.url,
-).pathname;
+);
+const wusUnitsLocalDistDir = toAbsolutePath("../../../../wus-units/dist");
 
 export const unitSourceUrls = [
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/wavicle/",
-  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/specbar/",
+  // "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/specbar/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/proto-engine-ptm-osc/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/proto-engine-pd-fm/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/mini-synth/",
@@ -15,6 +19,7 @@ export const unitSourceUrls = [
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/mini-synth-gp/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/useq/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/lseq1/",
+  `file://${wusUnitsLocalDistDir}/specbar/`,
 
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r8/additive/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r8/drum-machine/",
