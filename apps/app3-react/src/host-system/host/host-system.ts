@@ -20,10 +20,6 @@ export type UnitStateData =
 
 type HostStateBus = {
   audioContext: AudioContext;
-  pendingConnectionRules: {
-    sourceUnitId: string;
-    destUnitId: string;
-  }[];
   currentConnections: Map<string, string>;
   getUnitAgent(unitId: string): UnitAgentInHostSide | undefined;
   addUnitAgent(unitAgent: UnitAgentInHostSide): void;
@@ -68,14 +64,10 @@ function createNoteOutputPortImpl(): NoteOutputPortImpl {
 
 function createHostSystemBus(audioContext: AudioContext): HostStateBus {
   const units: Map<string, UnitAgentInHostSide> = new Map();
-  const pendingConnectionRules: {
-    sourceUnitId: string;
-    destUnitId: string;
-  }[] = [];
+
   const currentConnections: Map<string, string> = new Map();
   return {
     audioContext,
-    pendingConnectionRules,
     currentConnections,
     getUnitAgent(unitId: string): UnitAgentInHostSide | undefined {
       return units.get(unitId);
@@ -193,6 +185,11 @@ function createConnectionExHandlers(
   bus: HostStateBus,
   coreHandlers: ReturnType<typeof createConnectionCoreHandlers>,
 ) {
+  const pendingConnectionRules: {
+    sourceUnitId: string;
+    destUnitId: string;
+  }[] = [];
+
   const self = {
     wrapConnectUnits(unitId: string, destUnitId: string) {
       const sourceUnit = bus.getUnitAgent(unitId);
@@ -201,7 +198,7 @@ function createConnectionExHandlers(
         coreHandlers.connectUnits(unitId, destUnitId);
         return;
       }
-      bus.pendingConnectionRules.push({
+      pendingConnectionRules.push({
         sourceUnitId: unitId,
         destUnitId: destUnitId,
       });
@@ -211,9 +208,9 @@ function createConnectionExHandlers(
       if (previousDestUnitId && previousDestUnitId !== destUnitId) {
         coreHandlers.disconnectUnits(unitId, previousDestUnitId);
       }
-      for (const rule of [...bus.pendingConnectionRules]) {
+      for (const rule of [...pendingConnectionRules]) {
         if (rule.sourceUnitId === unitId) {
-          removeArrayItem(bus.pendingConnectionRules, rule);
+          removeArrayItem(pendingConnectionRules, rule);
         }
       }
       if (!destUnitId) {
@@ -223,10 +220,10 @@ function createConnectionExHandlers(
     },
     wrapAddUnitAgent(unitAgent: UnitAgentInHostSide) {
       bus.addUnitAgent(unitAgent);
-      for (const rule of bus.pendingConnectionRules) {
+      for (const rule of [...pendingConnectionRules]) {
         if (rule.destUnitId === unitAgent.unitId) {
           self.setUnitDestination(rule.sourceUnitId, unitAgent.unitId);
-          removeArrayItem(bus.pendingConnectionRules, rule);
+          removeArrayItem(pendingConnectionRules, rule);
         }
       }
     },
