@@ -45,16 +45,16 @@ const UnitsSolid = () => {
     <>
       <UnitFrame
         unitId="uf_effect"
-        pageUrl={catalog.mu5_visualizer.loaderPageUrl}
+        pageUrl={catalog.mu5Visualizer.loaderPageUrl}
         destUnitId="$output"
         hostSystem={hostSystem}
       />
       <UnitFrame
         unitId="uf_instrument"
-        pageUrl={catalog.mini_synth_ge.loaderPageUrl}
+        pageUrl={catalog.miniSynthGe.loaderPageUrl}
         // pageUrl={catalog.mini_synth_ge.loaderPageUrl}
         // className="w-[640px] h-[320px]"
-        frameSize={catalog.mini_synth_ge.preferredSize}
+        frameSize={catalog.miniSynthGe.preferredSize}
         destUnitId="uf_effect"
         hostSystem={hostSystem}
         hostBpm={state.bpm}
@@ -62,7 +62,7 @@ const UnitsSolid = () => {
       />
       <UnitFrame
         unitId="uf_keyboard"
-        pageUrl={catalog.mu4_keyboard.loaderPageUrl}
+        pageUrl={catalog.mu4Keyboard.loaderPageUrl}
         destUnitId="uf_instrument"
         hostSystem={hostSystem}
         inputNotes={state.notes}

@@ -44,7 +44,7 @@ type StoreState = {
 const audioContext = new AudioContext();
 const hostSystem = createHostSystem(audioContext);
 const store = createStore<StoreState>({
-  catalogKey: initialData?.catalogKey ?? "mini_synth",
+  catalogKey: initialData?.catalogKey ?? "miniSynth",
 });
 if (initialData) {
   hostSystem.importUnitStates(initialData.unitStates);
@@ -137,8 +137,8 @@ const PageRoot = () => {
             key={keyboardUnitId}
             unitId={keyboardUnitId}
             destUnitId={instrumentUnitId}
-            pageUrl={catalog.mu4_keyboard.loaderPageUrl}
-            frameSize={catalog.mu4_keyboard.preferredSize}
+            pageUrl={catalog.mu4Keyboard.loaderPageUrl}
+            frameSize={catalog.mu4Keyboard.preferredSize}
             hostSystem={hostSystem}
           />
         </div>
