@@ -5,6 +5,7 @@ import {
   UnitAgent,
   UnitType,
 } from "wus-unit-types";
+import { base64Helper, isUint8ArrayLike } from "@/host-system/host/helpers";
 
 export type UnitAgentInHostSide = UnitAgent & {
   unitId: string;
@@ -12,6 +13,10 @@ export type UnitAgentInHostSide = UnitAgent & {
   noteOutputPortImpl: NoteOutputPortImpl;
   effectSourceNode: AudioNode;
 };
+
+export type UnitStateData =
+  | { unitId: string; type: "bytes"; base64: string }
+  | { unitId: string; type: "json"; json: unknown };
 
 type HostSystemBus = {
   audioContext: AudioContext;
@@ -36,6 +41,10 @@ export type HostSystem = {
   wrapAddUnitAgent(unitAgent: UnitAgentInHostSide): void;
   wrapConnectUnits(unitId: string, destUnitId: string): void;
   wrapDisconnectUnits(unitId: string, destUnitId: string): void;
+  //return current unit states
+  exportUnitStates(): UnitStateData[];
+  //register state data that will be applied to units after it is loaded
+  importUnitStates(unitStates: UnitStateData[]): void;
 };
 
 type NoteOutputPortImpl = NoteOutputPort & {
@@ -210,7 +219,7 @@ function hostSystemBus_wrapConnectUnits(
   });
 }
 
-export function hostSystemBus_setUnitDestination(
+function hostSystemBus_setUnitDestination(
   bus: HostSystemBus,
   unitId: string,
   destUnitId?: string,
@@ -233,8 +242,52 @@ export function hostSystemBus_setUnitDestination(
   hostSystemBus_wrapConnectUnits(bus, unitId, destUnitId);
 }
 
+function createUnitStatesIo(hostSystemBus: HostSystemBus) {
+  return {
+    exportUnitStates(): UnitStateData[] {
+      const units = hostSystemBus.getUnits();
+      return units
+        .map((unit) => {
+          const state =
+            unit.persistence?.emitStateBytes?.() ??
+            unit.persistence?.emitState?.();
+          if (!state) {
+            return undefined;
+          }
+          if (isUint8ArrayLike(state)) {
+            return {
+              unitId: unit.unitId,
+              type: "bytes",
+              base64: base64Helper.encode(state),
+            };
+          } else {
+            return { unitId: unit.unitId, type: "json", json: state };
+          }
+        })
+        .filter(Boolean) as UnitStateData[];
+    },
+    importUnitStates(unitStates: UnitStateData[]) {
+      // const units = hostSystemBus.getUnits();
+      // for (const stateData of unitStates) {
+      //   const unit = units.find((u) => u.unitId === stateData.unitId);
+      //   if (!unit) continue;
+      //   if (stateData.type === "bytes" && unit.persistence?.applyStateBytes) {
+      //     const byteString = atob(stateData.base64);
+      //     const bytes = new Uint8Array(
+      //       Array.from(byteString).map((char) => char.charCodeAt(0)),
+      //     );
+      //     unit.persistence.applyStateBytes(bytes);
+      //   } else if (stateData.type === "json" && unit.persistence?.applyState) {
+      //     unit.persistence.applyState(stateData.json);
+      //   }
+      // }
+    },
+  };
+}
+
 export function createHostSystem(audioContext: AudioContext): HostSystem {
   const bus = createHostSystemBus(audioContext);
+  const unitStatesIo = createUnitStatesIo(bus);
   return {
     audioContext,
     getUnits() {
@@ -259,5 +312,7 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
     wrapDisconnectUnits(unitId, destUnitId) {
       hostSystemBus_disconnectUnits(bus, unitId, destUnitId);
     },
+    exportUnitStates: unitStatesIo.exportUnitStates,
+    importUnitStates: unitStatesIo.importUnitStates,
   };
 }
