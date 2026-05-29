@@ -1,4 +1,5 @@
 import { mountAppRoot } from "beams/ax-react/mount-app-root";
+import { useEffect } from "react";
 import { createStore } from "snap-store";
 import { Button } from "@/components/button";
 import { createHostSystem, UnitStateData } from "@/host-system/host";
@@ -30,6 +31,9 @@ const hostSystem = createHostSystem(audioContext);
 const store = createStore<StoreState>({
   catalogKey: savedData?.catalogKey ?? "mini_synth",
 });
+if (savedData) {
+  hostSystem.importUnitStates(savedData.unitStates);
+}
 
 type ProjectData = {
   catalogKey: CatalogKey;
@@ -45,6 +49,10 @@ const actions = {
       `dev3-persistence-saved-data`,
       JSON.stringify(projectData),
     );
+    alert("state saved");
+  },
+  reloadPage() {
+    location.reload();
   },
 };
 
@@ -70,7 +78,7 @@ const PageRoot = () => {
             ))}
           </select>
           <div className="flex-ha gap-4">
-            <Button text="reload page" />
+            <Button text="reload page" onClick={actions.reloadPage} />
             <Button text="save states" onClick={actions.saveSceneStates} />
           </div>
         </div>
@@ -105,6 +113,7 @@ const PageRoot = () => {
 };
 
 const App = () => {
+  useEffect(hostSystem.setupLifecycle, []);
   return <PageRoot />;
 };
 

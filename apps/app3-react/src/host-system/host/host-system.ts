@@ -1,11 +1,13 @@
 import { removeArrayItem } from "beams/ax/array-utils";
 import { base64Helper, isUint8ArrayLike } from "beams/mo/binary-helper";
+import { createEventPort, EventPort } from "beams/mo/event-port";
 import {
   HostInterface,
   NoteOutputPort,
   UnitAgent,
   UnitType,
 } from "wus-unit-types";
+
 export type UnitAgentInHostSide = UnitAgent & {
   unitId: string;
   unitDestinationNode: AudioNode;
@@ -15,9 +17,10 @@ export type UnitAgentInHostSide = UnitAgent & {
 
 export type UnitStateData =
   | { unitId: string; type: "bytes"; base64: string }
-  | { unitId: string; type: "json"; json: unknown };
+  | { unitId: string; type: "json"; json: Record<string, any> };
 
 type HostStateBus = {
+  eventPort: EventPort<{ type: "unitAdded"; unitAgent: UnitAgentInHostSide }>;
   audioContext: AudioContext;
   currentConnections: Map<string, string>;
   getUnitAgent(unitId: string): UnitAgentInHostSide | undefined;
@@ -40,6 +43,7 @@ export type HostSystem = {
   exportUnitStates(): UnitStateData[];
   //register state data that will be applied to units after it is loaded
   importUnitStates(unitStates: UnitStateData[]): void;
+  setupLifecycle(): () => void;
 };
 
 type NoteOutputPortImpl = NoteOutputPort & {
@@ -61,11 +65,15 @@ function createNoteOutputPortImpl(): NoteOutputPortImpl {
   };
 }
 
-function createHostSystemBus(audioContext: AudioContext): HostStateBus {
+function createHostStateBus(audioContext: AudioContext): HostStateBus {
   const units: Map<string, UnitAgentInHostSide> = new Map();
-
   const currentConnections: Map<string, string> = new Map();
+  const eventPort = createEventPort<{
+    type: "unitAdded";
+    unitAgent: UnitAgentInHostSide;
+  }>();
   return {
+    eventPort,
     audioContext,
     currentConnections,
     getUnitAgent(unitId: string): UnitAgentInHostSide | undefined {
@@ -73,6 +81,7 @@ function createHostSystemBus(audioContext: AudioContext): HostStateBus {
     },
     addUnitAgent(unitAgent: UnitAgentInHostSide) {
       units.set(unitAgent.unitId, unitAgent);
+      eventPort.emit({ type: "unitAdded", unitAgent });
     },
     getUnits() {
       return Array.from(units.values());
@@ -230,10 +239,37 @@ function createConnectionExHandlers(
   return self;
 }
 
-function createUnitStatesIo(hostSystemBus: HostStateBus) {
+function createPersistHandlers(bus: HostStateBus) {
+  const pendingUnitStates: UnitStateData[] = [];
+
+  const internal = {
+    applyStateToUnit(unit: UnitAgentInHostSide, stateData: UnitStateData) {
+      if (stateData.type === "bytes" && unit.persistence?.loadStateBytes) {
+        const bytes = base64Helper.decode(stateData.base64);
+        unit.persistence.loadStateBytes(bytes);
+      } else if (stateData.type === "json" && unit.persistence?.loadState) {
+        unit.persistence.loadState(stateData.json);
+      }
+    },
+  };
+
   return {
+    setupLifecycle() {
+      return bus.eventPort.subscribe((e) => {
+        if (e.type === "unitAdded") {
+          const unit = e.unitAgent;
+          const pendingState = pendingUnitStates.find(
+            (s) => s.unitId === unit.unitId,
+          );
+          if (pendingState) {
+            internal.applyStateToUnit(unit, pendingState);
+            removeArrayItem(pendingUnitStates, pendingState);
+          }
+        }
+      });
+    },
     exportUnitStates(): UnitStateData[] {
-      const units = hostSystemBus.getUnits();
+      const units = bus.getUnits();
       return units
         .map((unit) => {
           const state =
@@ -255,30 +291,24 @@ function createUnitStatesIo(hostSystemBus: HostStateBus) {
         .filter(Boolean) as UnitStateData[];
     },
     importUnitStates(unitStates: UnitStateData[]) {
-      // const units = hostSystemBus.getUnits();
-      // for (const stateData of unitStates) {
-      //   const unit = units.find((u) => u.unitId === stateData.unitId);
-      //   if (!unit) continue;
-      //   if (stateData.type === "bytes" && unit.persistence?.applyStateBytes) {
-      //     const byteString = atob(stateData.base64);
-      //     const bytes = new Uint8Array(
-      //       Array.from(byteString).map((char) => char.charCodeAt(0)),
-      //     );
-      //     unit.persistence.applyStateBytes(bytes);
-      //   } else if (stateData.type === "json" && unit.persistence?.applyState) {
-      //     unit.persistence.applyState(stateData.json);
-      //   }
-      // }
+      for (const state of unitStates) {
+        const unit = bus.getUnitAgent(state.unitId);
+        if (unit) {
+          internal.applyStateToUnit(unit, state);
+        } else {
+          pendingUnitStates.push(state);
+        }
+      }
     },
   };
 }
 
 export function createHostSystem(audioContext: AudioContext): HostSystem {
-  const bus = createHostSystemBus(audioContext);
+  const bus = createHostStateBus(audioContext);
   const coreHandlers = createConnectionCoreHandlers(bus);
   const exHandlers = createConnectionExHandlers(bus, coreHandlers);
 
-  const unitStatesIo = createUnitStatesIo(bus);
+  const persistHandlers = createPersistHandlers(bus);
   return {
     audioContext,
     getUnits: bus.getUnits,
@@ -289,7 +319,10 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
     wrapAddUnitAgent: exHandlers.wrapAddUnitAgent,
     wrapConnectUnits: exHandlers.wrapConnectUnits,
     wrapDisconnectUnits: coreHandlers.disconnectUnits,
-    exportUnitStates: unitStatesIo.exportUnitStates,
-    importUnitStates: unitStatesIo.importUnitStates,
+    exportUnitStates: persistHandlers.exportUnitStates,
+    importUnitStates: persistHandlers.importUnitStates,
+    setupLifecycle() {
+      return persistHandlers.setupLifecycle();
+    },
   };
 }
