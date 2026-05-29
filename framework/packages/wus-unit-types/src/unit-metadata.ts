@@ -6,4 +6,5 @@ export type UnitMetadata = {
   category?: UnitCategoryHint;
   repositoryUrl: string;
   preferredSize: string;
+  unitTypesVersion: string;
 };
