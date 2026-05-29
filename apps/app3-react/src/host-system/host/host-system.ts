@@ -89,7 +89,7 @@ function createHostSystemBus(audioContext: AudioContext): HostStateBus {
   };
 }
 
-function hostSystemBus_createHostInterfaceForUnit(
+function createHostInterfaceForUnit(
   bus: HostStateBus,
   unitId: string,
   registeredCallback: (unitAgent: UnitAgentInHostSide) => void,
@@ -285,15 +285,9 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
   const unitStatesIo = createUnitStatesIo(bus);
   return {
     audioContext,
-    getUnits() {
-      return bus.getUnits();
-    },
+    getUnits: bus.getUnits,
     createHostInterfaceForUnit(unitId, registeredCallback) {
-      return hostSystemBus_createHostInterfaceForUnit(
-        bus,
-        unitId,
-        registeredCallback,
-      );
+      return createHostInterfaceForUnit(bus, unitId, registeredCallback);
     },
     setUnitDestination: exHandlers.setUnitDestination,
     wrapAddUnitAgent: exHandlers.wrapAddUnitAgent,
