@@ -17,7 +17,6 @@ type Props = {
   // iframeAttrs?: Omit<JSX.IntrinsicElements["iframe"], "src" | "title" | "ref">;
   onIframeMounted?(iframe: HTMLIFrameElement): (() => void) | undefined;
 };
-
 export const UnitFrame = ({
   unitId,
   pageUrl,
@@ -31,6 +30,11 @@ export const UnitFrame = ({
   frameSize,
   onIframeMounted,
 }: Props) => {
+  if (destUnitId && destUnitId === unitId) {
+    throw new Error(
+      `UnitFrame ${unitId}: destUnitId cannot be the same as unitId.`,
+    );
+  }
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const model = useMemo(
     () => createUnitFrameModel(hostSystem, unitId),
