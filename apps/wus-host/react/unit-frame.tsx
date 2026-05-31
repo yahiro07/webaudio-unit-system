@@ -1,16 +1,13 @@
 import { CSSProperties, useEffect, useMemo, useRef } from "react";
-import { HostSystem } from "../host";
 import { FrameSizeInput, mergeStyleWithFrameSize } from "./frame-size";
+import { useHostAppContext } from "./host-app-context";
 import { createUnitFrameModel } from "./unit-frame-model";
 
 type Props = {
   unitId: string;
   pageUrl?: string;
   destUnitId?: string;
-  hostBpm?: number;
-  hostPlaying?: boolean;
   inputNotes?: number[];
-  hostSystem: HostSystem;
   className?: string;
   style?: CSSProperties;
   frameSize?: FrameSizeInput;
@@ -21,10 +18,7 @@ export const UnitFrame = ({
   unitId,
   pageUrl,
   destUnitId,
-  hostBpm,
-  hostPlaying,
   inputNotes,
-  hostSystem,
   className,
   style,
   frameSize,
@@ -35,6 +29,12 @@ export const UnitFrame = ({
       `UnitFrame ${unitId}: destUnitId cannot be the same as unitId.`,
     );
   }
+  const {
+    hostSystem,
+    bpm: hostBpm,
+    playing: hostPlaying,
+  } = useHostAppContext();
+
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const model = useMemo(
     () => createUnitFrameModel(hostSystem, unitId),
