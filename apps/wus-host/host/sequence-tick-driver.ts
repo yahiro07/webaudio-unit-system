@@ -1,4 +1,4 @@
-import { createIntervalTimer } from "beams/ax/timer-utils";
+import { createIntervalTimer } from "../utils/timer-utils";
 import { HostSystem } from "./host-system";
 
 type SequenceTickDriver = {

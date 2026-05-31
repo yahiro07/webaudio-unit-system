@@ -1,12 +1,12 @@
-import { removeArrayItem } from "beams/ax/array-utils";
-import { base64Helper, isUint8ArrayLike } from "beams/mo/binary-helper";
-import { createEventPort, EventPort } from "beams/mo/event-port";
 import {
   HostInterface,
   NoteOutputPort,
   UnitAgent,
   UnitType,
 } from "wus-unit-types";
+import { removeArrayItem } from "../utils/array-utils";
+import { base64Helper, isUint8ArrayLike } from "../utils/binary-helper";
+import { createEventPort, EventPort } from "../utils/event-port";
 
 export type UnitAgentInHostSide = UnitAgent & {
   unitId: string;

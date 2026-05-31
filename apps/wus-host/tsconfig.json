@@ -19,11 +19,6 @@
   },
   "include": [
     "host",
-    "react",
-    "node_modules/beams/**/*"
+    "react"
   ],
-  "exclude": [
-    "node_modules/beams/ax-solid/**/*",
-    "node_modules/beams/mo-solid/**/*"
-  ]
 }
