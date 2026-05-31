@@ -15,7 +15,7 @@ async function fetchUnitAssetText(
     resolvedUnitEntry.kind === "public"
   ) {
     const fullPath = path.join(resolvedUnitEntry.folderPath, targetAssetPath);
-    console.log(`Reading file from ${fullPath}`);
+    // console.log(`Reading file from ${fullPath}`);
     try {
       return await fs.promises.readFile(fullPath, "utf8");
     } catch (_) {
@@ -114,7 +114,9 @@ function createUnitInventorySpec(
     unitTypesVersion: meta.unitTypesVersion,
     originalPageUrl: `${pageFolderUrl}index.html`,
     loaderPageUrl: `${loaderPageUrlBase}index.html`,
-    thumbnailUrl: hasThumbnail ? `${pageFolderUrl}thumbnail.png` : undefined,
+    thumbnailUrl: hasThumbnail
+      ? `${pageFolderUrl}unit-thumbnail.png`
+      : undefined,
     //
     originalRepositoryUrl: _meta.repositoryUrl ?? _meta.originalRepositoryUrl,
     originalAuthor: _meta.author ?? _meta.originalAuthor,
@@ -133,7 +135,7 @@ export async function generateSummariesJson(
       const meta = await fetchUnitMeta(resolvedUnitEntry);
       const hasThumbnail = await checkUnitAssetExists(
         resolvedUnitEntry,
-        "thumbnail.png",
+        "unit-thumbnail.png",
       );
       const hasLicenseText = await checkUnitAssetExists(
         resolvedUnitEntry,
