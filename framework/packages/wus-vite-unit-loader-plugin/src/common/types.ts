@@ -13,14 +13,14 @@ export type UnitInventorySpec = {
   unitTypesVersion: string;
   originalPageUrl: string;
   loaderPageUrl: string;
-  thumbnailUrl: string | undefined;
+  thumbnailUrl?: string;
   //
   originalRepositoryUrl: string;
   originalAuthor: string;
   forkedRepositoryUrl?: string;
   forkedAuthor?: string;
   license: string;
-  licenseTextUrl: string | undefined;
+  licenseTextUrl?: string;
 };
 
 export type UnitInventoriesJson = Record<string, UnitInventorySpec>;
