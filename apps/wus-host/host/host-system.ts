@@ -330,7 +330,10 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
       return persistHandlers.setupLifecycle();
     },
     setMasterGain(gain) {
-      bus.masterGainNode.gain.value = gain;
+      bus.masterGainNode.gain.linearRampToValueAtTime(
+        gain,
+        audioContext.currentTime + 0.01,
+      );
     },
   };
 }
