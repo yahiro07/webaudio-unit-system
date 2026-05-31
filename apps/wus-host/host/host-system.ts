@@ -22,6 +22,7 @@ export type UnitStateData =
 type HostStateBus = {
   eventPort: EventPort<{ type: "unitAdded"; unitAgent: UnitAgentInHostSide }>;
   audioContext: AudioContext;
+  masterGainNode: GainNode;
   currentConnections: Map<string, string>;
   getUnitAgent(unitId: string): UnitAgentInHostSide | undefined;
   addUnitAgent(unitAgent: UnitAgentInHostSide): void;
@@ -44,6 +45,7 @@ export type HostSystem = {
   //register state data that will be applied to units after it is loaded
   importUnitStates(unitStates: UnitStateData[]): void;
   setupLifecycle(): () => void;
+  setMasterGain(gain: number): void;
 };
 
 type NoteOutputPortImpl = NoteOutputPort & {
@@ -72,9 +74,12 @@ function createHostStateBus(audioContext: AudioContext): HostStateBus {
     type: "unitAdded";
     unitAgent: UnitAgentInHostSide;
   }>();
+  const masterGainNode = audioContext.createGain();
+  masterGainNode.connect(audioContext.destination);
   return {
     eventPort,
     audioContext,
+    masterGainNode,
     currentConnections,
     getUnitAgent(unitId: string): UnitAgentInHostSide | undefined {
       return units.get(unitId);
@@ -129,7 +134,7 @@ function createConnectionCoreHandlers(bus: HostStateBus) {
         if (
           (["instrument", "effect"] as UnitType[]).includes(sourceUnit.type)
         ) {
-          sourceUnit.unitDestinationNode.connect(bus.audioContext.destination);
+          sourceUnit.unitDestinationNode.connect(bus.masterGainNode);
           bus.currentConnections.set(unitId, destUnitId);
           console.log(`connected audio: ${unitId} --> output`);
         }
@@ -323,6 +328,9 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
     importUnitStates: persistHandlers.importUnitStates,
     setupLifecycle() {
       return persistHandlers.setupLifecycle();
+    },
+    setMasterGain(gain) {
+      bus.masterGainNode.gain.value = gain;
     },
   };
 }
