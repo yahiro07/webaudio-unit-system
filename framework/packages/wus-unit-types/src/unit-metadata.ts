@@ -1,12 +1,22 @@
-import { UnitCategoryHint, UnitType } from "./unit-interfaces";
+export type UnitType = "instrument" | "sequencer" | "effect";
+
+export type UnitCategoryHint =
+  | "synthesizer"
+  | "stepSequencer"
+  | "effect"
+  | "visualizer"
+  | "drumMachine"
+  | "keyboard"
+  | "padController"
+  | "stateSwitcher";
 
 export type UnitMetadata = {
   name: string;
   unitType: UnitType;
   category?: UnitCategoryHint;
-  preferredSize: string;
-  outputSignalTypes: string; //audio,note,cvgate,state,params,pad
-  inputSignalTypes: string; //audio,note,cvgate,state,params,pad
+  preferredSize: string; //w,h
+  outputSignalTypes: string; //audio,note,cvGate,clock,state,automation,samplerPad
+  inputSignalTypes: string; //audio,note,cvGate,clock,state,automation,samplerPad
   unitTypesVersion: string;
 } & (
   | { repositoryUrl: string; author: string }

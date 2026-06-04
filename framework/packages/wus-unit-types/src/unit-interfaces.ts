@@ -1,98 +1,116 @@
-//note: velocity in noteOn arguments are in range between 0.0-1.0, not 0-127
-export type UnitType = "instrument" | "sequencer" | "effect";
+export type PortSubtype =
+  | "audio"
+  | "note"
+  | "cvGate"
+  | "clock"
+  | "state"
+  | "automation"
+  | "samplerPad";
 
-export type UnitCategoryHint =
-  | "synthesizer"
-  | "stepSequencer"
-  | "effect"
-  | "visualizer"
-  | "drumMachine"
-  | "keyboard"
-  | "padController"
-  | "switcher";
+export type NotePort = {
+  noteOn(note: number, timeAt?: number, velocity?: number): void; //midi note number, velocity 0~1
+  noteOff(note: number, timeAt?: number): void;
+};
+
+export type CvGatePort = {
+  setCv(cv: number, timeAt?: number): void; //0~1, 0.1cv/octave
+  setGate(gate: boolean, timeAt?: number): void;
+};
+
+export type ClockPort = {
+  start?(): void;
+  //480ppq based tick from song start
+  processScheduling?(
+    startTime: number,
+    ppqFrom: number,
+    ppqTo: number,
+    bpm: number,
+  ): void;
+  //16th note based (4ppq) integer step from song start
+  processStep?(stepIndex: number): void;
+  stop?(): void;
+};
+
+export type StatePort = {
+  emitState?(): Record<string, any> | undefined;
+  applyState?(state: Record<string, any>): void;
+  emitStateBytes?(): Uint8Array | undefined;
+  applyStateBytes?(bytes: Uint8Array): void;
+};
+
+export type ParameterSpec = {
+  id: string;
+  steps?: number; //2 for on/off, 3 for low/medium/high, etc
+  //all parameters are ranged in 0~1
+};
+
+export type AutomationPort = {
+  getParameterSpecs(): ParameterSpec[];
+  getParameter(id: string): number;
+  setParameter(id: string, value: number, timeAt?: number): void;
+};
+
+export type SamplerPadPort = {
+  getToneIds(): string[];
+  playTone(toneId: string, timeAt?: number): void;
+};
+
+export type AudioPort = {
+  node: AudioNode;
+};
+
+export type UnitOutputPort = {
+  setCallbacks(callbacks: {
+    onConnectedTo?(subPortTypes: PortSubtype[]): void;
+    onDisconnectTo?(): void;
+  }): void;
+  audioOutput: AudioPort;
+  noteOutput: NotePort;
+  cvGateOutput: CvGatePort;
+  clockOutput: ClockPort;
+  stateOutput: StatePort;
+  automationOutput: AutomationPort;
+  samplerPadOutput: SamplerPadPort;
+};
+
+export type UnitInputPort = {
+  audioInput: AudioPort;
+  setCallbacks(callbacks: {
+    onConnectedFrom?(subPortTypes: PortSubtype[]): void;
+    onDisconnectFrom?(): void;
+  }): void;
+  setHandlers(handlers: {
+    noteInput?: NotePort;
+    cvGateInput?: CvGatePort;
+    clockInput?: ClockPort;
+    stateInput?: StatePort;
+    automationInput?: AutomationPort;
+    samplerPadInput?: SamplerPadPort;
+  }): void;
+};
 
 export type MetaAttributes = {
   key?: string; //C, Am, ... etc
 };
 
-export type NoteOutputPortSpec = {
-  numChannels: number;
-  drumChannel?: number;
-};
-export type NoteOutputPort = {
-  noteOn(noteNumber: number, velocity: number): void;
-  noteOff(noteNumber: number): void;
-};
-
-export type InstrumentMultiChannelsInterface = {
-  numChannels: number;
-  drumChannel?: number;
-  noteOn(ch: number, noteNumber: number, velocity: number): void;
-  noteOff(ch: number, noteNumber: number): void;
-};
-
-export type AssignableTonePlaybackInterface = {
-  toneIds: string[];
-  playTone(toneId: string): void;
-};
-
-export type DestinationRequirementFlags =
-  | "hasAudioInput" //effect <-- instrument, effect <-- drumMachine
-  | "hasNoteInput" //instrument <-- sequencer, instrument <-- keyboard
-  | "hasPersistence" //any unit <--switcher
-  | "hasMultiChannelsNoteInput" //instrument <-- sequencer
-  | "hasTonePlaybackInterface"; //drumMachine <-- padController
-
-export type NoteInputInterface = {
-  noteOn(noteNumber: number, velocity: number): void;
-  noteOff(noteNumber: number): void;
-};
-
-export type PersistenceInterface = {
-  emitState?(): Record<string, any>;
-  loadState?(state: Record<string, any>): void;
-  emitStateBytes?(): Uint8Array;
-  loadStateBytes?(bytes: Uint8Array): void;
-};
-
-export type TransportHandlingInterface = {
-  processTickRange?(tickFrom: number, tickTo: number): void; //480PPQ based tick from song start
-  processStep?(stepIndex: number): void; //16th note based step from song start
-};
-
-export type DestinationUnitAgent = {
-  queryPersistenceInterface(): PersistenceInterface | undefined;
-  queryNoteInputInterface(): NoteInputInterface | undefined;
-  queryInstrumentMultiChannelsInterface():
-    | InstrumentMultiChannelsInterface
-    | undefined;
-  queryAssignableTonePlaybackInterface():
-    | AssignableTonePlaybackInterface
-    | undefined;
-};
-
-export type UnitAgent = {
-  type: UnitType;
-  categoryHint?: UnitCategoryHint;
-  destinationRequirementFlags?: DestinationRequirementFlags[];
+export type HostCallbacks = {
   setBpm?(bpm: number): void;
   setPlayState?(playing: boolean): void;
-  setMetaAttrs?(metaAttrs: MetaAttributes): void;
-  persistence?: PersistenceInterface;
-  noteInput?: NoteInputInterface;
-  transportHandling?: TransportHandlingInterface;
-  extraCapabilities?: {
-    instrumentMultiChannelsInterface?: InstrumentMultiChannelsInterface;
-    assignableTonePlaybackInterface?: AssignableTonePlaybackInterface;
-  };
-  onConnectedTo?(destUnitAgent: DestinationUnitAgent): void;
-  onDisconnected?(): void;
+  setMetaAttributes?(metaAttrs: MetaAttributes): void;
 };
 
-export type HostInterface = {
+export type UnitPortsSpec = {
+  output?: PortSubtype[];
+  input?: PortSubtype[];
+};
+
+export type UnitInterface = {
   audioContext: AudioContext;
-  audioDestinationNode: AudioNode;
-  audioSourceNode: AudioNode;
-  noteOutputPort: NoteOutputPort;
-  setupUnitAgent(unitAgent: UnitAgent): void;
+  primaryOutputPort: UnitOutputPort;
+  primaryInputPort: UnitInputPort;
+  createMultiChannelOutputPorts(numPorts: number): UnitOutputPort[];
+  createMultiChannelInputPorts(numPorts: number): UnitInputPort[];
+  setHostCallbacks(callbacks: HostCallbacks): void;
+  setPortSubtypes(spec: UnitPortsSpec): void;
+  completeSetup(): void;
 };
