@@ -67,6 +67,12 @@ export function createUnitInterface(
       return inputPorts;
     },
     completeSetupWithAttributes(attrs) {
+      if (attrs.primaryInputPortHandlers) {
+        primaryInputPort.setHandlers(attrs.primaryInputPortHandlers);
+      }
+      if (attrs.primaryInputPortCallbacks) {
+        primaryInputPort.setCallbacks(attrs.primaryInputPortCallbacks);
+      }
       createdCallback({
         unitId,
         portsSpec: {
