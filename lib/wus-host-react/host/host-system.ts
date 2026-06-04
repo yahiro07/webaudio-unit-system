@@ -224,7 +224,7 @@ function createUnitsLoadingManager(
 
       return newUnits;
     },
-    async reserveLoading() {
+    async executeLoadingJobs() {
       if (!isProcessing) {
         isProcessing = true;
         bus.eventPort.emit({ type: "loadStarted" });
@@ -245,6 +245,11 @@ function createUnitsLoadingManager(
         if (unitLoadingJobs.length > 0 || pendingConnectionCodeMap.size > 0) {
           internal.reserveLoading();
         }
+      }
+    },
+    reserveLoading() {
+      if (!isProcessing) {
+        setTimeout(internal.executeLoadingJobs, 0);
       }
     },
   };
