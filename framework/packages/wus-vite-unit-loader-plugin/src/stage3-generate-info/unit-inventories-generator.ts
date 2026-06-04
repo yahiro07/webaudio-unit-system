@@ -5,128 +5,94 @@ import { ResolvedUnitEntry } from "../common/internal-types";
 import { UnitInventoriesJson, UnitInventorySpec } from "../common/types";
 import { normalizeFrameSize } from "./frame-size";
 
-function slugifyUnitName(name: string): string {
-  return name
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-function trimTrailingSlash(value: string): string {
-  return value.replace(/\/+$/, "");
-}
-
-function buildUnitPageId(
-  meta: UnitMetadata,
+async function fetchUnitAssetText(
   resolvedUnitEntry: ResolvedUnitEntry,
-): string {
-  const pageFolderUrl = resolvedUnitEntry.sourceUrlSpec;
-  const readableName = slugifyUnitName(meta.name);
-  const url = new URL(pageFolderUrl);
-
-  if (resolvedUnitEntry.kind === "file") {
-    const sourceFolderSegments = trimTrailingSlash(pageFolderUrl)
-      .split(path.sep)
-      .filter(Boolean);
-    return `file:${sourceFolderSegments.slice(-3).join("/")}:${readableName}`;
-  } else if (resolvedUnitEntry.kind === "cache") {
-    const normalizedPathname = trimTrailingSlash(url.pathname);
-    const ghMatch = normalizedPathname.match(
-      /^\/gh\/([^/]+)\/([^/@]+)(?:@[^/]+)?(?:\/.*)?$/,
-    );
-    if (url.hostname === "cdn.jsdelivr.net" && ghMatch) {
-      return `gh:${ghMatch[1]}/${ghMatch[2]}:${readableName}`;
-    } else {
-      const sourcePath = path.posix.dirname(normalizedPathname);
-      return `url:${url.host}${sourcePath}:${readableName}`;
-    }
-  } else if (resolvedUnitEntry.kind === "public") {
-    return `public:${resolvedUnitEntry.folderPath}`;
-  } else if (resolvedUnitEntry.kind === "direct") {
-    return `direct:${resolvedUnitEntry.targetUrl}`;
-  } else {
-    throw new Error(
-      `Unsupported resolved unit entry kind for building page ID: ${(resolvedUnitEntry as any).kind}`,
-    );
-  }
-}
-
-// function checkPageIdsUnique(metaList: UnitInventorySpec[]) {
-//   const pageIds = metaList.map((m) => m.canonicalPageId);
-//   for (let i = 0; i < pageIds.length; i++) {
-//     const id = pageIds[i];
-//     if (pageIds.indexOf(id) !== i) {
-//       throw new Error(`Duplicate page ID detected: ${id}`);
-//     }
-//   }
-// }
-
-async function readUnitMetaFromFolder(
-  folderPath: string,
-): Promise<UnitMetadata> {
-  try {
-    const metaFilePath = path.join(folderPath, "unit-meta.json");
-    console.log(`Reading unit meta from ${metaFilePath}`);
-    const res = await fs.promises.readFile(metaFilePath, "utf8");
-    const json = JSON.parse(res) as UnitMetadata;
-    return json;
-  } catch (error) {
-    throw new Error(
-      `Failed to read unit meta from folder ${folderPath}: ${error}`,
-    );
-  }
-}
-
-async function readUnitMetaFromUrl(url: string): Promise<UnitMetadata> {
-  try {
-    const metaUrl = new URL("unit-meta.json", url);
-    const res = await fetch(metaUrl);
-    if (!res.ok) {
-      // return undefined;
-      throw new Error(`Failed to fetch unit meta from ${metaUrl}`);
-    }
-    const json = (await res.json()) as UnitMetadata;
-    return json;
-  } catch (error) {
-    throw new Error(`Failed to fetch unit meta from ${url}: ${error}`);
-  }
-}
-
-async function fetchUnitMeta(
-  resolvedUnitEntry: ResolvedUnitEntry,
-): Promise<UnitMetadata> {
+  targetAssetPath: string,
+): Promise<string> {
   if (
     resolvedUnitEntry.kind === "file" ||
     resolvedUnitEntry.kind === "cache" ||
     resolvedUnitEntry.kind === "public"
   ) {
-    const folderPath = resolvedUnitEntry.folderPath;
-    return readUnitMetaFromFolder(folderPath);
+    const fullPath = path.join(resolvedUnitEntry.folderPath, targetAssetPath);
+    // console.log(`Reading file from ${fullPath}`);
+    try {
+      return await fs.promises.readFile(fullPath, "utf8");
+    } catch (_) {
+      throw new Error(`Failed to read file from ${fullPath}`);
+    }
   } else if (resolvedUnitEntry.kind === "direct") {
-    const url = resolvedUnitEntry.targetUrl;
-    return readUnitMetaFromUrl(url);
+    const urlBase = resolvedUnitEntry.targetUrl;
+    const url = new URL(targetAssetPath, urlBase);
+    console.log(`Fetching file from ${url}`);
+    try {
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch from ${url}`);
+      }
+      return await res.text();
+    } catch (_) {
+      throw new Error(`Failed to fetch from ${url}`);
+    }
   }
-  throw new Error(
-    `Unsupported resolved unit entry kind for ${resolvedUnitEntry.catalogKey}: ${(resolvedUnitEntry as any).kind}`,
-  );
+  throw new Error(`invalid condition`);
 }
 
-function getLoaderPageUrl(resolvedUnitEntry: ResolvedUnitEntry): string {
+async function checkUnitAssetExists(
+  resolvedUnitEntry: ResolvedUnitEntry,
+  targetAssetPath: string,
+): Promise<boolean> {
+  if (
+    resolvedUnitEntry.kind === "file" ||
+    resolvedUnitEntry.kind === "cache" ||
+    resolvedUnitEntry.kind === "public"
+  ) {
+    const fullPath = path.join(resolvedUnitEntry.folderPath, targetAssetPath);
+    try {
+      const stat = await fs.promises.stat(fullPath);
+      return stat.isFile();
+    } catch (_) {
+      return false;
+    }
+  } else if (resolvedUnitEntry.kind === "direct") {
+    const urlBase = resolvedUnitEntry.targetUrl;
+    const url = new URL(targetAssetPath, urlBase);
+    try {
+      const res = await fetch(url, { method: "HEAD" });
+      return res.ok;
+    } catch (_) {
+      return false;
+    }
+  }
+  throw new Error(`invalid condition`);
+}
+
+async function fetchUnitMeta(
+  resolvedUnitEntry: ResolvedUnitEntry,
+): Promise<UnitMetadata> {
+  const text = await fetchUnitAssetText(resolvedUnitEntry, "unit-meta.json");
+  try {
+    return JSON.parse(text);
+  } catch (_) {
+    throw new Error(`Failed to parse unit-meta.json: ${text}`);
+  }
+}
+
+function getLoaderPageUrlBase(resolvedUnitEntry: ResolvedUnitEntry): string {
   if (resolvedUnitEntry.kind === "public") {
-    return `${resolvedUnitEntry.sourceUrlSpec}index.html`;
+    return `${resolvedUnitEntry.sourceUrlSpec}`;
   } else if (resolvedUnitEntry.kind === "direct") {
-    return `${resolvedUnitEntry.targetUrl}index.html`;
+    return `${resolvedUnitEntry.targetUrl}`;
   } else {
-    return `/inventory-units/${resolvedUnitEntry.catalogKey}/index.html`;
+    return `/inventory-units/${resolvedUnitEntry.catalogKey}/`;
   }
 }
-
-let counter = 1;
 
 function createUnitInventorySpec(
   resolvedUnitEntry: ResolvedUnitEntry,
   meta: UnitMetadata,
+  hasThumbnail: boolean,
+  hasLicenseText: boolean,
 ): UnitInventorySpec {
   const catalogKey = resolvedUnitEntry.catalogKey;
   const pageFolderUrl = resolvedUnitEntry.sourceUrlSpec;
@@ -135,14 +101,29 @@ function createUnitInventorySpec(
     console.log(meta);
     throw new Error(`Invalid preferred size for unit ${catalogKey}`);
   }
+  const _meta = meta as any;
+  const loaderPageUrlBase = getLoaderPageUrlBase(resolvedUnitEntry);
   return {
     catalogKey,
-    // canonicalPageId: buildUnitPageId(meta, resolvedUnitEntry),
-    // canonicalPageId: "OMIT_AT_THIS_POINT_" + (counter++).toString(),
-    ...meta,
-    originalPageUrl: `${pageFolderUrl}index.html`,
-    loaderPageUrl: getLoaderPageUrl(resolvedUnitEntry),
+    name: meta.name,
+    unitType: meta.unitType,
+    category: meta.category,
     preferredSize,
+    outputSignalTypes: meta.outputSignalTypes,
+    inputSignalTypes: meta.inputSignalTypes,
+    unitTypesVersion: meta.unitTypesVersion,
+    originalPageUrl: `${pageFolderUrl}index.html`,
+    loaderPageUrl: `${loaderPageUrlBase}index.html`,
+    thumbnailUrl: hasThumbnail
+      ? `${pageFolderUrl}unit-thumbnail.png`
+      : undefined,
+    //
+    originalRepositoryUrl: _meta.repositoryUrl ?? _meta.originalRepositoryUrl,
+    originalAuthor: _meta.author ?? _meta.originalAuthor,
+    forkedRepositoryUrl: _meta.forkedRepositoryUrl,
+    forkedAuthor: _meta.forkedAuthor,
+    license: meta.license,
+    licenseTextUrl: hasLicenseText ? `${pageFolderUrl}LICENSE` : undefined,
   };
 }
 
@@ -152,10 +133,22 @@ export async function generateSummariesJson(
   const inventorySpecs = await Promise.all(
     resolvedUnitEntries.map(async (resolvedUnitEntry) => {
       const meta = await fetchUnitMeta(resolvedUnitEntry);
-      return createUnitInventorySpec(resolvedUnitEntry, meta);
+      const hasThumbnail = await checkUnitAssetExists(
+        resolvedUnitEntry,
+        "unit-thumbnail.png",
+      );
+      const hasLicenseText = await checkUnitAssetExists(
+        resolvedUnitEntry,
+        "LICENSE",
+      );
+      return createUnitInventorySpec(
+        resolvedUnitEntry,
+        meta,
+        hasThumbnail,
+        hasLicenseText,
+      );
     }),
   );
-  // checkPageIdsUnique(inventorySpecs);
   const summariesJson: UnitInventoriesJson = Object.fromEntries(
     inventorySpecs.map((spec) => [spec.catalogKey, spec]),
   );

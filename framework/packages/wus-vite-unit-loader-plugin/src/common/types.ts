@@ -1,13 +1,26 @@
-import { UnitMetadata } from "wus-unit-types";
+import { UnitCategoryHint, UnitType } from "wus-unit-types";
 
 export type UnitSourceUrls = Record<string, string>;
 
-export type UnitInventorySpec = Omit<UnitMetadata, "preferredSize"> & {
+export type UnitInventorySpec = {
   catalogKey: string;
-  // canonicalPageId: string;
+  name: string;
+  unitType: UnitType;
+  category?: UnitCategoryHint;
+  preferredSize: { width: number; height: number };
+  outputSignalTypes: string;
+  inputSignalTypes: string;
+  unitTypesVersion: string;
   originalPageUrl: string;
   loaderPageUrl: string;
-  preferredSize: { width: number; height: number };
+  thumbnailUrl?: string;
+  //
+  originalRepositoryUrl: string;
+  originalAuthor: string;
+  forkedRepositoryUrl?: string;
+  forkedAuthor?: string;
+  license: string;
+  licenseTextUrl?: string;
 };
 
 export type UnitInventoriesJson = Record<string, UnitInventorySpec>;

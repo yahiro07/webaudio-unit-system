@@ -38,7 +38,7 @@ export function unitLoaderPlugin(options: {
         unitSourceUrls,
         unitsCacheFolderPath,
       );
-      console.log(resolvedUnitEntries);
+      // console.log(resolvedUnitEntries);
     },
     async processStage2() {
       //stage2 - check and download remote units if needed
