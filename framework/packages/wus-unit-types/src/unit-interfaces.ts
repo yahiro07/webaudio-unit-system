@@ -119,13 +119,14 @@ export type UnitInterface = {
   primaryInputPort: UnitInputPort;
   createMultiChannelOutputPorts(numPorts: number): UnitOutputPort[];
   createMultiChannelInputPorts(numPorts: number): UnitInputPort[];
-  // setHostCallbacks(callbacks: HostCallbacks): void;
-  // declareUnitFeatures(spec: UnitFeatures): void;
-  // completeSetup(): void;
   completeSetupWithAttributes(attrs: {
     unitFeatures: UnitFeatures;
     hostCallbacks?: HostCallbacks;
     primaryInputPortHandlers?: UnitInputPortHandlers;
     primaryInputPortCallbacks?: UnitInputPortCallbacks;
   }): void;
+  //deprecated, use completeSetupWithAttributes instead
+  // setHostCallbacks(callbacks: HostCallbacks): void;
+  // declareUnitFeatures(spec: UnitFeatures): void;
+  // completeSetup(): void;
 };
