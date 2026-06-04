@@ -6,12 +6,6 @@ import { createStore } from "snap-store";
 
 const unitInterface = getUnitInterface();
 
-unitInterface?.declareUnitFeatures({
-  type: "sequencer",
-  categoryHint: "keyboard",
-  outputs: ["note"],
-});
-
 const store = createStore<{ notes: number[] }>({ notes: [] });
 
 const noteOutput = unitInterface?.primaryOutputPort.noteOutput;
@@ -28,13 +22,19 @@ const actions = {
 };
 
 function setupUnitInstance() {
-  unitInterface?.primaryInputPort.setHandlers({
-    noteInput: {
-      noteOn: actions.noteOn,
-      noteOff: actions.noteOff,
+  unitInterface?.completeSetupWithAttributes({
+    unitFeatures: {
+      type: "sequencer",
+      categoryHint: "keyboard",
+      outputs: ["note"],
+    },
+    primaryInputPortHandlers: {
+      noteInput: {
+        noteOn: actions.noteOn,
+        noteOff: actions.noteOff,
+      },
     },
   });
-  unitInterface?.completeSetup();
 }
 setupUnitInstance();
 

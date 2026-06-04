@@ -18,12 +18,6 @@ const [state, setState] = createStore<{
 function setupUnitInstance() {
   const unitInterface = getUnitInterface();
   if (unitInterface) {
-    unitInterface.declareUnitFeatures({
-      type: "effect",
-      categoryHint: "visualizer",
-      outputs: ["audio"],
-      inputs: ["audio"],
-    });
     const audioContext = unitInterface.audioContext;
     setState({ sampleRate: audioContext.sampleRate });
     const analyzer = audioContext.createAnalyser();
@@ -41,7 +35,14 @@ function setupUnitInstance() {
     unitInterface.primaryInputPort.audioInput.node.connect(analyzer);
     analyzer.connect(unitInterface.primaryOutputPort.audioOutput.node);
 
-    unitInterface.completeSetup();
+    unitInterface.completeSetupWithAttributes({
+      unitFeatures: {
+        type: "effect",
+        categoryHint: "visualizer",
+        outputs: ["audio"],
+        inputs: ["audio"],
+      },
+    });
   }
 }
 setupUnitInstance();

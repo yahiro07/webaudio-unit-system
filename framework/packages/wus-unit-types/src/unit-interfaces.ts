@@ -61,11 +61,12 @@ export type AudioPort = {
   node: AudioNode;
 };
 
+type UnitOutputPortCallbacks = {
+  onConnectedFrom?(subPortTypes: PortSubtype[]): void;
+  onDisconnectFrom?(): void;
+};
 export type UnitOutputPort = {
-  setCallbacks(callbacks: {
-    onConnectedTo?(subPortTypes: PortSubtype[]): void;
-    onDisconnectTo?(): void;
-  }): void;
+  setCallbacks(callbacks: UnitOutputPortCallbacks): void;
   audioOutput: AudioPort;
   noteOutput: NotePort;
   cvGateOutput: CvGatePort;
@@ -75,20 +76,24 @@ export type UnitOutputPort = {
   samplerPadOutput: SamplerPadPort;
 };
 
+type UnitInputPortCallbacks = {
+  onConnectedFrom?(subPortTypes: PortSubtype[]): void;
+  onDisconnectFrom?(): void;
+};
+
+type UnitInputPortHandlers = {
+  noteInput?: NotePort;
+  cvGateInput?: CvGatePort;
+  clockInput?: ClockPort;
+  stateInput?: StatePort;
+  automationInput?: AutomationPort;
+  samplerPadInput?: SamplerPadPort;
+};
+
 export type UnitInputPort = {
   audioInput: AudioPort;
-  setCallbacks(callbacks: {
-    onConnectedFrom?(subPortTypes: PortSubtype[]): void;
-    onDisconnectFrom?(): void;
-  }): void;
-  setHandlers(handlers: {
-    noteInput?: NotePort;
-    cvGateInput?: CvGatePort;
-    clockInput?: ClockPort;
-    stateInput?: StatePort;
-    automationInput?: AutomationPort;
-    samplerPadInput?: SamplerPadPort;
-  }): void;
+  setCallbacks(callbacks: UnitInputPortCallbacks): void;
+  setHandlers(handlers: UnitInputPortHandlers): void;
 };
 
 export type MetaAttributes = {
@@ -117,4 +122,10 @@ export type UnitInterface = {
   setHostCallbacks(callbacks: HostCallbacks): void;
   declareUnitFeatures(spec: UnitFeatures): void;
   completeSetup(): void;
+  completeSetupWithAttributes(attrs: {
+    unitFeatures: UnitFeatures;
+    hostCallbacks?: HostCallbacks;
+    primaryInputPortHandlers?: UnitInputPortHandlers;
+    primaryInputPortCallbacks?: UnitInputPortCallbacks;
+  }): void;
 };

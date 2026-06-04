@@ -8,12 +8,6 @@ const store = createStore({ gain: 0.5 });
 
 function setupUnitInstance() {
   const unitInterface = getUnitInterface();
-  unitInterface?.declareUnitFeatures({
-    type: "effect",
-    categoryHint: "effect",
-    outputs: ["audio"],
-    inputs: ["audio", "state"],
-  });
   if (unitInterface) {
     const audioContext = unitInterface.audioContext;
     const gainNode = audioContext.createGain();
@@ -25,21 +19,29 @@ function setupUnitInstance() {
         gainNode.gain.value = attrs.gain;
       }
     });
-    unitInterface.primaryInputPort.setHandlers({
-      stateInput: {
-        emitStateBytes() {
-          const g = (store.state.gain * 255) >>> 0;
-          return new Uint8Array([g]);
-        },
-        applyStateBytes(state) {
-          if (state.length === 1) {
-            const g = state[0] / 255;
-            store.setGain(g);
-          }
+
+    unitInterface.completeSetupWithAttributes({
+      unitFeatures: {
+        type: "effect",
+        categoryHint: "effect",
+        outputs: ["audio"],
+        inputs: ["audio", "state"],
+      },
+      primaryInputPortHandlers: {
+        stateInput: {
+          emitStateBytes() {
+            const g = (store.state.gain * 255) >>> 0;
+            return new Uint8Array([g]);
+          },
+          applyStateBytes(state) {
+            if (state.length === 1) {
+              const g = state[0] / 255;
+              store.setGain(g);
+            }
+          },
         },
       },
     });
-    unitInterface.completeSetup();
   }
 }
 setupUnitInstance();

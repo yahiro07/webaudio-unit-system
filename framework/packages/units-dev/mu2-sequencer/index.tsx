@@ -11,13 +11,6 @@ import { getUnitInterface } from "wus-unit-types";
 
 const unitInterface = getUnitInterface();
 
-unitInterface?.declareUnitFeatures({
-  type: "sequencer",
-  categoryHint: "stepSequencer",
-  outputs: ["note"],
-  inputs: ["clock"],
-});
-
 function createAppModel() {
   const [state, setState] = createStore({
     stepPos: 0,
@@ -50,18 +43,25 @@ function createAppModel() {
 const appModel = createAppModel();
 
 function setupUnitInstance() {
-  unitInterface?.primaryInputPort.setHandlers({
-    clockInput: {
-      start() {},
-      processStep(stepIndex) {
-        appModel.onStep(stepIndex);
-      },
-      stop() {
-        appModel.allNotesOff();
+  unitInterface?.completeSetupWithAttributes({
+    unitFeatures: {
+      type: "sequencer",
+      categoryHint: "stepSequencer",
+      outputs: ["note"],
+      inputs: ["clock"],
+    },
+    primaryInputPortHandlers: {
+      clockInput: {
+        start() {},
+        processStep(stepIndex) {
+          appModel.onStep(stepIndex);
+        },
+        stop() {
+          appModel.allNotesOff();
+        },
       },
     },
   });
-  unitInterface?.completeSetup();
 }
 setupUnitInstance();
 

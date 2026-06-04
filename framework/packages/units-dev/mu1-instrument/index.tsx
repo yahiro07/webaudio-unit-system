@@ -4,13 +4,6 @@ import { getUnitInterface } from "wus-unit-types";
 
 const unitInterface = getUnitInterface();
 
-unitInterface?.declareUnitFeatures({
-  type: "instrument",
-  categoryHint: "synthesizer",
-  outputs: ["audio"],
-  inputs: ["note"],
-});
-
 const audioContext = unitInterface?.audioContext ?? new AudioContext();
 const destinationNode =
   unitInterface?.primaryOutputPort.audioOutput.node ?? audioContext.destination;
@@ -61,17 +54,24 @@ function ToneButton(props: { label: string; noteNumber: number }) {
 }
 
 function setupUnitInstance() {
-  unitInterface?.primaryInputPort.setHandlers({
-    noteInput: {
-      noteOn(noteNumber) {
-        appModel.noteOn(noteNumber);
-      },
-      noteOff(noteNumber) {
-        appModel.noteOff(noteNumber);
+  unitInterface?.completeSetupWithAttributes({
+    unitFeatures: {
+      type: "instrument",
+      categoryHint: "synthesizer",
+      outputs: ["audio"],
+      inputs: ["note"],
+    },
+    primaryInputPortHandlers: {
+      noteInput: {
+        noteOn(noteNumber) {
+          appModel.noteOn(noteNumber);
+        },
+        noteOff(noteNumber) {
+          appModel.noteOff(noteNumber);
+        },
       },
     },
   });
-  unitInterface?.completeSetup();
 }
 setupUnitInstance();
 
