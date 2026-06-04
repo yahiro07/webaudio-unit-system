@@ -2,7 +2,7 @@
 
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createStore } from "solid-js/store";
-import { getHostInterface } from "wus-unit-types";
+import { getUnitInterface } from "wus-unit-types";
 import "@wus/mo/styles";
 import { mapUnaryFrom, mapUnaryTo } from "@wus/ax/number-utils";
 import { createEffect } from "solid-js";
@@ -16,9 +16,9 @@ const [state, setState] = createStore<{
 });
 
 function setupUnitInstance() {
-  const hostInterface = getHostInterface();
-  if (hostInterface) {
-    const audioContext = hostInterface.audioContext;
+  const unitInterface = getUnitInterface();
+  if (unitInterface) {
+    const audioContext = unitInterface.audioContext;
     setState({ sampleRate: audioContext.sampleRate });
     const analyzer = audioContext.createAnalyser();
     analyzer.fftSize = 1024;
@@ -32,10 +32,17 @@ function setupUnitInstance() {
       setState({ fftData });
     }, 16);
 
-    hostInterface.audioSourceNode.connect(analyzer);
-    analyzer.connect(hostInterface.audioDestinationNode);
+    unitInterface.primaryInputPort.audioInput.node.connect(analyzer);
+    analyzer.connect(unitInterface.primaryOutputPort.audioOutput.node);
 
-    hostInterface.setupUnitAgent({ type: "effect" });
+    unitInterface.completeSetupWithAttributes({
+      unitFeatures: {
+        type: "effect",
+        categoryHint: "visualizer",
+        outputs: ["audio"],
+        inputs: ["audio"],
+      },
+    });
   }
 }
 setupUnitInstance();

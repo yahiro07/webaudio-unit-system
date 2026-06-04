@@ -1,12 +1,12 @@
-import { UnitCategoryHint, UnitType } from "./unit-interfaces";
+import { UnitCategoryHint, UnitType } from "./common-types";
 
 export type UnitMetadata = {
   name: string;
   unitType: UnitType;
-  category?: UnitCategoryHint;
-  preferredSize: string;
-  outputSignalTypes: string; //audio,note,cvgate,state,params,pad
-  inputSignalTypes: string; //audio,note,cvgate,state,params,pad
+  categoryHint?: UnitCategoryHint;
+  preferredSize: string; //w,h
+  outputSignalTypes: string; //audio,note,cvGate,clock,state,automation,samplerPad
+  inputSignalTypes: string; //audio,note,cvGate,clock,state,automation,samplerPad
   unitTypesVersion: string;
 } & (
   | { repositoryUrl: string; author: string }
