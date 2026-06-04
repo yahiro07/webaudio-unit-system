@@ -12,7 +12,7 @@ import { generateRandomId } from "@wus/mo/random-id-generator";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createSignal, Show } from "solid-js";
 import { createStore, produce } from "solid-js/store";
-import { UnitInventorySpec } from "../../vite-plugins/common/types";
+import { UnitInventorySpec } from "wus-vite-unit-loader-plugin";
 import unitInventories from "./unit-inventories.json";
 
 type CatalogKey = keyof typeof unitInventories;
