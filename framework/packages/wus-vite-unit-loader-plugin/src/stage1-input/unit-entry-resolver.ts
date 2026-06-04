@@ -11,7 +11,7 @@ function mapUrlToResolvedUnitEntry(
   url: string,
   unitsCacheFolderPath: string,
 ): ResolvedUnitEntry {
-  const catalogKey = normalizeCasing(catalogKeyInput, "snake");
+  const catalogKey = normalizeCasing(catalogKeyInput, "camel");
   const sourceUrlSpec = url;
   if (url.startsWith("/@direct/")) {
     const targetUrl = extractDirectTargetUrl(url);

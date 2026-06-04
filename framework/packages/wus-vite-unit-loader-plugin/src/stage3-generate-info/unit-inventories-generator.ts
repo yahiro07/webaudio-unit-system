@@ -3,6 +3,7 @@ import path from "node:path";
 import { UnitMetadata } from "../../../wus-host-system/contract";
 import { ResolvedUnitEntry } from "../common/internal-types";
 import { UnitInventoriesJson, UnitInventorySpec } from "../common/types";
+import { normalizeFrameSize } from "./frame-size";
 
 function slugifyUnitName(name: string): string {
   return name
@@ -51,15 +52,15 @@ function buildUnitPageId(
   }
 }
 
-function checkPageIdsUnique(metaList: UnitInventorySpec[]) {
-  const pageIds = metaList.map((m) => m.canonicalPageId);
-  for (let i = 0; i < pageIds.length; i++) {
-    const id = pageIds[i];
-    if (pageIds.indexOf(id) !== i) {
-      throw new Error(`Duplicate page ID detected: ${id}`);
-    }
-  }
-}
+// function checkPageIdsUnique(metaList: UnitInventorySpec[]) {
+//   const pageIds = metaList.map((m) => m.canonicalPageId);
+//   for (let i = 0; i < pageIds.length; i++) {
+//     const id = pageIds[i];
+//     if (pageIds.indexOf(id) !== i) {
+//       throw new Error(`Duplicate page ID detected: ${id}`);
+//     }
+//   }
+// }
 
 async function readUnitMetaFromFolder(
   folderPath: string,
@@ -129,13 +130,19 @@ function createUnitInventorySpec(
 ): UnitInventorySpec {
   const catalogKey = resolvedUnitEntry.catalogKey;
   const pageFolderUrl = resolvedUnitEntry.sourceUrlSpec;
+  const preferredSize = normalizeFrameSize(meta.preferredSize);
+  if (!preferredSize) {
+    console.log(meta);
+    throw new Error(`Invalid preferred size for unit ${catalogKey}`);
+  }
   return {
     catalogKey,
     // canonicalPageId: buildUnitPageId(meta, resolvedUnitEntry),
-    canonicalPageId: "OMIT_AT_THIS_POINT_" + (counter++).toString(),
+    // canonicalPageId: "OMIT_AT_THIS_POINT_" + (counter++).toString(),
     ...meta,
     originalPageUrl: `${pageFolderUrl}index.html`,
     loaderPageUrl: getLoaderPageUrl(resolvedUnitEntry),
+    preferredSize,
   };
 }
 
@@ -148,7 +155,7 @@ export async function generateSummariesJson(
       return createUnitInventorySpec(resolvedUnitEntry, meta);
     }),
   );
-  checkPageIdsUnique(inventorySpecs);
+  // checkPageIdsUnique(inventorySpecs);
   const summariesJson: UnitInventoriesJson = Object.fromEntries(
     inventorySpecs.map((spec) => [spec.catalogKey, spec]),
   );

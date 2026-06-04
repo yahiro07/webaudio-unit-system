@@ -3,5 +3,8 @@
   "category": "synthesizer",
   "unitType": "instrument",
   "repositoryUrl": "https://github.com/yahiro07/webaudio-unit-system",
-  "preferredSize": "300,150"
+  "preferredSize": "300,150",
+  "unitTypesVersion": "0.1.0",
+  "inputSignalTypes": "note",
+  "outputSignalTypes": "audio"
 }
