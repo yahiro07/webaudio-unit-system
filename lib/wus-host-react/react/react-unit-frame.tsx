@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { hostSystem } from "../host/host-system";
+import { HostSystem } from "../host";
 import { HsUnitInstance } from "../host/host-types";
 import {
   instantiateReactUnit,
@@ -11,24 +11,26 @@ export const ReactUnitFrame = ({
   unitTemplateFn,
   destSpec,
   loadedCallback,
+  hostSystem,
 }: {
   unitId: string;
   unitTemplateFn: ReactUnitTemplateFn;
   destSpec?: string;
   loadedCallback?(unitInstance: HsUnitInstance): void;
+  hostSystem: HostSystem;
 }) => {
   const unit = useMemo(
-    () => instantiateReactUnit(unitTemplateFn, unitId),
-    [unitTemplateFn, unitId],
+    () => instantiateReactUnit(hostSystem.audioContext, unitTemplateFn, unitId),
+    [unitTemplateFn, unitId, hostSystem],
   );
   useEffect(() => {
     loadedCallback?.(unit);
     return hostSystem.registerUnitInstance(unit);
-  }, [unit, loadedCallback]);
+  }, [unit, loadedCallback, hostSystem]);
 
   useEffect(() => {
     hostSystem.reserveConnectionChange(unitId, destSpec);
-  }, [unitId, destSpec]);
+  }, [unitId, destSpec, hostSystem]);
 
   return <unit.RenderUi />;
 };

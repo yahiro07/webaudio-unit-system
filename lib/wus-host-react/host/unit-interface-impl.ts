@@ -1,6 +1,5 @@
 import { UnitInterface } from "wus-unit-types";
 import { seqNumbers } from "../utils/array-utils";
-import { createHsUnitOutputPort, gAudioContext } from "./host-core";
 import {
   HsUnitInputPort,
   HsUnitInputPortCallbacks,
@@ -9,9 +8,12 @@ import {
   HsUnitInstance,
   HsUnitOutputPort,
 } from "./host-types";
+import { createHsUnitOutputPortImpl } from "./output-port";
 
-export function createHsUnitInputPortPre(): HsUnitInputPortPre {
-  const audioNode = gAudioContext.createGain();
+export function createHsUnitInputPortPre(
+  audioContext: AudioContext,
+): HsUnitInputPortPre {
+  const audioNode = audioContext.createGain();
   let handlers: HsUnitInputPortPreHandlers | undefined;
   let callbacks: HsUnitInputPortCallbacks | undefined;
   return {
@@ -40,12 +42,12 @@ export function createHsUnitInputPortPre(): HsUnitInputPortPre {
 }
 
 export function createUnitInterface(
+  audioContext: AudioContext,
   unitId: string,
   createdCallback: (unitInstance: HsUnitInstance) => void,
 ): UnitInterface {
-  const audioContext = gAudioContext;
-  const primaryOutputPort = createHsUnitOutputPort();
-  const primaryInputPort = createHsUnitInputPortPre();
+  const primaryOutputPort = createHsUnitOutputPortImpl(audioContext);
+  const primaryInputPort = createHsUnitInputPortPre(audioContext);
   let outputPorts: HsUnitOutputPort[] | undefined;
   let inputPorts: HsUnitInputPortPre[] | undefined;
   return {
@@ -53,11 +55,15 @@ export function createUnitInterface(
     primaryOutputPort,
     primaryInputPort,
     createMultiChannelOutputPorts(numPorts: number) {
-      outputPorts = seqNumbers(numPorts).map(() => createHsUnitOutputPort());
+      outputPorts = seqNumbers(numPorts).map(() =>
+        createHsUnitOutputPortImpl(audioContext),
+      );
       return outputPorts;
     },
     createMultiChannelInputPorts(numPorts: number) {
-      inputPorts = seqNumbers(numPorts).map(() => createHsUnitInputPortPre());
+      inputPorts = seqNumbers(numPorts).map(() =>
+        createHsUnitInputPortPre(audioContext),
+      );
       return inputPorts;
     },
     completeSetupWithAttributes(attrs) {

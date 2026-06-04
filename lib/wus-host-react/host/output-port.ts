@@ -20,7 +20,7 @@ function getConnectedSubPortTypes(
 }
 
 export function createHsUnitOutputPortImpl(
-  fnCreateGainNode: () => GainNode,
+  audioContext: AudioContext,
 ): HsUnitOutputPort {
   const connectedInputPorts = new Set<HsUnitInputPort>();
   const unsubscribeSubPortTypesByPort = new Map<HsUnitInputPort, () => void>();
@@ -73,7 +73,7 @@ export function createHsUnitOutputPortImpl(
     },
     audioOutput: {
       get node() {
-        audioRelayNode ??= fnCreateGainNode();
+        audioRelayNode ??= audioContext.createGain();
         return audioRelayNode;
       },
     },

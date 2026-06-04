@@ -1,12 +1,5 @@
 import { HsUnitInstance } from "./host-types";
 
-// export const splitFanOutDestSpecs = (destSpec: string) => {
-//   return destSpec
-//     .split("&")
-//     .map((spec) => spec.trim())
-//     .filter(Boolean);
-// };
-
 export function getUnitSourcePort(
   unit: HsUnitInstance,
   outputPortIndex?: number,

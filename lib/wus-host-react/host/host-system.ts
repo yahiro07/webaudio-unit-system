@@ -1,5 +1,4 @@
 import { createEventPort, EventPort } from "../utils/event-port";
-import { gAudioContext } from "./host-core";
 import { DestinationCode, HsUnitInputPort, HsUnitInstance } from "./host-types";
 import { getUnitSourcePort } from "./unit-connecter";
 
@@ -7,7 +6,8 @@ type HostSystemEvent = { type: "loadStarted" } | { type: "loadCompleted" };
 // | { type: "unitsAdded"; units: HsUnitInstance[] }
 // | { type: "unitsRemoved"; unitIds: string[] };
 
-type HostSystem = {
+export type HostSystem = {
+  audioContext: AudioContext;
   eventPort: EventPort<HostSystemEvent>;
   registerUnitInstance(unit: HsUnitInstance): () => void;
   registerPendingUnitInstancePromise(
@@ -21,6 +21,7 @@ type HostSystem = {
 };
 
 type HostStateBus = {
+  audioContext: AudioContext;
   eventPort: EventPort<HostSystemEvent>;
   audioDestinationUnitInputPort: HsUnitInputPort;
   units: Map<string, HsUnitInstance>;
@@ -29,14 +30,15 @@ type HostStateBus = {
   removeUnit(unitId: string): void;
 };
 
-function createHostStateBus(): HostStateBus {
+function createHostStateBus(audioContext: AudioContext): HostStateBus {
   const eventPort = createEventPort<HostSystemEvent>();
   const audioDestinationUnitInputPort: HsUnitInputPort = {
-    audioInput: { node: gAudioContext.destination },
+    audioInput: { node: audioContext.destination },
   };
   const units: Map<string, HsUnitInstance> = new Map();
 
   return {
+    audioContext,
     eventPort,
     audioDestinationUnitInputPort,
     units,
@@ -265,8 +267,8 @@ function createUnitsLoadingManager(
   };
 }
 
-function createHostSystem(): HostSystem {
-  const bus = createHostStateBus();
+export function createHostSystem(audioContext: AudioContext): HostSystem {
+  const bus = createHostStateBus(audioContext);
   const connectionManager = createUnitConnectionsManager(bus);
   const loadingManager = createUnitsLoadingManager(bus, connectionManager);
 
@@ -282,6 +284,7 @@ function createHostSystem(): HostSystem {
   };
 
   return {
+    audioContext,
     eventPort: bus.eventPort,
     registerUnitInstance(unit: HsUnitInstance) {
       const promise = Promise.resolve(unit);
@@ -295,4 +298,3 @@ function createHostSystem(): HostSystem {
     },
   };
 }
-export const hostSystem = createHostSystem();
