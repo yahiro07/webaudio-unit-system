@@ -1,3 +1,5 @@
+import { UnitCategoryHint, UnitType } from "./common-types";
+
 export type PortSubtype =
   | "audio"
   | "note"
@@ -99,9 +101,11 @@ export type HostCallbacks = {
   setMetaAttributes?(metaAttrs: MetaAttributes): void;
 };
 
-export type UnitPortsSpec = {
-  output?: PortSubtype[];
-  input?: PortSubtype[];
+export type UnitFeatures = {
+  type: UnitType;
+  categoryHint?: UnitCategoryHint;
+  outputs?: PortSubtype[];
+  inputs?: PortSubtype[];
 };
 
 export type UnitInterface = {
@@ -111,6 +115,6 @@ export type UnitInterface = {
   createMultiChannelOutputPorts(numPorts: number): UnitOutputPort[];
   createMultiChannelInputPorts(numPorts: number): UnitInputPort[];
   setHostCallbacks(callbacks: HostCallbacks): void;
-  setPortSubtypes(spec: UnitPortsSpec): void;
+  declareUnitFeatures(spec: UnitFeatures): void;
   completeSetup(): void;
 };
