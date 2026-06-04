@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "react";
+import { CSSProperties, useEffect, useMemo, useRef } from "react";
 import { HostSystem } from "../host";
 import { HsUnitInstance } from "../host/host-types";
 import { createUnitInterface } from "../host/unit-interface-impl";
+import { mergeStyleWithFrameSize } from "./frame-size-helper";
 
 export const UnitFrame = ({
   unitId,
@@ -9,12 +10,20 @@ export const UnitFrame = ({
   destSpec,
   loadedCallback,
   hostSystem,
+  className,
+  style,
+  frameSize,
 }: {
   unitId: string;
   pageUrl: string;
   destSpec?: string;
   loadedCallback?(unitInstance: HsUnitInstance): void;
   hostSystem: HostSystem;
+  // inputNotes?: number[];
+  className?: string;
+  style?: CSSProperties;
+  frameSize?: { width: number; height: number };
+  // onIframeMounted?(iframe: HTMLIFrameElement): (() => void) | undefined;
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -41,12 +50,18 @@ export const UnitFrame = ({
       unitInstantiationPromise,
     );
   }, [pageUrl, hostSystem]);
+
+  const mergedStyle = useMemo(
+    () => mergeStyleWithFrameSize(style, frameSize),
+    [style, frameSize],
+  );
+
   return (
     <iframe
+      className={className}
+      style={mergedStyle}
       ref={iframeRef}
       src={pageUrl}
-      width="200"
-      height="100"
       title={unitId}
     />
   );
