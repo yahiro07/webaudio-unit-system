@@ -3,7 +3,7 @@ import { UnitCategoryHint, UnitType } from "./common-types";
 export type UnitMetadata = {
   name: string;
   unitType: UnitType;
-  category?: UnitCategoryHint;
+  categoryHint?: UnitCategoryHint;
   preferredSize: string; //w,h
   outputSignalTypes: string; //audio,note,cvGate,clock,state,automation,samplerPad
   inputSignalTypes: string; //audio,note,cvGate,clock,state,automation,samplerPad
