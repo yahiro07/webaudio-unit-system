@@ -2,31 +2,36 @@ import "@wus/mo/styles";
 import { FeKnob } from "@wus/mo-react/components/knob";
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
 import { createStore } from "snap-store";
-import { getHostInterface } from "wus-unit-types";
+import { getUnitInterface } from "wus-unit-types";
 
 const store = createStore({ gain: 0.5 });
 
 function setupUnitInstance() {
-  const hostInterface = getHostInterface();
-  if (hostInterface) {
-    const audioContext = hostInterface.audioContext;
+  const unitInterface = getUnitInterface();
+  unitInterface?.declareUnitFeatures({
+    type: "effect",
+    categoryHint: "effect",
+    outputs: ["audio"],
+    inputs: ["audio", "state"],
+  });
+  if (unitInterface) {
+    const audioContext = unitInterface.audioContext;
     const gainNode = audioContext.createGain();
-    hostInterface.audioSourceNode.connect(gainNode);
-    gainNode.connect(hostInterface.audioDestinationNode);
+    unitInterface.primaryInputPort.audioInput.node.connect(gainNode);
+    gainNode.connect(unitInterface.primaryOutputPort.audioOutput.node);
 
     store.subscribe((attrs) => {
       if (attrs.gain !== undefined) {
         gainNode.gain.value = attrs.gain;
       }
     });
-    hostInterface.setupUnitAgent({
-      type: "effect",
-      persistence: {
+    unitInterface.primaryInputPort.setHandlers({
+      stateInput: {
         emitStateBytes() {
           const g = (store.state.gain * 255) >>> 0;
           return new Uint8Array([g]);
         },
-        loadStateBytes(state) {
+        applyStateBytes(state) {
           if (state.length === 1) {
             const g = state[0] / 255;
             store.setGain(g);
@@ -34,6 +39,7 @@ function setupUnitInstance() {
         },
       },
     });
+    unitInterface.completeSetup();
   }
 }
 setupUnitInstance();

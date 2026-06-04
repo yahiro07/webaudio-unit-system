@@ -1,32 +1,40 @@
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
-import { getHostInterface } from "wus-unit-types";
+import { getUnitInterface } from "wus-unit-types";
 import "@wus/mo/styles";
 import { seqNumbers } from "@wus/ax/array-utils";
 import { createStore } from "snap-store";
 
-const hostInterface = getHostInterface();
+const unitInterface = getUnitInterface();
+
+unitInterface?.declareUnitFeatures({
+  type: "sequencer",
+  categoryHint: "keyboard",
+  outputs: ["note"],
+});
 
 const store = createStore<{ notes: number[] }>({ notes: [] });
+
+const noteOutput = unitInterface?.primaryOutputPort.noteOutput;
 
 const actions = {
   noteOn(noteNumber: number, velocity: number) {
     store.mutations.setNotes((prev) => [...prev, noteNumber]);
-    hostInterface?.noteOutputPort.noteOn(noteNumber, velocity);
+    noteOutput?.noteOn(noteNumber, velocity);
   },
   noteOff(noteNumber: number) {
     store.mutations.setNotes((prev) => prev.filter((n) => n !== noteNumber));
-    hostInterface?.noteOutputPort.noteOff(noteNumber);
+    noteOutput?.noteOff(noteNumber);
   },
 };
 
 function setupUnitInstance() {
-  hostInterface?.setupUnitAgent({
-    type: "sequencer",
+  unitInterface?.primaryInputPort.setHandlers({
     noteInput: {
       noteOn: actions.noteOn,
       noteOff: actions.noteOff,
     },
   });
+  unitInterface?.completeSetup();
 }
 setupUnitInstance();
 

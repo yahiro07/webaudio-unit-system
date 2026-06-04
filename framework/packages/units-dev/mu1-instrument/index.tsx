@@ -1,11 +1,19 @@
 import "@wus/mo/styles";
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
-import { getHostInterface } from "wus-unit-types";
+import { getUnitInterface } from "wus-unit-types";
 
-const hostInterface = getHostInterface();
-const audioContext = hostInterface?.audioContext ?? new AudioContext();
+const unitInterface = getUnitInterface();
+
+unitInterface?.declareUnitFeatures({
+  type: "instrument",
+  categoryHint: "synthesizer",
+  outputs: ["audio"],
+  inputs: ["note"],
+});
+
+const audioContext = unitInterface?.audioContext ?? new AudioContext();
 const destinationNode =
-  hostInterface?.audioDestinationNode ?? audioContext.destination;
+  unitInterface?.primaryOutputPort.audioOutput.node ?? audioContext.destination;
 
 function midiToFrequency(midiNote: number): number {
   return 440 * 2 ** ((midiNote - 69) / 12);
@@ -53,8 +61,7 @@ function ToneButton(props: { label: string; noteNumber: number }) {
 }
 
 function setupUnitInstance() {
-  hostInterface?.setupUnitAgent({
-    type: "instrument",
+  unitInterface?.primaryInputPort.setHandlers({
     noteInput: {
       noteOn(noteNumber) {
         appModel.noteOn(noteNumber);
@@ -64,6 +71,7 @@ function setupUnitInstance() {
       },
     },
   });
+  unitInterface?.completeSetup();
 }
 setupUnitInstance();
 

@@ -4,12 +4,19 @@ import { seqNumbers } from "@wus/ax/array-utils";
 import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
 import { createEffect } from "solid-js";
 import { createStore } from "solid-js/store";
-import { getHostInterface } from "wus-unit-types";
 import "@wus/mo/styles";
 import { createIntervalTimer } from "@wus/ax/timer-utils";
 import { Button } from "@wus/mo-solid/components/button";
+import { getUnitInterface } from "wus-unit-types";
 
-const hostInterface = getHostInterface();
+const unitInterface = getUnitInterface();
+
+unitInterface?.declareUnitFeatures({
+  type: "sequencer",
+  categoryHint: "stepSequencer",
+  outputs: ["note"],
+  inputs: ["clock"],
+});
 
 function createAppModel() {
   const [state, setState] = createStore({
@@ -19,17 +26,19 @@ function createAppModel() {
 
   const notNumber = 36 + 9;
 
+  const noteOutput = unitInterface?.primaryOutputPort.noteOutput;
+
   function onStep(stepPos: number) {
     if (stepPos % 4 === 2) {
-      hostInterface?.noteOutputPort.noteOn(notNumber, 0.8);
+      noteOutput?.noteOn(notNumber, 0.8);
     } else if (stepPos % 4 === 0) {
-      hostInterface?.noteOutputPort.noteOff(notNumber);
+      noteOutput?.noteOff(notNumber);
     }
     setState({ stepPos: stepPos % 16 });
   }
 
   function allNotesOff() {
-    hostInterface?.noteOutputPort.noteOff(notNumber);
+    noteOutput?.noteOff(notNumber);
   }
   return {
     state,
@@ -41,19 +50,18 @@ function createAppModel() {
 const appModel = createAppModel();
 
 function setupUnitInstance() {
-  hostInterface?.setupUnitAgent({
-    type: "sequencer",
-    setPlayState(playing) {
-      if (!playing) {
-        appModel.allNotesOff();
-      }
-    },
-    transportHandling: {
+  unitInterface?.primaryInputPort.setHandlers({
+    clockInput: {
+      start() {},
       processStep(stepIndex) {
         appModel.onStep(stepIndex);
       },
+      stop() {
+        appModel.allNotesOff();
+      },
     },
   });
+  unitInterface?.completeSetup();
 }
 setupUnitInstance();
 
