@@ -1,10 +1,10 @@
-import { removeArrayItem } from "../../mylib/ax/array-utils";
 import {
   HostInterface,
   NoteOutputPort,
   UnitAgent,
   UnitType,
 } from "../contract";
+import { removeArrayItem } from "../utils/array-utils";
 
 export type UnitAgentInHostSide = UnitAgent & {
   unitId: string;

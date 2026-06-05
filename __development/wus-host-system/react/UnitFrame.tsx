@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { arrayExclude } from "../../mylib/ax/array-utils";
 import { HostInterface } from "../contract";
 import {
   HostSystem,
@@ -8,6 +7,7 @@ import {
   hostSystem_wrapConnectUnits,
   UnitAgentInHostSide,
 } from "../host";
+import { arrayExclude } from "../utils/array-utils";
 
 type Props = {
   unitId: string;

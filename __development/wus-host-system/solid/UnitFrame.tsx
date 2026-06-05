@@ -8,7 +8,6 @@ import {
   onCleanup,
   onMount,
 } from "solid-js";
-import { arrayExclude } from "../../mylib/ax/array-utils";
 import { HostInterface } from "../contract";
 import {
   HostSystem,
@@ -17,6 +16,7 @@ import {
   hostSystem_wrapAddUnitAgent,
   UnitAgentInHostSide,
 } from "../host";
+import { arrayExclude } from "../utils/array-utils";
 import {
   FrameSizeInput,
   mergeStyleWithFrameSize,
