@@ -11,5 +11,5 @@ export default defineConfig({
     viteStaticCopy({ targets: [{ src: "unit-meta.json", dest: "./" }] }),
   ],
   resolve: { tsconfigPaths: true, dedupe: ["react", "react-dom"] },
-  build: { outDir: "../../dist", emptyOutDir: true },
+  build: { outDir: "../../dist/mu3-effect", emptyOutDir: true },
 });

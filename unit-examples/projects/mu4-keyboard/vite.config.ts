@@ -14,5 +14,5 @@ export default defineConfig({
     tsconfigPaths: true,
     dedupe: ["react", "react-dom"],
   },
-  build: { outDir: "../../dist", emptyOutDir: true },
+  build: { outDir: "../../dist/mu4-keyboard", emptyOutDir: true },
 });

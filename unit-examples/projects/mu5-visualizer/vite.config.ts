@@ -11,5 +11,5 @@ export default defineConfig({
     viteStaticCopy({ targets: [{ src: "unit-meta.json", dest: "./" }] }),
   ],
   resolve: { tsconfigPaths: true },
-  build: { outDir: "../../dist", emptyOutDir: true },
+  build: { outDir: "../../dist/mu5-visualizer", emptyOutDir: true },
 });
