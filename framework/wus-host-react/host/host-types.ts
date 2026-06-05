@@ -1,0 +1,71 @@
+import { ReactNode } from "react";
+import {
+  AudioPort,
+  AutomationPort,
+  ClockPort,
+  CvGatePort,
+  HostCallbacks,
+  NotePort,
+  PortSubtype,
+  SamplerPadPort,
+  StatePort,
+  UnitInputPort,
+  UnitOutputPort,
+} from "wus-unit-types";
+
+export type HsUnitInputPortPreHandlers = {
+  noteInput?: NotePort;
+  cvGateInput?: CvGatePort;
+  clockInput?: ClockPort;
+  stateInput?: StatePort;
+  automationInput?: AutomationPort;
+  samplerPadInput?: SamplerPadPort;
+};
+
+export type HsUnitInputPortCallbacks = Parameters<
+  UnitInputPort["setCallbacks"]
+>[0];
+
+export type HsUnitInputPortPre = UnitInputPort & {
+  emit(): HsUnitInputPort;
+};
+
+export type HsUnitInputPort = {
+  audioInput?: AudioPort;
+  noteInput?: NotePort;
+  cvGateInput?: CvGatePort;
+  clockInput?: ClockPort;
+  stateInput?: StatePort;
+  automationInput?: AutomationPort;
+  samplerPadInput?: SamplerPadPort;
+  callbacks?: HsUnitInputPortCallbacks;
+  getSubPortTypes?: (hasAudioOutput: boolean) => PortSubtype[];
+  subscribeSubPortTypes?: (
+    listener: (subPortTypes: PortSubtype[]) => void,
+  ) => () => void;
+};
+
+export type HsUnitOutputPort = UnitOutputPort & {
+  connectTo(port: HsUnitInputPort): void;
+  disconnectFrom(port: HsUnitInputPort): void;
+};
+
+export type HsUnitPortsSpec = {
+  outputPortSubtypes?: PortSubtype[];
+  inputPortSubtypes?: PortSubtype[];
+  numMultiInputs?: number;
+  numMultiOutputs?: number;
+};
+
+export type HsUnitInstance = {
+  portsSpec: HsUnitPortsSpec;
+  unitId: string;
+  outputPort: HsUnitOutputPort;
+  inputPort: HsUnitInputPort;
+  outputPorts?: HsUnitOutputPort[];
+  inputPorts?: HsUnitInputPort[];
+  hostCallbacks?: HostCallbacks;
+  RenderUi?: () => ReactNode;
+};
+
+export type DestinationCode = string;

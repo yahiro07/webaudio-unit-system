@@ -1,0 +1,5 @@
+/** biome-ignore-all lint/suspicious/noUnknownAtRules: tailwind extended syntax */
+@import "tailwindcss";
+
+@source "../../mo-react/**/*.tsx";
+@source "../../mo-solid/**/*.tsx";
