@@ -5,11 +5,11 @@ function toAbsolutePath(path: string): string {
 }
 
 const unitsDevDistDir = toAbsolutePath("../../../unit-examples/dist");
-const wusUnitsLocalDistDir = toAbsolutePath("../../../../wus-units/dist");
+// const wusUnitsLocalDistDir = toAbsolutePath("../../../../wus-units/dist");
 
 export const unitSourceUrls = [
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/wavicle/",
-  // "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/specbar/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/specbar/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/proto-engine-ptm-osc/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/proto-engine-pd-fm/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/mini-synth/",
@@ -17,7 +17,7 @@ export const unitSourceUrls = [
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/mini-synth-gp/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/useq/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-units@r7/lseq1/",
-  `file://${wusUnitsLocalDistDir}/specbar/`,
+  // `file://${wusUnitsLocalDistDir}/specbar/`,
 
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r8/additive/",
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r8/drum-machine/",
@@ -28,9 +28,14 @@ export const unitSourceUrls = [
   "https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r8/webaudio-synth-v2/",
   `file://${homeDir}/wus-units/my-drum-machine/`,
   `file://${homeDir}/wus-units/twsq1/`,
-  `file://${unitsDevDistDir}/mu1-instrument/`,
-  `file://${unitsDevDistDir}/mu2-sequencer/`,
-  `file://${unitsDevDistDir}/mu3-effect/`,
-  `file://${unitsDevDistDir}/mu4-keyboard/`,
-  `file://${unitsDevDistDir}/mu5-visualizer/`,
+  // `file://${unitsDevDistDir}/mu1-instrument/`,
+  // `file://${unitsDevDistDir}/mu2-sequencer/`,
+  // `file://${unitsDevDistDir}/mu3-effect/`,
+  // `file://${unitsDevDistDir}/mu4-keyboard/`,
+  // `file://${unitsDevDistDir}/mu5-visualizer/`,
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@r0/unit-examples/dist/mu1-instrument/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@r0/unit-examples/dist/mu2-sequencer/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@r0/unit-examples/dist/mu3-effect/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@r0/unit-examples/dist/mu4-keyboard/",
+  "https://cdn.jsdelivr.net/gh/yahiro07/webaudio-unit-system@r0/unit-examples/dist/mu5-visualizer/",
 ];

@@ -1,4 +1,4 @@
-import { mountAppRoot } from "beams/ax-react/mount-app-root";
+import { mountAppRoot } from "mofur/ax-react";
 import { useEffect } from "react";
 import { createStore } from "snap-store";
 import { createHostSystem, UnitStateData } from "wus-host/host";

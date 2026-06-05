@@ -1,5 +1,5 @@
-import { mountAppRoot } from "beams/ax-react/mount-app-root";
-import { ScalerBox } from "beams/mo-react/components/scaler-box";
+import { mountAppRoot } from "mofur/ax-react";
+import { ScalerBox } from "mofur/mo-react";
 import { createStore } from "snap-store";
 import { createHostSystem } from "wus-host/host";
 import { HostAppProvider, UnitFrame } from "wus-host/react";

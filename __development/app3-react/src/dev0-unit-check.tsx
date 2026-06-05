@@ -1,5 +1,5 @@
-import { mountAppRoot } from "beams/ax-react/mount-app-root";
-import { setupMidiKeyboardInput } from "beams/mx-audio/midi-keyboard-input";
+import { mountAppRoot } from "mofur/ax-react";
+import { setupMidiKeyboardInput } from "mofur/mx-audio";
 import { useEffect } from "react";
 import { createStore } from "snap-store";
 import { createHostSystem } from "wus-host/host";
