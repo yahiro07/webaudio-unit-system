@@ -108,7 +108,7 @@ export type HostCallbacks = {
 };
 
 export type UnitAspects = {
-  unitType: UnitType;
+  type: UnitType;
   categoryHint?: UnitCategoryHint;
   outputs?: PortSubtype[];
   inputs?: PortSubtype[];
