@@ -1,6 +1,6 @@
-import { clampValue } from "@wus/ax/number-utils";
-import { startDragSession } from "@wus/mo/drag-session";
 import { ReactNode } from "react";
+import { clampValue } from "../../../mylib/ax/number-utils";
+import { startDragSession } from "../../../mylib/mo/drag-session";
 
 export function KnobFrame(props: {
   value: number;

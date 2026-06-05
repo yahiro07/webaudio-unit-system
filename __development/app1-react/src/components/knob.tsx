@@ -1,5 +1,5 @@
-import { mapUnaryTo } from "@wus/ax/number-utils";
-import { mergeReactProps } from "../merge-react-props";
+import { mapUnaryTo } from "../../../mylib/ax/number-utils";
+import { mergeReactProps } from "../utils/merge-react-props";
 import { CellFrame } from "./cell-frame";
 import { KnobFrame } from "./knob-frame";
 

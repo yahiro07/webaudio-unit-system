@@ -1,4 +1,4 @@
-import { mergeReactProps } from "../merge-react-props";
+import { mergeReactProps } from "../utils/merge-react-props";
 import { CellFrame } from "./cell-frame";
 import { KnobFrame } from "./knob-frame";
 

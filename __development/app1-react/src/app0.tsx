@@ -1,4 +1,4 @@
-import { mountAppRoot } from "@wus/mo-react/mount-app-root";
+import { mountAppRoot } from "./utils/mount-app-root";
 
 const App = () => {
   return (
