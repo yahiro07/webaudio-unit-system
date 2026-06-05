@@ -12,5 +12,6 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "typescript": "~6.0.3",
-    "wus-unit-types": "file:../../framework/packages/wus-unit-types"  }
+    "wus-unit-types": "file:../../contract/wus-unit-types"
+  }
 }

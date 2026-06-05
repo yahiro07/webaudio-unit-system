@@ -10,13 +10,12 @@
     }
   },
   "scripts": {
-    "prepare": "npm run build",
     "build": "tsup src/index.ts --format esm --clean --dts --out-dir dist"
   },
   "devDependencies": {
     "tsup": "^8.5.1",
     "typescript": "^6.0.2",
     "vite": "^8.0.16",
-    "wus-unit-types": "^0.2.3"
+    "wus-unit-types": "file:../../contract/wus-unit-types"
   }
 }
