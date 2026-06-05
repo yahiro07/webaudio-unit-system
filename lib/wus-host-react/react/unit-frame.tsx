@@ -40,6 +40,7 @@ export const UnitFrame = ({
         hostSystem.audioContext,
         unitId,
         (unitInstance) => {
+          // console.log(`unit loaded for ${unitId}`);
           loadedCallback?.(unitInstance);
           resolve(unitInstance);
         },
