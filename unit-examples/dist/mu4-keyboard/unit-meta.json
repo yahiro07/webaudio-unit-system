@@ -1,0 +1,12 @@
+{
+  "name": "mu4-keyboard",
+  "unitType": "sequencer",
+  "categoryHint": "keyboard",
+  "preferredSize": "300,150",
+  "outputSignalTypes": "note",
+  "inputSignalTypes": "note",
+  "unitTypesVersion": "0.2.0",
+  "repositoryUrl": "https://github.com/yahiro07/webaudio-unit-system",
+  "author": "yahiro",
+  "license": "MIT"
+}
