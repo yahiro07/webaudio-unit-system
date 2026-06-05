@@ -41,7 +41,7 @@ importers:
         version: 6.0.2(vite@8.0.14(@types/node@25.9.1)(jiti@2.7.0))
       beams:
         specifier: file:../../../beam
-        version: file:../../../beam(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: beam@file:../../../beam
       tailwindcss:
         specifier: ^4.3.0
         version: 4.3.0
@@ -52,14 +52,14 @@ importers:
         specifier: ^8.0.12
         version: 8.0.14(@types/node@25.9.1)(jiti@2.7.0)
       wus-host:
-        specifier: file:../wus-host
-        version: file:../wus-host
+        specifier: file:../../framework/wus-host
+        version: file:../../framework/wus-host
       wus-unit-types:
-        specifier: file:../../framework/packages/wus-unit-types
-        version: file:../../framework/packages/wus-unit-types
+        specifier: file:../../contract/wus-unit-types
+        version: file:../../contract/wus-unit-types
       wus-vite-unit-loader-plugin:
-        specifier: file:../../framework/packages/wus-vite-unit-loader-plugin
-        version: file:../../framework/packages/wus-vite-unit-loader-plugin
+        specifier: file:../../framework/wus-vite-unit-loader-plugin
+        version: file:../../framework/wus-vite-unit-loader-plugin
 
 packages:
 
@@ -316,21 +316,8 @@ packages:
       babel-plugin-react-compiler:
         optional: true
 
-  beams@file:../../../beam:
+  beam@file:../../../beam:
     resolution: {directory: ../../../beam, type: directory}
-    peerDependencies:
-      '@types/react': ^19.2.14
-      '@types/react-dom': ^19.2.3
-      react: '*'
-      react-dom: '*'
-      solid-js: ^1.9.12
-    peerDependenciesMeta:
-      react:
-        optional: true
-      react-dom:
-        optional: true
-      solid-js:
-        optional: true
 
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
@@ -561,14 +548,14 @@ packages:
       yaml:
         optional: true
 
-  wus-host@file:../wus-host:
-    resolution: {directory: ../wus-host, type: directory}
+  wus-host@file:../../framework/wus-host:
+    resolution: {directory: ../../framework/wus-host, type: directory}
 
-  wus-unit-types@file:../../framework/packages/wus-unit-types:
-    resolution: {directory: ../../framework/packages/wus-unit-types, type: directory}
+  wus-unit-types@file:../../contract/wus-unit-types:
+    resolution: {directory: ../../contract/wus-unit-types, type: directory}
 
-  wus-vite-unit-loader-plugin@file:../../framework/packages/wus-vite-unit-loader-plugin:
-    resolution: {directory: ../../framework/packages/wus-vite-unit-loader-plugin, type: directory}
+  wus-vite-unit-loader-plugin@file:../../framework/wus-vite-unit-loader-plugin:
+    resolution: {directory: ../../framework/wus-vite-unit-loader-plugin, type: directory}
 
 snapshots:
 
@@ -757,13 +744,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.1
       vite: 8.0.14(@types/node@25.9.1)(jiti@2.7.0)
 
-  beams@file:../../../beam(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
-    dependencies:
-      '@types/react': 19.2.15
-      '@types/react-dom': 19.2.3(@types/react@19.2.15)
-    optionalDependencies:
-      react: 19.2.6
-      react-dom: 19.2.6(react@19.2.6)
+  beam@file:../../../beam: {}
 
   clsx@2.1.1: {}
 
@@ -923,12 +904,12 @@ snapshots:
       fsevents: 2.3.3
       jiti: 2.7.0
 
-  wus-host@file:../wus-host:
+  wus-host@file:../../framework/wus-host:
     dependencies:
       clsx: 2.1.1
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
 
-  wus-unit-types@file:../../framework/packages/wus-unit-types: {}
+  wus-unit-types@file:../../contract/wus-unit-types: {}
 
-  wus-vite-unit-loader-plugin@file:../../framework/packages/wus-vite-unit-loader-plugin: {}
+  wus-vite-unit-loader-plugin@file:../../framework/wus-vite-unit-loader-plugin: {}

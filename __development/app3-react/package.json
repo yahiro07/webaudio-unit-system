@@ -22,9 +22,9 @@
     "tailwindcss": "^4.3.0",
     "typescript": "~6.0.3",
     "vite": "^8.0.12",
-    "wus-unit-types": "file:../../framework/packages/wus-unit-types",
-    "wus-vite-unit-loader-plugin": "file:../../framework/packages/wus-vite-unit-loader-plugin",
+    "wus-unit-types": "file:../../contract/wus-unit-types",
+    "wus-vite-unit-loader-plugin": "file:../../framework/wus-vite-unit-loader-plugin",
     "beams": "file:../../../beam",
-    "wus-host": "file:../wus-host"
+    "wus-host": "file:../../framework/wus-host"
   }
 }

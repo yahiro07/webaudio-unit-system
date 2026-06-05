@@ -4,9 +4,7 @@ function toAbsolutePath(path: string): string {
   return new URL(path, import.meta.url).pathname;
 }
 
-const unitsDevDistDir = toAbsolutePath(
-  "../../../framework/packages/units-dev/dist",
-);
+const unitsDevDistDir = toAbsolutePath("../../../unit-examples/dist");
 const wusUnitsLocalDistDir = toAbsolutePath("../../../../wus-units/dist");
 
 export const unitSourceUrls = [
