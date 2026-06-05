@@ -11,6 +11,6 @@ export default defineConfig({
     unitLoaderPlugin({ unitSourceUrls, cacheFolderPath: "./.wus-cache" }),
   ],
   appType: "mpa",
-  resolve: { tsconfigPaths: true },
+  resolve: { tsconfigPaths: true, dedupe: ["react", "react-dom"] },
   server: { port: 3004 },
 });
