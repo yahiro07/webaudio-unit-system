@@ -1,6 +1,5 @@
 .local/
 dist/
 node_modules/
-framework/packages/wus-units/units
 *.code-workspace
 .vscode/settings.json
