@@ -1,6 +1,7 @@
 {
-  "name": "@wus/units-dev",
+  "name": "unit-examples",
   "type": "module",
+  "private": true,
   "scripts": {
     "build": "node build-all.mjs",
     "watch": "node build-all.mjs --watch"
