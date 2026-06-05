@@ -25,11 +25,6 @@
     }
   },
   "include": [
-    "src",
-    "node_modules/beams/**/*"
+    "src"
   ],
-  "exclude": [
-    "node_modules/beams/ax-solid/**/*",
-    "node_modules/beams/mo-solid/**/*"
-  ]
 }
