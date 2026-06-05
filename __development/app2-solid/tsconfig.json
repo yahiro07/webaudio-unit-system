@@ -1,5 +1,5 @@
 {
-  "extends": "../../../tsconfig.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "solid-js",
@@ -10,6 +10,6 @@
   },
   "include": [
     "./src/**/*",
-    "../../wus-host-system/**/*"
+    "../wus-host-system/**/*"
   ]
 }
