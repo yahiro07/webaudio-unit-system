@@ -118,28 +118,26 @@ const PageRoot = () => {
           </div>
         </div>
         <div className="border border-gray-400 flex-vc h-[700px]">
-          <HostAppProvider hostSystem={hostSystem}>
-            <UnitFrame
-              unitId={visualizerUnitId}
-              destUnitId="$output"
-              pageUrl={catalog.specbar.loaderPageUrl}
-              frameSize={catalog.specbar.preferredSize}
-            />
-            <UnitFrame
-              key={instrumentUnitId}
-              unitId={instrumentUnitId}
-              destUnitId={visualizerUnitId}
-              pageUrl={catalog[catalogKey].loaderPageUrl}
-              frameSize={catalog[catalogKey].preferredSize}
-            />
-            <UnitFrame
-              key={keyboardUnitId}
-              unitId={keyboardUnitId}
-              destUnitId={instrumentUnitId}
-              pageUrl={catalog.mu4Keyboard.loaderPageUrl}
-              frameSize={catalog.mu4Keyboard.preferredSize}
-            />
-          </HostAppProvider>
+          <UnitFrame
+            unitId={visualizerUnitId}
+            destUnitId="$output"
+            pageUrl={catalog.specbar.loaderPageUrl}
+            frameSize={catalog.specbar.preferredSize}
+          />
+          <UnitFrame
+            key={instrumentUnitId}
+            unitId={instrumentUnitId}
+            destUnitId={visualizerUnitId}
+            pageUrl={catalog[catalogKey].loaderPageUrl}
+            frameSize={catalog[catalogKey].preferredSize}
+          />
+          <UnitFrame
+            key={keyboardUnitId}
+            unitId={keyboardUnitId}
+            destUnitId={instrumentUnitId}
+            pageUrl={catalog.mu4Keyboard.loaderPageUrl}
+            frameSize={catalog.mu4Keyboard.preferredSize}
+          />
         </div>
       </div>
     </div>
@@ -148,7 +146,11 @@ const PageRoot = () => {
 
 const App = () => {
   useEffect(hostSystem.setupLifecycle, []);
-  return <PageRoot />;
+  return (
+    <HostAppProvider hostSystem={hostSystem}>
+      <PageRoot />
+    </HostAppProvider>
+  );
 };
 
 mountAppRoot(<App />);

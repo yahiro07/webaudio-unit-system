@@ -42,11 +42,7 @@ const actions = {
 const UnitRows = () => {
   const state = store.useSnapshot();
   return (
-    <HostAppProvider
-      hostSystem={hostSystem}
-      bpm={state.bpm}
-      playing={state.playing}
-    >
+    <>
       <UnitFrame
         unitId="uf_effect"
         pageUrl={catalog.mu5Visualizer.loaderPageUrl}
@@ -69,7 +65,7 @@ const UnitRows = () => {
         // hostSystem={hostSystem}
         inputNotes={state.notes}
       />
-    </HostAppProvider>
+    </>
   );
 };
 
@@ -101,13 +97,22 @@ const PageRoot = () => {
 };
 
 const App = () => {
+  const state = store.useSnapshot();
   useEffect(() =>
     setupMidiKeyboardInput({
       noteOn: actions.noteOn,
       noteOff: actions.noteOff,
     }),
   );
-  return <PageRoot />;
+  return (
+    <HostAppProvider
+      hostSystem={hostSystem}
+      bpm={state.bpm}
+      playing={state.playing}
+    >
+      <PageRoot />{" "}
+    </HostAppProvider>
+  );
 };
 
 mountAppRoot(<App />);

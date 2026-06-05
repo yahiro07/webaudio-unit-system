@@ -50,13 +50,11 @@ const PageRoot = () => {
               contentHeight={frameSize.height}
               scale={scaling}
             >
-              <HostAppProvider hostSystem={hostSystem}>
-                <UnitFrame
-                  unitId="uf_instrument"
-                  pageUrl={catalog[catalogKey].loaderPageUrl}
-                  frameSize={frameSize}
-                />
-              </HostAppProvider>
+              <UnitFrame
+                unitId="uf_instrument"
+                pageUrl={catalog[catalogKey].loaderPageUrl}
+                frameSize={frameSize}
+              />
             </ScalerBox>
           </div>
         </div>
@@ -71,7 +69,11 @@ const PageRoot = () => {
 };
 
 const App = () => {
-  return <PageRoot />;
+  return (
+    <HostAppProvider hostSystem={hostSystem}>
+      <PageRoot />
+    </HostAppProvider>
+  );
 };
 
 mountAppRoot(<App />);
