@@ -2,7 +2,7 @@ import { mountAppRoot } from "beams/ax-react/mount-app-root";
 import { useEffect } from "react";
 import { createStore } from "snap-store";
 import { createHostSystem, UnitStateData } from "wus-host/host";
-import { UnitFrame } from "wus-host/react";
+import { HostAppProvider, UnitFrame } from "wus-host/react";
 import { Button } from "@/components/button";
 import catalog from "./unit-inventories.json";
 
@@ -118,29 +118,28 @@ const PageRoot = () => {
           </div>
         </div>
         <div className="border border-gray-400 flex-vc h-[700px]">
-          <UnitFrame
-            unitId={visualizerUnitId}
-            destUnitId="$output"
-            pageUrl={catalog.specbar.loaderPageUrl}
-            frameSize={catalog.specbar.preferredSize}
-            hostSystem={hostSystem}
-          />
-          <UnitFrame
-            key={instrumentUnitId}
-            unitId={instrumentUnitId}
-            destUnitId={visualizerUnitId}
-            pageUrl={catalog[catalogKey].loaderPageUrl}
-            frameSize={catalog[catalogKey].preferredSize}
-            hostSystem={hostSystem}
-          />
-          <UnitFrame
-            key={keyboardUnitId}
-            unitId={keyboardUnitId}
-            destUnitId={instrumentUnitId}
-            pageUrl={catalog.mu4Keyboard.loaderPageUrl}
-            frameSize={catalog.mu4Keyboard.preferredSize}
-            hostSystem={hostSystem}
-          />
+          <HostAppProvider hostSystem={hostSystem}>
+            <UnitFrame
+              unitId={visualizerUnitId}
+              destUnitId="$output"
+              pageUrl={catalog.specbar.loaderPageUrl}
+              frameSize={catalog.specbar.preferredSize}
+            />
+            <UnitFrame
+              key={instrumentUnitId}
+              unitId={instrumentUnitId}
+              destUnitId={visualizerUnitId}
+              pageUrl={catalog[catalogKey].loaderPageUrl}
+              frameSize={catalog[catalogKey].preferredSize}
+            />
+            <UnitFrame
+              key={keyboardUnitId}
+              unitId={keyboardUnitId}
+              destUnitId={instrumentUnitId}
+              pageUrl={catalog.mu4Keyboard.loaderPageUrl}
+              frameSize={catalog.mu4Keyboard.preferredSize}
+            />
+          </HostAppProvider>
         </div>
       </div>
     </div>

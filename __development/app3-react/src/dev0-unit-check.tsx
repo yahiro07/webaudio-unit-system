@@ -3,7 +3,7 @@ import { setupMidiKeyboardInput } from "beams/mx-audio/midi-keyboard-input";
 import { useEffect } from "react";
 import { createStore } from "snap-store";
 import { createHostSystem } from "wus-host/host";
-import { UnitFrame } from "wus-host/react";
+import { HostAppProvider, UnitFrame } from "wus-host/react";
 import { Button } from "@/components/button";
 import { NumberSliderBox } from "@/components/number-slider-box";
 import catalog from "./unit-inventories.json";
@@ -39,15 +39,19 @@ const actions = {
   },
 };
 
-const UnitsSolid = () => {
+const UnitRows = () => {
   const state = store.useSnapshot();
   return (
-    <>
+    <HostAppProvider
+      hostSystem={hostSystem}
+      bpm={state.bpm}
+      playing={state.playing}
+    >
       <UnitFrame
         unitId="uf_effect"
         pageUrl={catalog.mu5Visualizer.loaderPageUrl}
         destUnitId="$output"
-        hostSystem={hostSystem}
+        // hostSystem={hostSystem}
       />
       <UnitFrame
         unitId="uf_instrument"
@@ -56,18 +60,16 @@ const UnitsSolid = () => {
         // className="w-[640px] h-[320px]"
         frameSize={catalog.miniSynthGe.preferredSize}
         destUnitId="uf_effect"
-        hostSystem={hostSystem}
-        hostBpm={state.bpm}
-        hostPlaying={state.playing}
+        // hostSystem={hostSystem}
       />
       <UnitFrame
         unitId="uf_keyboard"
         pageUrl={catalog.mu4Keyboard.loaderPageUrl}
         destUnitId="uf_instrument"
-        hostSystem={hostSystem}
+        // hostSystem={hostSystem}
         inputNotes={state.notes}
       />
-    </>
+    </HostAppProvider>
   );
 };
 
@@ -76,7 +78,7 @@ const PageRoot = () => {
   return (
     <div className="w-dvw h-dvh flex-vc">
       <div className="flex-v gap-2">
-        <UnitsSolid />
+        <UnitRows />
       </div>
       <div className="flex-ha gap-4">
         <Button

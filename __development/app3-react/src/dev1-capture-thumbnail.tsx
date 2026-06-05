@@ -2,7 +2,7 @@ import { mountAppRoot } from "beams/ax-react/mount-app-root";
 import { ScalerBox } from "beams/mo-react/components/scaler-box";
 import { createStore } from "snap-store";
 import { createHostSystem } from "wus-host/host";
-import { UnitFrame } from "wus-host/react";
+import { HostAppProvider, UnitFrame } from "wus-host/react";
 import { normalizeFrameSize } from "wus-host/react/frame-size";
 import catalog from "./unit-inventories.json";
 
@@ -50,12 +50,13 @@ const PageRoot = () => {
               contentHeight={frameSize.height}
               scale={scaling}
             >
-              <UnitFrame
-                unitId="uf_instrument"
-                pageUrl={catalog[catalogKey].loaderPageUrl}
-                frameSize={frameSize}
-                hostSystem={hostSystem}
-              />
+              <HostAppProvider hostSystem={hostSystem}>
+                <UnitFrame
+                  unitId="uf_instrument"
+                  pageUrl={catalog[catalogKey].loaderPageUrl}
+                  frameSize={frameSize}
+                />
+              </HostAppProvider>
             </ScalerBox>
           </div>
         </div>
