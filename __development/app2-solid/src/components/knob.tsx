@@ -1,4 +1,4 @@
-import { mapUnaryTo } from "@wus/ax/number-utils";
+import { mapUnaryTo } from "mofus/ax";
 import { mergeProps } from "solid-js";
 import { CellFrame } from "./cell-frame";
 import { KnobFrame } from "./knob-frame";

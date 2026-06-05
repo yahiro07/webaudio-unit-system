@@ -1,5 +1,5 @@
 import { UnitAgent } from "@wus/host-system/host";
-import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
+import { mountAppRoot } from "mofus/ax-solid";
 import { onMount } from "solid-js";
 
 const _IFrameExp0 = () => {

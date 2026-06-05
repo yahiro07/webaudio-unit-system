@@ -1,7 +1,7 @@
-import "@wus/mo/styles";
+import "../styles";
 import { createHostSystem } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
-import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
+import { mountAppRoot } from "mofus/ax-solid";
 
 const audioContext = new AudioContext();
 const hostSystem = createHostSystem(audioContext);

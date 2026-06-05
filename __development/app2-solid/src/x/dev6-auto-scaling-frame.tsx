@@ -1,13 +1,13 @@
-import "@wus/mo/styles";
+import "../styles";
 import {
   createHostSystem,
   createSequenceTickDriver,
 } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
-import { Button } from "@wus/mo-solid/components/button";
-import { FeNumberSliderBox } from "@wus/mo-solid/components/number-slider-box";
-import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
+import { mountAppRoot } from "mofus/ax-solid";
 import { createStore } from "solid-js/store";
+import { Button } from "../components/button";
+import { FeNumberSliderBox } from "../components/number-slider-box";
 import catalog from "../unit-inventories.json";
 import { createScreenRecorder, openVideoInNewTab } from "./screen-recorder";
 
@@ -84,8 +84,9 @@ function UnitFrameEx(props: {
   destUnitId?: string;
 }) {
   const pageUrl = catalog[props.catalogKey].loaderPageUrl;
-  const frameSize = catalog[props.catalogKey].preferredSize;
-  const [frameW, frameH] = frameSize.split(",").map(Number);
+  const { width: frameW, height: frameH } =
+    catalog[props.catalogKey].preferredSize;
+  // const [frameW, frameH] = frameSize.split(",").map(Number);
   const [outerW, outerH] = commonSize;
   const scaling = Math.min(outerW / frameW, outerH / frameH);
   const planeW = frameW * scaling;
@@ -121,14 +122,14 @@ const PageRoot = () => {
           <UnitFrameEx
             destUnitId="$output"
             unitId="mu5"
-            catalogKey="mu5_visualizer"
+            catalogKey="mu5Visualizer"
           />
           <UnitFrameEx
             destUnitId="mu5"
             unitId="unit2"
-            catalogKey="my_drum_machine"
+            catalogKey="myDrumMachine"
           />
-          <UnitFrameEx unitId="ua1" catalogKey="bc_010" />
+          <UnitFrameEx unitId="ua1" catalogKey="bc010" />
         </div>
         <div class="flex-vc gap-2">
           <UnitFrameEx
@@ -139,14 +140,14 @@ const PageRoot = () => {
           <UnitFrameEx
             destUnitId="mu1"
             unitId="mu2"
-            catalogKey="mu2_sequencer"
+            catalogKey="mu2Sequencer"
           />
-          <UnitFrameEx unitId="ua1" catalogKey="wasyn_1" />
+          <UnitFrameEx unitId="ua1" catalogKey="wasyn1" />
         </div>
         <div class="flex-vc gap-2">
           <UnitFrameEx unitId="ua1" catalogKey="koodori" />
-          <UnitFrameEx unitId="ua2" catalogKey="webaudio_synth_v2" />
-          <UnitFrameEx unitId="ua1" catalogKey="drum_machine" />
+          <UnitFrameEx unitId="ua2" catalogKey="webaudioSynthV2" />
+          <UnitFrameEx unitId="ua1" catalogKey="drumMachine" />
         </div>
       </div>
 

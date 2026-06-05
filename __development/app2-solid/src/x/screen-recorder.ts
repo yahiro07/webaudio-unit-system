@@ -1,4 +1,4 @@
-import { delayMs } from "@wus/ax/timer-utils";
+import { delayMs } from "mofus/ax";
 
 type ScreenRecorder = {
   doRecording(options: {

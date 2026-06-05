@@ -1,18 +1,18 @@
 /** biome-ignore-all lint/correctness/useJsxKeyInIterable: solid */
 
-import "@wus/mo/styles";
-import { seqNumbers } from "@wus/ax/array-utils";
+import "./styles";
 import {
   createHostSystem,
   UnitCategoryHint,
   UnitType,
 } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
-import { generateRandomId } from "@wus/mo/random-id-generator";
-import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
+import { seqNumbers } from "mofus/ax";
+import { mountAppRoot } from "mofus/ax-solid";
 import { createSignal, Show } from "solid-js";
 import { createStore, produce } from "solid-js/store";
 import { UnitInventorySpec } from "wus-vite-unit-loader-plugin";
+import { generateRandomId } from "../../mylib/mo/random-id-generator";
 import unitInventories from "./unit-inventories.json";
 
 type CatalogKey = keyof typeof unitInventories;
@@ -41,31 +41,31 @@ function createUnitTemplateEntry(
     pageUrl: unit.loaderPageUrl,
     unitType: unit.unitType,
     name: unit.name,
-    repositoryUrl: unit.repositoryUrl,
-    category: unit.category,
-    size: unit.preferredSize,
+    repositoryUrl: unit.originalRepositoryUrl,
+    category: unit.category as UnitCategoryHint | undefined,
+    size: `${unit.preferredSize.width},${unit.preferredSize.height}`,
     ...attrs,
   };
 }
 
 const unitTemplates: UnitTemplate[] = [
-  createUnitTemplateEntry("mu1_instrument", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu2_sequencer", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu3_effect", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu4_keyboard", { scaling: 0.6 }),
-  createUnitTemplateEntry("mu5_visualizer", { scaling: 0.6 }),
-  createUnitTemplateEntry("my_drum_machine", { scaling: 0.3 }),
+  createUnitTemplateEntry("mu1Instrument", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu2Sequencer", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu3Effect", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu4Keyboard", { scaling: 0.6 }),
+  createUnitTemplateEntry("mu5Visualizer", { scaling: 0.6 }),
+  createUnitTemplateEntry("myDrumMachine", { scaling: 0.3 }),
   // createUnitTemplateEntry("debugLH3000", {scaling: 0.2}),
   createUnitTemplateEntry("additive", { scaling: 0.2 }),
-  createUnitTemplateEntry("wavicle", { scaling: 0.25 }),
-  createUnitTemplateEntry("proto_engine", { scaling: 0.17 }),
-  createUnitTemplateEntry("mini_synth", { scaling: 0.3 }),
-  createUnitTemplateEntry("mini_synth_ge", { scaling: 0.3 }),
-  createUnitTemplateEntry("mini_synth_gp", { scaling: 0.25 }),
-  createUnitTemplateEntry("bc_010", { scaling: 0.25 }),
-  createUnitTemplateEntry("webaudio_tinysynth_simple", { scaling: 0.35 }),
-  createUnitTemplateEntry("wasyn_1", { scaling: 0.25 }),
-  createUnitTemplateEntry("webaudio_synth_v2", { scaling: 0.25 }),
+  // createUnitTemplateEntry("wavicle", { scaling: 0.25 }),
+  createUnitTemplateEntry("protoEngine", { scaling: 0.17 }),
+  createUnitTemplateEntry("miniSynth", { scaling: 0.3 }),
+  createUnitTemplateEntry("miniSynthGe", { scaling: 0.3 }),
+  createUnitTemplateEntry("miniSynthGp", { scaling: 0.25 }),
+  createUnitTemplateEntry("bc010", { scaling: 0.25 }),
+  createUnitTemplateEntry("webaudioTinysynthSimple", { scaling: 0.35 }),
+  createUnitTemplateEntry("wasyn1", { scaling: 0.25 }),
+  createUnitTemplateEntry("webaudioSynthV2", { scaling: 0.25 }),
   createUnitTemplateEntry("koodori", { scaling: 0.2 }),
 ];
 
@@ -173,7 +173,7 @@ const appModel = createAppModel();
 
 const presetScenes = {
   setupScenePreset1() {
-    appModel.actions.assignUnit("lane0-instrument", "mu1_instrument");
+    appModel.actions.assignUnit("lane0-instrument", "mu1Instrument");
   },
 };
 

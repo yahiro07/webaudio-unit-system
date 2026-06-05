@@ -1,15 +1,15 @@
-import "@wus/mo/styles";
+import "./styles";
 import {
   createHostSystem,
   createSequenceTickDriver,
 } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
-import { setupMidiKeyboardInput } from "@wus/mo/midi-keyboard-input";
-import { Button } from "@wus/mo-solid/components/button";
-import { FeNumberSliderBox } from "@wus/mo-solid/components/number-slider-box";
-import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
+import { mountAppRoot } from "mofus/ax-solid";
+import { setupMidiKeyboardInput } from "mofus/mx-audio";
 import { onCleanup } from "solid-js";
 import { createStore } from "solid-js/store";
+import { Button } from "./components/button";
+import { FeNumberSliderBox } from "./components/number-slider-box";
 
 type StoreState = {
   bpm: number;

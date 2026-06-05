@@ -1,7 +1,7 @@
-import "@wus/mo/styles";
+import "../styles";
 import { createHostSystem } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
-import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
+import { mountAppRoot } from "mofus/ax-solid";
 import catalog from "../unit-inventories.json";
 
 const audioContext = new AudioContext();
@@ -13,15 +13,15 @@ const PageRoot = () => {
       <UnitFrame
         destUnitId="$output"
         unitId="unit1"
-        pageUrl={catalog.mu1_instrument.loaderPageUrl}
-        frameSize={catalog.mu1_instrument.preferredSize}
+        pageUrl={catalog.mu1Instrument.loaderPageUrl}
+        frameSize={catalog.mu1Instrument.preferredSize}
         hostSystem={hostSystem}
       />
       <UnitFrame
         destUnitId="$output"
         unitId="unit2"
-        pageUrl={catalog.webaudio_tinysynth_simple.loaderPageUrl}
-        frameSize={catalog.webaudio_tinysynth_simple.preferredSize}
+        pageUrl={catalog.webaudioTinysynthSimple.loaderPageUrl}
+        frameSize={catalog.webaudioTinysynthSimple.preferredSize}
         hostSystem={hostSystem}
       />
     </div>

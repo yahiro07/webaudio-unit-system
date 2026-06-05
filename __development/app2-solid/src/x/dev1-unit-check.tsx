@@ -1,12 +1,12 @@
-import "@wus/mo/styles";
+import "../styles";
 import { createHostSystem } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
-import { setupMidiKeyboardInput } from "@wus/mo/midi-keyboard-input";
-import { Button } from "@wus/mo-solid/components/button";
-import { FeNumberSliderBox } from "@wus/mo-solid/components/number-slider-box";
-import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
+import { mountAppRoot } from "mofus/ax-solid";
+import { setupMidiKeyboardInput } from "mofus/mx-audio";
 import { onCleanup } from "solid-js";
 import { createStore } from "solid-js/store";
+import { Button } from "../components/button";
+import { FeNumberSliderBox } from "../components/number-slider-box";
 import catalog from "../unit-inventories.json";
 
 catalog;
@@ -67,7 +67,7 @@ const UnitsSolid = () => {
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@bundles/units/webaudio-synth-v2/index.html"
         // pageUrl="https://cdn.jsdelivr.net/gh/yahiro07/wus-custom-units@r4/units/bc-010/index.html"
         // pageUrl={catalog.wavicle.loaderPageUrl}
-        pageUrl={catalog.proto_engine.loaderPageUrl}
+        pageUrl={catalog.protoEngine.loaderPageUrl}
         frameSize={[1100, 450]}
         // frameSize={catalog.wavicle.preferredSize}
         destUnitId="uf_effect"

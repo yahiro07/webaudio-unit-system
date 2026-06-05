@@ -1,5 +1,5 @@
-import { arrayExclude } from "@wus/ax/array-utils";
 import { useEffect, useRef } from "react";
+import { arrayExclude } from "../../mylib/ax/array-utils";
 import { HostInterface } from "../contract";
 import {
   HostSystem,

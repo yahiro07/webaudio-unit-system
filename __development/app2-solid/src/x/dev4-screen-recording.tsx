@@ -1,10 +1,10 @@
-import "@wus/mo/styles";
+import "../styles";
 import { createHostSystem } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
-import { Button } from "@wus/mo-solid/components/button";
-import { FeNumberSliderBox } from "@wus/mo-solid/components/number-slider-box";
-import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
+import { mountAppRoot } from "mofus/ax-solid";
 import { createStore } from "solid-js/store";
+import { Button } from "../components/button";
+import { FeNumberSliderBox } from "../components/number-slider-box";
 import catalog from "../unit-inventories.json";
 import { createScreenRecorder, openVideoInNewTab } from "./screen-recorder";
 
@@ -67,7 +67,7 @@ const uiActions = {
 
 // const ctDrumMachine = catalog["drum_machine"];
 // const ctDrumMachine = catalog["koodori"];
-const ctDrumMachine = catalog["my_drum_machine"];
+const ctDrumMachine = catalog["myDrumMachine"];
 
 const PageRoot = () => {
   return (

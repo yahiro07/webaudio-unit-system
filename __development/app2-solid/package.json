@@ -20,7 +20,7 @@
     "wrangler": "^4.90.0",
     "wus-unit-types": "file:../../contract/wus-unit-types",
     "wus-vite-unit-loader-plugin": "file:../../framework/wus-vite-unit-loader-plugin",
-    "wus-host-system": "file:../wus-host-system",
+    "@wus/host-system": "file:../wus-host-system",
     "mofus": "^0.1.0"
   }
 }

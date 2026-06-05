@@ -1,4 +1,4 @@
-import { createIntervalTimer } from "@wus/ax/timer-utils";
+import { createIntervalTimer } from "../../mylib/ax/timer-utils";
 import { HostSystem } from "./host-system";
 
 type SequenceTickDriver = {

@@ -1,6 +1,5 @@
 /** @jsxImportSource solid-js */
 
-import { arrayExclude } from "@wus/ax/array-utils";
 import {
   createEffect,
   createMemo,
@@ -9,6 +8,7 @@ import {
   onCleanup,
   onMount,
 } from "solid-js";
+import { arrayExclude } from "../../mylib/ax/array-utils";
 import { HostInterface } from "../contract";
 import {
   HostSystem,

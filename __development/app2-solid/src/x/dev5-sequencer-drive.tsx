@@ -1,13 +1,13 @@
-import "@wus/mo/styles";
+import "../styles";
 import {
   createHostSystem,
   createSequenceTickDriver,
 } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
-import { Button } from "@wus/mo-solid/components/button";
-import { FeNumberSliderBox } from "@wus/mo-solid/components/number-slider-box";
-import { mountAppRoot } from "@wus/mo-solid/mount-app-root";
+import { mountAppRoot } from "mofus/ax-solid";
 import { createStore } from "solid-js/store";
+import { Button } from "../components/button";
+import { FeNumberSliderBox } from "../components/number-slider-box";
 import catalog from "../unit-inventories.json";
 import { createScreenRecorder, openVideoInNewTab } from "./screen-recorder";
 
@@ -86,7 +86,7 @@ const PageRoot = () => {
           <UnitFrame
             destUnitId="$output"
             unitId="mu5"
-            pageUrl={catalog.mu5_visualizer.loaderPageUrl}
+            pageUrl={catalog.mu5Visualizer.loaderPageUrl}
             frameSize={commonSize}
             hostSystem={hostSystem}
             className="w-full h-[180px]"
@@ -107,15 +107,15 @@ const PageRoot = () => {
           <UnitFrame
             destUnitId="$output"
             unitId="mu1"
-            pageUrl={catalog.wavicle.loaderPageUrl}
-            // pageUrl={catalog.additive.loaderPageUrl}
+            // pageUrl={catalog.wavicle.loaderPageUrl}
+            pageUrl={catalog.additive.loaderPageUrl}
             frameSize={commonSize}
             hostSystem={hostSystem}
           />
           <UnitFrame
             destUnitId="mu1"
             unitId="mu2"
-            pageUrl={catalog.mu2_sequencer.loaderPageUrl}
+            pageUrl={catalog.mu2Sequencer.loaderPageUrl}
             frameSize={commonSize}
             hostBpm={store.state.bpm}
             hostPlaying={store.state.playing}

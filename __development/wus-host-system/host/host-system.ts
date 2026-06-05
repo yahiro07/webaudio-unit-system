@@ -1,4 +1,4 @@
-import { removeArrayItem } from "@wus/ax/array-utils";
+import { removeArrayItem } from "../../mylib/ax/array-utils";
 import {
   HostInterface,
   NoteOutputPort,
