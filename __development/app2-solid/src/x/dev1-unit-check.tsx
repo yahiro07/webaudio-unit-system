@@ -1,4 +1,3 @@
-import "../styles";
 import { createHostSystem } from "@wus/host-system/host";
 import { UnitFrame } from "@wus/host-system/solid";
 import { mountAppRoot } from "mofus/ax-solid";

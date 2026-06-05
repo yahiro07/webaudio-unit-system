@@ -1,6 +1,6 @@
 import { clampValue } from "mofus/ax";
+import { startDragSession } from "mofus/ax-ui";
 import { JSXElement } from "solid-js";
-import { startDragSession } from "../../../mylib/mo/drag-session";
 
 export function KnobFrame(props: {
   value: number;

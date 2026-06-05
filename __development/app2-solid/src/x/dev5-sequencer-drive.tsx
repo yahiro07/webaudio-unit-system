@@ -1,4 +1,3 @@
-import "../styles";
 import {
   createHostSystem,
   createSequenceTickDriver,

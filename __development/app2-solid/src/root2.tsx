@@ -1,6 +1,5 @@
 /** biome-ignore-all lint/correctness/useJsxKeyInIterable: solid */
 
-import "./styles";
 import {
   createHostSystem,
   UnitCategoryHint,
@@ -9,10 +8,10 @@ import {
 import { UnitFrame } from "@wus/host-system/solid";
 import { seqNumbers } from "mofus/ax";
 import { mountAppRoot } from "mofus/ax-solid";
+import { generateRandomId } from "mofus/mo";
 import { createSignal, Show } from "solid-js";
 import { createStore, produce } from "solid-js/store";
 import { UnitInventorySpec } from "wus-vite-unit-loader-plugin";
-import { generateRandomId } from "../../mylib/mo/random-id-generator";
 import unitInventories from "./unit-inventories.json";
 
 type CatalogKey = keyof typeof unitInventories;
