@@ -84,7 +84,7 @@ export const UnitFrame = ({
     }
   }, [hostPlaying]);
 
-  useUnitInputNotesAffecter(unitInstanceRef, inputNotes);
+  useUnitInputNotesAffecter(unitInstanceRef.current, inputNotes);
 
   return (
     <iframe

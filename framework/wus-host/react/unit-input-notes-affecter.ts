@@ -1,14 +1,13 @@
-import { RefObject, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { HsUnitInstance } from "../host";
 
 export function useUnitInputNotesAffecter(
-  unitInstanceRef: RefObject<HsUnitInstance | null>,
+  unitInstance: HsUnitInstance | null,
   inputNotes?: number[],
 ) {
   const activeNotesRef = useRef<Set<number>>(new Set());
 
   useEffect(() => {
-    const unitInstance = unitInstanceRef.current;
     if (unitInstance) {
       const activeNotes = activeNotesRef.current;
       const notesToAdd =
@@ -25,5 +24,5 @@ export function useUnitInputNotesAffecter(
         activeNotes.delete(note);
       }
     }
-  }, [inputNotes, unitInstanceRef.current]);
+  }, [inputNotes, unitInstance]);
 }

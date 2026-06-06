@@ -1,38 +1,56 @@
 import { useEffect, useMemo } from "react";
-import { HostSystem } from "../host";
 import { HsUnitInstance } from "../host/host-types";
+import { useHostAppContext } from "./host-app-context";
 import {
   instantiateReactUnit,
   ReactUnitTemplateFn,
 } from "./react-unit-interface";
+import { useUnitInputNotesAffecter } from "./unit-input-notes-affecter";
 
 type Props = {
   unitId: string;
   unitTemplateFn: ReactUnitTemplateFn;
   destSpec?: string;
-  loadedCallback?(unitInstance: HsUnitInstance): void;
-  hostSystem: HostSystem;
+  inputNotes?: number[];
+  onUnitInstanceLoaded?(unitInstance: HsUnitInstance): void;
 };
 
 export const ReactUnitFrame = ({
   unitId,
   unitTemplateFn,
   destSpec,
-  loadedCallback,
-  hostSystem,
+  inputNotes,
+  onUnitInstanceLoaded,
 }: Props) => {
+  const { hostSystem, hostBpm, hostPlaying } = useHostAppContext();
+
   const unit = useMemo(
     () => instantiateReactUnit(hostSystem.audioContext, unitTemplateFn, unitId),
     [unitTemplateFn, unitId, hostSystem],
   );
   useEffect(() => {
-    loadedCallback?.(unit);
+    onUnitInstanceLoaded?.(unit);
     return hostSystem.registerUnitInstance(unit);
-  }, [unit, loadedCallback, hostSystem]);
+  }, [unit, onUnitInstanceLoaded, hostSystem]);
 
   useEffect(() => {
     hostSystem.reserveConnectionChange(unitId, destSpec);
   }, [unitId, destSpec, hostSystem]);
+
+  useEffect(() => {
+    if (hostBpm) {
+      unit.hostCallbacks?.setBpm?.(hostBpm);
+    }
+  }, [hostBpm, unit]);
+
+  useEffect(() => {
+    if (hostPlaying) {
+      unit.hostCallbacks?.setPlayState?.(true);
+      return () => unit.hostCallbacks?.setPlayState?.(false);
+    }
+  }, [hostPlaying, unit]);
+
+  useUnitInputNotesAffecter(unit, inputNotes);
 
   return <unit.RenderUi />;
 };
