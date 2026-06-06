@@ -128,3 +128,8 @@ export type UnitInterface = {
     primaryInputPortHandlers?: UnitInputPortHandlers;
   }): void;
 };
+
+export type WindowWithUnitInterface = {
+  checkUnitInterfaceCompatibility?(versionCode: string): void;
+  unitInterface?: UnitInterface;
+};
