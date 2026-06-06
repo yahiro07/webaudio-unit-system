@@ -1,7 +1,7 @@
 import { CSSProperties, useEffect, useMemo, useRef } from "react";
 import { HsUnitInstance } from "../host/host-types";
 import { createUnitInterface } from "../host/unit-interface-impl";
-import { mergeStyleWithFrameSize } from "./frame-size-helper";
+import { mergeStyleWithFrameSize } from "../utils/frame-size-helper";
 import { useHostAppContext } from "./host-app-context";
 import { useUnitInputNotesAffecter } from "./unit-input-notes-affecter";
 
