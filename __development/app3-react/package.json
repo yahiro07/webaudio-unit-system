@@ -25,6 +25,6 @@
     "wus-unit-types": "file:../../contract/wus-unit-types",
     "wus-vite-unit-loader-plugin": "file:../../framework/wus-vite-unit-loader-plugin",
     "mofur": "^0.1.0",
-    "wus-host": "file:../../framework/wus-host-react"
+    "wus-host": "file:../../framework/wus-host"
   }
 }
