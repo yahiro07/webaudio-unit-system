@@ -5,4 +5,5 @@ export type {
   HostSystemEvent,
   HsUnitInstance,
   HsUnitPortsSpec,
+  HsUnitStateData,
 } from "./host-types";
