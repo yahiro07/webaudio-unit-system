@@ -5,7 +5,7 @@ import {
   instantiateReactUnit,
   ReactUnitTemplateFn,
 } from "./react-unit-interface";
-import { useUnitInputNotesAffecter } from "./unit-input-notes-affecter";
+import { useUnitInputNotesAffecter } from "./use-unit-input-notes-affecter";
 
 type Props = {
   unitId: string;

@@ -3,7 +3,7 @@ import { HsUnitInstance } from "../host/host-types";
 import { createUnitInterface } from "../host/unit-interface-impl";
 import { mergeStyleWithFrameSize } from "../utils/frame-size-helper";
 import { useHostAppContext } from "./host-app-context";
-import { useUnitInputNotesAffecter } from "./unit-input-notes-affecter";
+import { useUnitInputNotesAffecter } from "./use-unit-input-notes-affecter";
 
 type Props = {
   unitId: string;
