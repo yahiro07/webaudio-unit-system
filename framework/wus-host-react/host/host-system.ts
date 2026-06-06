@@ -6,6 +6,7 @@ import { createUnitsLoadingManager } from "./unit-loading-manager";
 
 export type HostSystem = {
   audioContext: AudioContext;
+  getAllUnits(): HsUnitInstance[];
   eventPort: EventPort<HostSystemEvent>;
   registerUnitInstance(unit: HsUnitInstance): () => void;
   registerPendingUnitInstancePromise(
@@ -36,6 +37,7 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
 
   return {
     audioContext,
+    getAllUnits: bus.getAllUnits,
     eventPort: bus.eventPort,
     registerUnitInstance(unit: HsUnitInstance) {
       const promise = Promise.resolve(unit);
