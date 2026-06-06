@@ -17,6 +17,7 @@ export type HostSystem = {
     srcUnitId: string,
     destSpec: DestinationCode | undefined,
   ): void;
+  setMasterGain(gain: number): void;
 };
 
 export function createHostSystem(audioContext: AudioContext): HostSystem {
@@ -48,6 +49,12 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
     },
     reserveConnectionChange(srcUnitId, destSpec) {
       loadingManager.reserveConnectUnit(srcUnitId, destSpec ?? "");
+    },
+    setMasterGain(gain) {
+      bus.masterGainNode.gain.linearRampToValueAtTime(
+        gain,
+        audioContext.currentTime + 0.01,
+      );
     },
   };
 }

@@ -2,8 +2,9 @@ import { createEventPort, EventPort } from "../utils/event-port";
 import { HostSystemEvent, HsUnitInputPort, HsUnitInstance } from "./host-types";
 
 export type HostStateBus = {
-  audioContext: AudioContext;
   eventPort: EventPort<HostSystemEvent>;
+  audioContext: AudioContext;
+  masterGainNode: GainNode;
   audioDestinationUnitInputPort: HsUnitInputPort;
   units: Map<string, HsUnitInstance>;
   addUnits(units: HsUnitInstance[]): void;
@@ -13,14 +14,17 @@ export type HostStateBus = {
 
 export function createHostStateBus(audioContext: AudioContext): HostStateBus {
   const eventPort = createEventPort<HostSystemEvent>();
+  const masterGainNode = audioContext.createGain();
+  masterGainNode.connect(audioContext.destination);
   const audioDestinationUnitInputPort: HsUnitInputPort = {
-    audioInput: { node: audioContext.destination },
+    audioInput: { node: masterGainNode },
   };
   const units: Map<string, HsUnitInstance> = new Map();
 
   return {
-    audioContext,
     eventPort,
+    audioContext,
+    masterGainNode,
     audioDestinationUnitInputPort,
     units,
     addUnits(newUnits: HsUnitInstance[]) {
