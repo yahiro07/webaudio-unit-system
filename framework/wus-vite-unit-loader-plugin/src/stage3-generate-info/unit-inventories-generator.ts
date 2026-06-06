@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { UnitMetadata } from "../../../wus-host-system/contract";
+import { UnitMetadata } from "wus-unit-types";
 import { ResolvedUnitEntry } from "../common/internal-types";
 import { UnitInventoriesJson, UnitInventorySpec } from "../common/types";
 import { normalizeFrameSize } from "./frame-size";
@@ -107,7 +107,7 @@ function createUnitInventorySpec(
     catalogKey,
     name: meta.name,
     unitType: meta.unitType,
-    category: meta.category,
+    category: meta.categoryHint,
     preferredSize,
     outputSignalTypes: meta.outputSignalTypes,
     inputSignalTypes: meta.inputSignalTypes,
