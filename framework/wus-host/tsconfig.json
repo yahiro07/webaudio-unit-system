@@ -19,6 +19,7 @@
   },
   "include": [
     "host",
-    "react"
+    "react",
+    "utils"
   ],
 }

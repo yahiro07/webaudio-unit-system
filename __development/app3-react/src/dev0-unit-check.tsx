@@ -1,5 +1,5 @@
-import { mountAppRoot } from "beams/ax-react/mount-app-root";
-import { setupMidiKeyboardInput } from "beams/mx-audio/midi-keyboard-input";
+import { mountAppRoot } from "mofur/ax-react";
+import { setupMidiKeyboardInput } from "mofur/mx-audio";
 import { useEffect } from "react";
 import { createStore } from "snap-store";
 import { createHostSystem } from "wus-host/host";
@@ -42,16 +42,11 @@ const actions = {
 const UnitRows = () => {
   const state = store.useSnapshot();
   return (
-    <HostAppProvider
-      hostSystem={hostSystem}
-      bpm={state.bpm}
-      playing={state.playing}
-    >
+    <>
       <UnitFrame
         unitId="uf_effect"
         pageUrl={catalog.mu5Visualizer.loaderPageUrl}
-        destUnitId="$output"
-        // hostSystem={hostSystem}
+        destSpec="$output"
       />
       <UnitFrame
         unitId="uf_instrument"
@@ -59,17 +54,15 @@ const UnitRows = () => {
         // pageUrl={catalog.mini_synth_ge.loaderPageUrl}
         // className="w-[640px] h-[320px]"
         frameSize={catalog.miniSynthGe.preferredSize}
-        destUnitId="uf_effect"
-        // hostSystem={hostSystem}
+        destSpec="uf_effect"
       />
       <UnitFrame
         unitId="uf_keyboard"
         pageUrl={catalog.mu4Keyboard.loaderPageUrl}
-        destUnitId="uf_instrument"
-        // hostSystem={hostSystem}
+        destSpec="uf_instrument"
         inputNotes={state.notes}
       />
-    </HostAppProvider>
+    </>
   );
 };
 
@@ -101,13 +94,22 @@ const PageRoot = () => {
 };
 
 const App = () => {
+  const state = store.useSnapshot();
   useEffect(() =>
     setupMidiKeyboardInput({
       noteOn: actions.noteOn,
       noteOff: actions.noteOff,
     }),
   );
-  return <PageRoot />;
+  return (
+    <HostAppProvider
+      hostSystem={hostSystem}
+      bpm={state.bpm}
+      playing={state.playing}
+    >
+      <PageRoot />{" "}
+    </HostAppProvider>
+  );
 };
 
 mountAppRoot(<App />);

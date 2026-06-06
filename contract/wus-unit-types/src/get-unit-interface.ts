@@ -1,8 +1,9 @@
-import { UnitInterface } from "./unit-interfaces";
+import { UnitInterface, WindowWithUnitInterface } from "./unit-interfaces";
 
-export function getUnitInterface(): UnitInterface | undefined {
-  type WindowWithUnitInterface = {
-    unitInterface?: UnitInterface;
-  };
-  return (window as WindowWithUnitInterface)?.unitInterface;
+export function getUnitInterface(
+  versionCode: string,
+): UnitInterface | undefined {
+  const win = window as WindowWithUnitInterface;
+  win.checkUnitInterfaceCompatibility?.(versionCode);
+  return win?.unitInterface;
 }

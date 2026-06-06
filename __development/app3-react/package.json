@@ -2,7 +2,7 @@
   "name": "app3-react",
   "private": "true",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite dev --force",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -24,7 +24,7 @@
     "vite": "^8.0.12",
     "wus-unit-types": "file:../../contract/wus-unit-types",
     "wus-vite-unit-loader-plugin": "file:../../framework/wus-vite-unit-loader-plugin",
-    "beams": "file:../../../beam/beams",
+    "mofur": "^0.1.0",
     "wus-host": "file:../../framework/wus-host"
   }
 }

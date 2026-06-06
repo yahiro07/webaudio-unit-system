@@ -21,15 +21,15 @@ export type CvGatePort = {
 
 export type ClockPort = {
   start?(): void;
-  //480ppq based tick from song start
   processScheduling?(
-    startTime: number,
-    ppqFrom: number,
-    ppqTo: number,
+    startTime: number, //absolute time based on AudioContext.currentTime
+    ppqFrom: number, //480ppq based tick from song start
+    ppqTo: number, //480ppq based tick from song start
+    //bpm for this clock, this could vary from host's global bpm if there is a clock divider/multiplier unit in between
     bpm: number,
   ): void;
   //16th note based (4ppq) integer step from song start
-  processStep?(stepIndex: number): void;
+  processStep?(stepIndex: number, unitDurationSec: number): void;
   stop?(): void;
 };
 
@@ -83,17 +83,17 @@ export type UnitInputPortCallbacks = {
 };
 
 export type UnitInputPortHandlers = {
+  callbacks?: UnitInputPortCallbacks;
   noteInput?: NotePort;
   cvGateInput?: CvGatePort;
-  clockInput?: ClockPort;
-  stateInput?: StatePort;
+  clockInput?: ClockPort; //host feed clocks only for primaryInputPort, not for multi-channel ports
+  stateInput?: StatePort; //host handles states only for primaryInputPort, not for multi-channel ports
   automationInput?: AutomationPort;
   samplerPadInput?: SamplerPadPort;
 };
 
 export type UnitInputPort = {
   audioInput: AudioPort;
-  setCallbacks(callbacks: UnitInputPortCallbacks): void;
   setHandlers(handlers: UnitInputPortHandlers): void;
 };
 
@@ -102,13 +102,15 @@ export type MetaAttributes = {
 };
 
 export type HostCallbacks = {
+  //setBpm and setPlayState are used for naive synchronization
+  //to host transport without step position
   setBpm?(bpm: number): void;
   setPlayState?(playing: boolean): void;
   setMetaAttributes?(metaAttrs: MetaAttributes): void;
 };
 
 export type UnitAspects = {
-  type: UnitType;
+  unitType: UnitType;
   categoryHint?: UnitCategoryHint;
   outputs?: PortSubtype[];
   inputs?: PortSubtype[];
@@ -120,14 +122,16 @@ export type UnitInterface = {
   primaryInputPort: UnitInputPort;
   createMultiChannelOutputPorts(numPorts: number): UnitOutputPort[];
   createMultiChannelInputPorts(numPorts: number): UnitInputPort[];
-  completeSetupWithAttributes(attrs: {
-    unitFeatures: UnitAspects;
+  completeSetup(attrs: {
+    unitAspects: UnitAspects;
     hostCallbacks?: HostCallbacks;
     primaryInputPortHandlers?: UnitInputPortHandlers;
-    primaryInputPortCallbacks?: UnitInputPortCallbacks;
+    multiChannelOutputPorts?: UnitOutputPort[];
+    multiChannelInputPorts?: UnitInputPort[];
   }): void;
-  //deprecated, use completeSetupWithAttributes instead
-  // setHostCallbacks(callbacks: HostCallbacks): void;
-  // declareUnitFeatures(spec: UnitFeatures): void;
-  // completeSetup(): void;
+};
+
+export type WindowWithUnitInterface = {
+  checkUnitInterfaceCompatibility?(versionCode: string): void;
+  unitInterface?: UnitInterface;
 };

@@ -1,2 +1,9 @@
 export * from "./host-system";
-export * from "./sequence-tick-driver";
+
+export type {
+  DestinationCode,
+  HostSystemEvent,
+  HsUnitInstance,
+  HsUnitPortsSpec,
+  HsUnitStateData,
+} from "./host-types";
