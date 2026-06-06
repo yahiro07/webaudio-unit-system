@@ -6,19 +6,21 @@ import {
   ReactUnitTemplateFn,
 } from "./react-unit-interface";
 
+type Props = {
+  unitId: string;
+  unitTemplateFn: ReactUnitTemplateFn;
+  destSpec?: string;
+  loadedCallback?(unitInstance: HsUnitInstance): void;
+  hostSystem: HostSystem;
+};
+
 export const ReactUnitFrame = ({
   unitId,
   unitTemplateFn,
   destSpec,
   loadedCallback,
   hostSystem,
-}: {
-  unitId: string;
-  unitTemplateFn: ReactUnitTemplateFn;
-  destSpec?: string;
-  loadedCallback?(unitInstance: HsUnitInstance): void;
-  hostSystem: HostSystem;
-}) => {
+}: Props) => {
   const unit = useMemo(
     () => instantiateReactUnit(hostSystem.audioContext, unitTemplateFn, unitId),
     [unitTemplateFn, unitId, hostSystem],

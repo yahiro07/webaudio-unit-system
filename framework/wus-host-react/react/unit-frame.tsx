@@ -3,6 +3,19 @@ import { HsUnitInstance } from "../host/host-types";
 import { createUnitInterface } from "../host/unit-interface-impl";
 import { mergeStyleWithFrameSize } from "./frame-size-helper";
 import { useHostAppContext } from "./host-app-context";
+import { useUnitInputNotesAffecter } from "./unit-input-notes-affecter";
+
+type Props = {
+  unitId: string;
+  pageUrl: string;
+  destSpec?: string;
+  loadedCallback?(unitInstance: HsUnitInstance): void;
+  className?: string;
+  style?: CSSProperties;
+  frameSize?: { width: number; height: number };
+  // onIframeMounted?(iframe: HTMLIFrameElement): (() => void) | undefined;
+  inputNotes?: number[];
+};
 
 export const UnitFrame = ({
   unitId,
@@ -12,16 +25,8 @@ export const UnitFrame = ({
   className,
   style,
   frameSize,
-}: {
-  unitId: string;
-  pageUrl: string;
-  destSpec?: string;
-  loadedCallback?(unitInstance: HsUnitInstance): void;
-  className?: string;
-  style?: CSSProperties;
-  frameSize?: { width: number; height: number };
-  // onIframeMounted?(iframe: HTMLIFrameElement): (() => void) | undefined;
-}) => {
+  inputNotes,
+}: Props) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const unitInstanceRef = useRef<HsUnitInstance>(null);
 
@@ -63,6 +68,8 @@ export const UnitFrame = ({
       unitInstanceRef.current?.hostCallbacks?.setHostBpm?.(hostBpm);
     }
   }, [hostBpm]);
+
+  useUnitInputNotesAffecter(unitInstanceRef, inputNotes);
 
   return (
     <iframe
