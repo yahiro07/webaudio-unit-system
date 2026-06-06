@@ -1,60 +1,71 @@
 import { CSSProperties, useEffect, useMemo, useRef } from "react";
-import { FrameSizeInput, mergeStyleWithFrameSize } from "./frame-size";
+import { HsUnitInstance } from "../host/host-types";
+import { mergeStyleWithFrameSize } from "../utils/frame-size-helper";
 import { useHostAppContext } from "./host-app-context";
-import { createUnitFrameModel } from "./unit-frame-model";
+import { loadIframeUnitInstance } from "./iframe-unit-loader";
+import { useUnitInputNotesAffecter } from "./use-unit-input-notes-affecter";
 
 type Props = {
   unitId: string;
-  pageUrl?: string;
-  destUnitId?: string;
-  inputNotes?: number[];
+  pageUrl: string;
+  destSpec?: string;
   className?: string;
   style?: CSSProperties;
-  frameSize?: FrameSizeInput;
-  // iframeAttrs?: Omit<JSX.IntrinsicElements["iframe"], "src" | "title" | "ref">;
+  frameSize?: { width: number; height: number };
+  inputNotes?: number[];
   onIframeMounted?(iframe: HTMLIFrameElement): (() => void) | undefined;
+  onUnitInstanceLoaded?(unitInstance: HsUnitInstance): void;
 };
+
 export const UnitFrame = ({
   unitId,
   pageUrl,
-  destUnitId,
-  inputNotes,
+  destSpec,
   className,
   style,
   frameSize,
+  inputNotes,
   onIframeMounted,
+  onUnitInstanceLoaded,
 }: Props) => {
-  if (destUnitId && destUnitId === unitId) {
-    throw new Error(
-      `UnitFrame ${unitId}: destUnitId cannot be the same as unitId.`,
-    );
-  }
-  const {
-    hostSystem,
-    bpm: hostBpm,
-    playing: hostPlaying,
-  } = useHostAppContext();
-
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const model = useMemo(
-    () => createUnitFrameModel(hostSystem, unitId),
-    [hostSystem, unitId],
-  );
-  useEffect(() => {
-    const iframe = iframeRef.current!;
-    const cleanup1 = onIframeMounted?.(iframe);
-    const cleanup2 = model.handleIframeMounted(iframe);
-    return () => {
-      cleanup1?.();
-      cleanup2?.();
-    };
-  }, [model, onIframeMounted]);
-  model.feedAttributes({ destUnitId, hostBpm, hostPlaying, inputNotes });
+  const unitInstanceRef = useRef<HsUnitInstance>(null);
+
+  const { hostSystem, hostBpm, hostPlaying } = useHostAppContext();
 
   const mergedStyle = useMemo(
     () => mergeStyleWithFrameSize(style, frameSize),
     [style, frameSize],
   );
+
+  useEffect(() => {
+    hostSystem.reserveConnectionChange(unitId, destSpec);
+  }, [unitId, destSpec, hostSystem]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: add pageUrl to deps
+  useEffect(() => {
+    return loadIframeUnitInstance(hostSystem, unitId, iframeRef.current!, {
+      onIframeMounted,
+      onUnitInstanceLoaded,
+      unitInstanceRef,
+    });
+  }, [pageUrl, hostSystem, unitId, onIframeMounted, onUnitInstanceLoaded]);
+
+  useEffect(() => {
+    if (hostBpm) {
+      unitInstanceRef.current?.hostCallbacks?.setBpm?.(hostBpm);
+    }
+  }, [hostBpm]);
+
+  useEffect(() => {
+    const unit = unitInstanceRef.current;
+    if (hostPlaying && unit) {
+      unit.hostCallbacks?.setPlayState?.(true);
+      return () => unit.hostCallbacks?.setPlayState?.(false);
+    }
+  }, [hostPlaying]);
+
+  useUnitInputNotesAffecter(unitInstanceRef.current, inputNotes);
 
   return (
     <iframe
@@ -62,7 +73,7 @@ export const UnitFrame = ({
       style={mergedStyle}
       ref={iframeRef}
       src={pageUrl}
-      title="unit"
+      title={unitId}
     />
   );
 };

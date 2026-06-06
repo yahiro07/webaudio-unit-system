@@ -5,12 +5,13 @@ import {
   useEffect,
   useMemo,
 } from "react";
-import { createSequenceTickDriver, HostSystem } from "../host";
+import { HostSystem } from "../host";
+import { createSequencerTickDriver } from "../host/sequencer-tick-driver/sequencer-tick-driver";
 
 type HostAppContextValue = {
   hostSystem: HostSystem;
-  playing?: boolean;
-  bpm?: number;
+  hostBpm?: number;
+  hostPlaying: boolean;
   masterGain?: number;
 };
 
@@ -31,11 +32,11 @@ function useHostAppDrivers({
   bpm?: number;
   masterGain?: number;
 }) {
-  const sequenceTickDriver = useMemo(
-    () => createSequenceTickDriver(hostSystem),
+  const sequencerTickDriver = useMemo(
+    () => createSequencerTickDriver(hostSystem),
     [hostSystem],
   );
-  useEffect(hostSystem.setupLifecycle, []);
+  // useEffect(hostSystem.setupLifecycle, []);
   useEffect(() => {
     if (masterGain !== undefined) {
       hostSystem.setMasterGain(masterGain);
@@ -43,17 +44,17 @@ function useHostAppDrivers({
   }, [hostSystem, masterGain]);
   useEffect(() => {
     if (bpm) {
-      sequenceTickDriver.setBpm(bpm);
+      sequencerTickDriver.setBpm(bpm);
     }
-  }, [sequenceTickDriver, bpm]);
+  }, [sequencerTickDriver, bpm]);
   useEffect(() => {
     if (playing) {
-      sequenceTickDriver.start();
-      return () => sequenceTickDriver.stop();
+      sequencerTickDriver.start();
+      return () => sequencerTickDriver.stop();
     } else {
-      sequenceTickDriver.stop();
+      sequencerTickDriver.stop();
     }
-  }, [sequenceTickDriver, playing]);
+  }, [sequencerTickDriver, playing]);
 }
 
 export const HostAppProvider = ({
@@ -71,7 +72,9 @@ export const HostAppProvider = ({
 }) => {
   useHostAppDrivers({ hostSystem, playing, bpm, masterGain });
   return (
-    <hostAppContext.Provider value={{ hostSystem, playing, bpm, masterGain }}>
+    <hostAppContext.Provider
+      value={{ hostSystem, hostBpm: bpm, hostPlaying: playing, masterGain }}
+    >
       {children}
     </hostAppContext.Provider>
   );

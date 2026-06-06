@@ -1,7 +1,7 @@
-import { mountAppRoot } from "beams/ax-react/mount-app-root";
+import { mountAppRoot } from "mofur/ax-react";
 import { useEffect } from "react";
 import { createStore } from "snap-store";
-import { createHostSystem, UnitStateData } from "wus-host/host";
+import { createHostSystem, HsUnitStateData } from "wus-host/host";
 import { HostAppProvider, UnitFrame } from "wus-host/react";
 import { Button } from "@/components/button";
 import catalog from "./unit-inventories.json";
@@ -46,13 +46,10 @@ const hostSystem = createHostSystem(audioContext);
 const store = createStore<StoreState>({
   catalogKey: initialData?.catalogKey ?? "miniSynth",
 });
-if (initialData) {
-  hostSystem.importUnitStates(initialData.unitStates);
-}
 
 type ProjectData = {
   catalogKey: CatalogKey;
-  unitStates: UnitStateData[];
+  unitStates: HsUnitStateData[];
 };
 
 function mapSongDataEmbeddedUrl(projectData: ProjectData): string {
@@ -118,28 +115,26 @@ const PageRoot = () => {
           </div>
         </div>
         <div className="border border-gray-400 flex-vc h-[700px]">
-          <HostAppProvider hostSystem={hostSystem}>
-            <UnitFrame
-              unitId={visualizerUnitId}
-              destUnitId="$output"
-              pageUrl={catalog.specbar.loaderPageUrl}
-              frameSize={catalog.specbar.preferredSize}
-            />
-            <UnitFrame
-              key={instrumentUnitId}
-              unitId={instrumentUnitId}
-              destUnitId={visualizerUnitId}
-              pageUrl={catalog[catalogKey].loaderPageUrl}
-              frameSize={catalog[catalogKey].preferredSize}
-            />
-            <UnitFrame
-              key={keyboardUnitId}
-              unitId={keyboardUnitId}
-              destUnitId={instrumentUnitId}
-              pageUrl={catalog.mu4Keyboard.loaderPageUrl}
-              frameSize={catalog.mu4Keyboard.preferredSize}
-            />
-          </HostAppProvider>
+          <UnitFrame
+            unitId={visualizerUnitId}
+            destSpec="$output"
+            pageUrl={catalog.specbar.loaderPageUrl}
+            frameSize={catalog.specbar.preferredSize}
+          />
+          <UnitFrame
+            key={instrumentUnitId}
+            unitId={instrumentUnitId}
+            destSpec={visualizerUnitId}
+            pageUrl={catalog[catalogKey].loaderPageUrl}
+            frameSize={catalog[catalogKey].preferredSize}
+          />
+          <UnitFrame
+            key={keyboardUnitId}
+            unitId={keyboardUnitId}
+            destSpec={instrumentUnitId}
+            pageUrl={catalog.mu4Keyboard.loaderPageUrl}
+            frameSize={catalog.mu4Keyboard.preferredSize}
+          />
         </div>
       </div>
     </div>
@@ -147,8 +142,16 @@ const PageRoot = () => {
 };
 
 const App = () => {
-  useEffect(hostSystem.setupLifecycle, []);
-  return <PageRoot />;
+  useEffect(() => {
+    if (initialData) {
+      hostSystem.reserveImportUnitStates(initialData.unitStates);
+    }
+  }, []);
+  return (
+    <HostAppProvider hostSystem={hostSystem}>
+      <PageRoot />
+    </HostAppProvider>
+  );
 };
 
 mountAppRoot(<App />);

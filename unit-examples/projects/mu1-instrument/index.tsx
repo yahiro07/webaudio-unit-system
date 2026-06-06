@@ -2,7 +2,7 @@ import "@wus/mo/styles";
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
 import { getUnitInterface } from "wus-unit-types";
 
-const unitInterface = getUnitInterface();
+const unitInterface = getUnitInterface("wus-v02");
 
 const audioContext = unitInterface?.audioContext ?? new AudioContext();
 const destinationNode =
@@ -54,9 +54,9 @@ function ToneButton(props: { label: string; noteNumber: number }) {
 }
 
 function setupUnitInstance() {
-  unitInterface?.completeSetupWithAttributes({
-    unitFeatures: {
-      type: "instrument",
+  unitInterface?.completeSetup({
+    unitAspects: {
+      unitType: "instrument",
       categoryHint: "synthesizer",
       outputs: ["audio"],
       inputs: ["note"],

@@ -35,6 +35,9 @@ export function normalizeCasing(
 }
 
 export function getContentType(filePath: string): string {
+  if (filePath.endsWith("LICENSE")) {
+    return "text/plain; charset=utf-8";
+  }
   switch (path.extname(filePath).toLowerCase()) {
     case ".html":
       return "text/html; charset=utf-8";

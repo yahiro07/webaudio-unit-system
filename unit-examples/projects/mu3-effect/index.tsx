@@ -7,7 +7,7 @@ import { getUnitInterface } from "wus-unit-types";
 const store = createStore({ gain: 0.5 });
 
 function setupUnitInstance() {
-  const unitInterface = getUnitInterface();
+  const unitInterface = getUnitInterface("wus-v02");
   if (unitInterface) {
     const audioContext = unitInterface.audioContext;
     const gainNode = audioContext.createGain();
@@ -20,9 +20,9 @@ function setupUnitInstance() {
       }
     });
 
-    unitInterface.completeSetupWithAttributes({
-      unitFeatures: {
-        type: "effect",
+    unitInterface.completeSetup({
+      unitAspects: {
+        unitType: "effect",
         categoryHint: "effect",
         outputs: ["audio"],
         inputs: ["audio", "state"],

@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { UnitMetadata } from "../../../wus-host-system/contract";
+import { UnitMetadata } from "wus-unit-types";
 import { ResolvedUnitEntry } from "../common/internal-types";
 import { UnitInventoriesJson, UnitInventorySpec } from "../common/types";
 import { normalizeFrameSize } from "./frame-size";
@@ -88,6 +88,15 @@ function getLoaderPageUrlBase(resolvedUnitEntry: ResolvedUnitEntry): string {
   }
 }
 
+//for unit-thumbnail.png and LICENSE text file
+function getUrlBaseForAssets(resolvedUnitEntry: ResolvedUnitEntry): string {
+  if (resolvedUnitEntry.kind === "file") {
+    return `/inventory-units/${resolvedUnitEntry.catalogKey}/`;
+  } else {
+    return resolvedUnitEntry.sourceUrlSpec;
+  }
+}
+
 function createUnitInventorySpec(
   resolvedUnitEntry: ResolvedUnitEntry,
   meta: UnitMetadata,
@@ -103,11 +112,12 @@ function createUnitInventorySpec(
   }
   const _meta = meta as any;
   const loaderPageUrlBase = getLoaderPageUrlBase(resolvedUnitEntry);
+  const urlBaseForAssets = getUrlBaseForAssets(resolvedUnitEntry);
   return {
     catalogKey,
     name: meta.name,
     unitType: meta.unitType,
-    category: meta.category,
+    category: meta.categoryHint,
     preferredSize,
     outputSignalTypes: meta.outputSignalTypes,
     inputSignalTypes: meta.inputSignalTypes,
@@ -115,7 +125,7 @@ function createUnitInventorySpec(
     originalPageUrl: `${pageFolderUrl}index.html`,
     loaderPageUrl: `${loaderPageUrlBase}index.html`,
     thumbnailUrl: hasThumbnail
-      ? `${pageFolderUrl}unit-thumbnail.png`
+      ? `${urlBaseForAssets}unit-thumbnail.png`
       : undefined,
     //
     originalRepositoryUrl: _meta.repositoryUrl ?? _meta.originalRepositoryUrl,
@@ -123,7 +133,7 @@ function createUnitInventorySpec(
     forkedRepositoryUrl: _meta.forkedRepositoryUrl,
     forkedAuthor: _meta.forkedAuthor,
     license: meta.license,
-    licenseTextUrl: hasLicenseText ? `${pageFolderUrl}LICENSE` : undefined,
+    licenseTextUrl: hasLicenseText ? `${urlBaseForAssets}LICENSE` : undefined,
   };
 }
 
