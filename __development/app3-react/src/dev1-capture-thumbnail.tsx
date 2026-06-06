@@ -3,7 +3,6 @@ import { ScalerBox } from "mofur/mo-react";
 import { createStore } from "snap-store";
 import { createHostSystem } from "wus-host/host";
 import { HostAppProvider, UnitFrame } from "wus-host/react";
-import { normalizeFrameSize } from "wus-host/react/frame-size";
 import catalog from "./unit-inventories.json";
 
 type CatalogKey = keyof typeof catalog;
@@ -20,7 +19,7 @@ const store = createStore<StoreState>({
 
 const PageRoot = () => {
   const { catalogKey } = store.useSnapshot();
-  const frameSize = normalizeFrameSize(catalog[catalogKey].preferredSize)!;
+  const frameSize = catalog[catalogKey].preferredSize!;
   const dpr = window.devicePixelRatio;
   const captureSizeWidth = 400 / dpr;
   const captureSizeHeight = 270 / dpr;
