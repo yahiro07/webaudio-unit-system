@@ -43,9 +43,9 @@ function createAppModel() {
 const appModel = createAppModel();
 
 function setupUnitInstance() {
-  unitInterface?.completeSetupWithAttributes({
-    unitFeatures: {
-      type: "sequencer",
+  unitInterface?.completeSetup({
+    unitAspects: {
+      unitType: "sequencer",
       categoryHint: "stepSequencer",
       outputs: ["note"],
       inputs: ["clock"],

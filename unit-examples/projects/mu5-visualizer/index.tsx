@@ -35,9 +35,9 @@ function setupUnitInstance() {
     unitInterface.primaryInputPort.audioInput.node.connect(analyzer);
     analyzer.connect(unitInterface.primaryOutputPort.audioOutput.node);
 
-    unitInterface.completeSetupWithAttributes({
-      unitFeatures: {
-        type: "effect",
+    unitInterface.completeSetup({
+      unitAspects: {
+        unitType: "effect",
         categoryHint: "visualizer",
         outputs: ["audio"],
         inputs: ["audio"],

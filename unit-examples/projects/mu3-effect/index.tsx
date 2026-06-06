@@ -20,9 +20,9 @@ function setupUnitInstance() {
       }
     });
 
-    unitInterface.completeSetupWithAttributes({
-      unitFeatures: {
-        type: "effect",
+    unitInterface.completeSetup({
+      unitAspects: {
+        unitType: "effect",
         categoryHint: "effect",
         outputs: ["audio"],
         inputs: ["audio", "state"],

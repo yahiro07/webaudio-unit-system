@@ -22,9 +22,9 @@ const actions = {
 };
 
 function setupUnitInstance() {
-  unitInterface?.completeSetupWithAttributes({
-    unitFeatures: {
-      type: "sequencer",
+  unitInterface?.completeSetup({
+    unitAspects: {
+      unitType: "sequencer",
       categoryHint: "keyboard",
       outputs: ["note"],
     },

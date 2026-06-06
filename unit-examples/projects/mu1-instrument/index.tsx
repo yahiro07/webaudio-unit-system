@@ -54,9 +54,9 @@ function ToneButton(props: { label: string; noteNumber: number }) {
 }
 
 function setupUnitInstance() {
-  unitInterface?.completeSetupWithAttributes({
-    unitFeatures: {
-      type: "instrument",
+  unitInterface?.completeSetup({
+    unitAspects: {
+      unitType: "instrument",
       categoryHint: "synthesizer",
       outputs: ["audio"],
       inputs: ["note"],
