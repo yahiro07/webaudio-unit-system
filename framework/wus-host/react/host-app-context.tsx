@@ -11,6 +11,7 @@ import { createSequencerTickDriver } from "../host/sequencer-tick-driver/sequenc
 type HostAppContextValue = {
   hostSystem: HostSystem;
   hostBpm?: number;
+  hostPlaying: boolean;
   masterGain?: number;
 };
 
@@ -71,7 +72,9 @@ export const HostAppProvider = ({
 }) => {
   useHostAppDrivers({ hostSystem, playing, bpm, masterGain });
   return (
-    <hostAppContext.Provider value={{ hostSystem, hostBpm: bpm, masterGain }}>
+    <hostAppContext.Provider
+      value={{ hostSystem, hostBpm: bpm, hostPlaying: playing, masterGain }}
+    >
       {children}
     </hostAppContext.Provider>
   );

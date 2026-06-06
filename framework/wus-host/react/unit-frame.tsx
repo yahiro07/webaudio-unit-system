@@ -31,7 +31,7 @@ export const UnitFrame = ({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const unitInstanceRef = useRef<HsUnitInstance>(null);
 
-  const { hostSystem, hostBpm } = useHostAppContext();
+  const { hostSystem, hostBpm, hostPlaying } = useHostAppContext();
 
   const mergedStyle = useMemo(
     () => mergeStyleWithFrameSize(style, frameSize),
@@ -72,9 +72,17 @@ export const UnitFrame = ({
 
   useEffect(() => {
     if (hostBpm) {
-      unitInstanceRef.current?.hostCallbacks?.setHostBpm?.(hostBpm);
+      unitInstanceRef.current?.hostCallbacks?.setBpm?.(hostBpm);
     }
   }, [hostBpm]);
+
+  useEffect(() => {
+    const unit = unitInstanceRef.current;
+    if (hostPlaying && unit) {
+      unit.hostCallbacks?.setPlayState?.(true);
+      return () => unit.hostCallbacks?.setPlayState?.(false);
+    }
+  }, [hostPlaying]);
 
   useUnitInputNotesAffecter(unitInstanceRef, inputNotes);
 

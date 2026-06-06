@@ -102,8 +102,10 @@ export type MetaAttributes = {
 };
 
 export type HostCallbacks = {
-  setHostBpm?(bpm: number): void;
-  // setPlayState?(playing: boolean): void;  // deprecated, refer to clockInput.start/stop instead
+  //setBpm and setPlayState are used for naive synchronization
+  //to host transport without step position
+  setBpm?(bpm: number): void;
+  setPlayState?(playing: boolean): void;
   setMetaAttributes?(metaAttrs: MetaAttributes): void;
 };
 

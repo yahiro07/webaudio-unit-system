@@ -127,6 +127,16 @@ export function createHsUnitOutputPortImpl(
           );
         });
       },
+      processScheduling(startTime, ppqFrom, ppqTo, bpm) {
+        connectedInputPorts.forEach((connectedInputPort) => {
+          connectedInputPort.clockInput?.processScheduling?.(
+            startTime,
+            ppqFrom,
+            ppqTo,
+            bpm,
+          );
+        });
+      },
       stop() {
         connectedInputPorts.forEach((connectedInputPort) => {
           connectedInputPort.clockInput?.stop?.();
