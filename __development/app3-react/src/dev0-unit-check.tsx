@@ -47,7 +47,6 @@ const UnitRows = () => {
         unitId="uf_effect"
         pageUrl={catalog.mu5Visualizer.loaderPageUrl}
         destSpec="$output"
-        // hostSystem={hostSystem}
       />
       <UnitFrame
         unitId="uf_instrument"
@@ -56,13 +55,11 @@ const UnitRows = () => {
         // className="w-[640px] h-[320px]"
         frameSize={catalog.miniSynthGe.preferredSize}
         destSpec="uf_effect"
-        // hostSystem={hostSystem}
       />
       <UnitFrame
         unitId="uf_keyboard"
         pageUrl={catalog.mu4Keyboard.loaderPageUrl}
         destSpec="uf_instrument"
-        // hostSystem={hostSystem}
         inputNotes={state.notes}
       />
     </>
