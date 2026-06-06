@@ -12,7 +12,7 @@ function getConnectionTargetPort(
   destSpec: string,
 ): HsUnitInputPort | undefined {
   if (destSpec === "$output") {
-    return bus.audioDestinationUnitInputPort;
+    return bus.audioDestinationVirtualUnitInputPort;
   }
   if (destSpec.includes(".")) {
     const [unitId, portName] = destSpec.split(".");
