@@ -4,7 +4,7 @@ import "@wus/mo/styles";
 import { seqNumbers } from "@wus/ax/array-utils";
 import { createStore } from "snap-store";
 
-const unitInterface = getUnitInterface();
+const unitInterface = getUnitInterface("wus-v02");
 
 const store = createStore<{ notes: number[] }>({ notes: [] });
 

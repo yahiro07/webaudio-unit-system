@@ -9,7 +9,7 @@ import { createIntervalTimer } from "@wus/ax/timer-utils";
 import { Button } from "@wus/mo-solid/components/button";
 import { getUnitInterface } from "wus-unit-types";
 
-const unitInterface = getUnitInterface();
+const unitInterface = getUnitInterface("wus-v02");
 
 function createAppModel() {
   const [state, setState] = createStore({
