@@ -2,7 +2,6 @@ import { UnitInterface } from "wus-unit-types";
 import { seqNumbers } from "../utils/array-utils";
 import {
   HsUnitInputPort,
-  HsUnitInputPortCallbacks,
   HsUnitInputPortPre,
   HsUnitInputPortPreHandlers,
   HsUnitInstance,
@@ -15,12 +14,8 @@ export function createHsUnitInputPortPre(
 ): HsUnitInputPortPre {
   const audioNode = audioContext.createGain();
   let handlers: HsUnitInputPortPreHandlers | undefined;
-  let callbacks: HsUnitInputPortCallbacks | undefined;
   return {
     audioInput: { node: audioNode },
-    setCallbacks(_callbacks: HsUnitInputPortCallbacks) {
-      callbacks = _callbacks;
-    },
     setHandlers(_handlers: HsUnitInputPortPreHandlers) {
       handlers = _handlers;
     },
@@ -28,14 +23,6 @@ export function createHsUnitInputPortPre(
       return {
         audioInput: { node: audioNode },
         ...handlers,
-        callbacks: {
-          onConnectedFrom(subPortTypes) {
-            callbacks?.onConnectedFrom?.(subPortTypes);
-          },
-          onDisconnectFrom() {
-            callbacks?.onDisconnectFrom?.();
-          },
-        },
       };
     },
   };
@@ -70,8 +57,10 @@ export function createUnitInterface(
       if (attrs.primaryInputPortHandlers) {
         primaryInputPort.setHandlers(attrs.primaryInputPortHandlers);
       }
-      if (attrs.primaryInputPortCallbacks) {
-        primaryInputPort.setCallbacks(attrs.primaryInputPortCallbacks);
+      if ("primaryInputPortCallbacks" in attrs) {
+        throw new Error(
+          "primaryInputPortCallbacks field is deprecated. Please set callbacks to primaryInputPortHandlers.callbacks instead.",
+        );
       }
       createdCallback({
         unitId,

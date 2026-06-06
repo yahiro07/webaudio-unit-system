@@ -10,6 +10,7 @@ import {
   SamplerPadPort,
   StatePort,
   UnitInputPort,
+  UnitInputPortCallbacks,
   UnitOutputPort,
 } from "wus-unit-types";
 
@@ -22,15 +23,12 @@ export type HsUnitInputPortPreHandlers = {
   samplerPadInput?: SamplerPadPort;
 };
 
-export type HsUnitInputPortCallbacks = Parameters<
-  UnitInputPort["setCallbacks"]
->[0];
-
 export type HsUnitInputPortPre = UnitInputPort & {
   emit(): HsUnitInputPort;
 };
 
 export type HsUnitInputPort = {
+  callbacks?: UnitInputPortCallbacks;
   audioInput?: AudioPort;
   noteInput?: NotePort;
   cvGateInput?: CvGatePort;
@@ -38,7 +36,6 @@ export type HsUnitInputPort = {
   stateInput?: StatePort;
   automationInput?: AutomationPort;
   samplerPadInput?: SamplerPadPort;
-  callbacks?: HsUnitInputPortCallbacks;
   getSubPortTypes?: (hasAudioOutput: boolean) => PortSubtype[];
   subscribeSubPortTypes?: (
     listener: (subPortTypes: PortSubtype[]) => void,

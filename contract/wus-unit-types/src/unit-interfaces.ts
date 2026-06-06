@@ -83,6 +83,7 @@ export type UnitInputPortCallbacks = {
 };
 
 export type UnitInputPortHandlers = {
+  callbacks?: UnitInputPortCallbacks;
   noteInput?: NotePort;
   cvGateInput?: CvGatePort;
   clockInput?: ClockPort;
@@ -93,7 +94,6 @@ export type UnitInputPortHandlers = {
 
 export type UnitInputPort = {
   audioInput: AudioPort;
-  setCallbacks(callbacks: UnitInputPortCallbacks): void;
   setHandlers(handlers: UnitInputPortHandlers): void;
 };
 
@@ -124,10 +124,5 @@ export type UnitInterface = {
     unitFeatures: UnitAspects;
     hostCallbacks?: HostCallbacks;
     primaryInputPortHandlers?: UnitInputPortHandlers;
-    primaryInputPortCallbacks?: UnitInputPortCallbacks;
   }): void;
-  //deprecated, use completeSetupWithAttributes instead
-  // setHostCallbacks(callbacks: HostCallbacks): void;
-  // declareUnitFeatures(spec: UnitFeatures): void;
-  // completeSetup(): void;
 };
