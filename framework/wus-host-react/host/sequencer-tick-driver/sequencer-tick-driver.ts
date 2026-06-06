@@ -37,9 +37,13 @@ function processAllUnitsScheduling(
   crossingStepIndices: number[],
 ) {
   const units = hostSystem.getAllUnits();
+  const unitStepDurationSec = 60 / bpm / 4;
   for (const crossingStepIndex of crossingStepIndices) {
     for (const unit of units) {
-      unit.inputPort?.clockInput?.processStep?.(crossingStepIndex);
+      unit.inputPort?.clockInput?.processStep?.(
+        crossingStepIndex,
+        unitStepDurationSec,
+      );
     }
   }
   for (const unit of units) {

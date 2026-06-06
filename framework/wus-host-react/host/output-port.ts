@@ -107,9 +107,12 @@ export function createHsUnitOutputPortImpl(
           connectedInputPort.clockInput?.start?.();
         });
       },
-      processStep(stepIndex: number) {
+      processStep(stepIndex: number, unitDurationSec: number) {
         connectedInputPorts.forEach((connectedInputPort) => {
-          connectedInputPort.clockInput?.processStep?.(stepIndex);
+          connectedInputPort.clockInput?.processStep?.(
+            stepIndex,
+            unitDurationSec,
+          );
         });
       },
       stop() {
