@@ -14,6 +14,12 @@ import {
   UnitOutputPort,
 } from "wus-unit-types";
 
+export type HostSystemEvent =
+  | { type: "loadStarted" }
+  | { type: "loadCompleted" };
+// | { type: "unitsAdded"; units: HsUnitInstance[] }
+// | { type: "unitsRemoved"; unitIds: string[] };
+
 export type HsUnitInputPortPreHandlers = {
   noteInput?: NotePort;
   cvGateInput?: CvGatePort;
