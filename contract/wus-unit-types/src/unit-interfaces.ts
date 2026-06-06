@@ -21,15 +21,15 @@ export type CvGatePort = {
 
 export type ClockPort = {
   start?(): void;
-  //480ppq based tick from song start
   processScheduling?(
-    startTime: number,
-    ppqFrom: number,
-    ppqTo: number,
+    startTime: number, //absolute time based on AudioContext.currentTime
+    ppqFrom: number, //480ppq based tick from song start
+    ppqTo: number, //480ppq based tick from song start
+    //bpm for this clock, this could vary from host's global bpm if there is a clock divider/multiplier unit in between
     bpm: number,
   ): void;
   //16th note based (4ppq) integer step from song start
-  processStep?(stepIndex: number): void;
+  processStep?(stepIndex: number, unitDurationSec: number): void;
   stop?(): void;
 };
 
@@ -86,8 +86,8 @@ export type UnitInputPortHandlers = {
   callbacks?: UnitInputPortCallbacks;
   noteInput?: NotePort;
   cvGateInput?: CvGatePort;
-  clockInput?: ClockPort;
-  stateInput?: StatePort;
+  clockInput?: ClockPort; //host feed clocks only for primaryInputPort, not for multi-channel ports
+  stateInput?: StatePort; //host handles states only for primaryInputPort, not for multi-channel ports
   automationInput?: AutomationPort;
   samplerPadInput?: SamplerPadPort;
 };
