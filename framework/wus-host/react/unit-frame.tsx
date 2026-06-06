@@ -1,8 +1,8 @@
 import { CSSProperties, useEffect, useMemo, useRef } from "react";
 import { HsUnitInstance } from "../host/host-types";
-import { createUnitInterface } from "../host/unit-interface-impl";
 import { mergeStyleWithFrameSize } from "../utils/frame-size-helper";
 import { useHostAppContext } from "./host-app-context";
+import { loadIframeUnitInstance } from "./iframe-unit-loader";
 import { useUnitInputNotesAffecter } from "./use-unit-input-notes-affecter";
 
 type Props = {
@@ -44,31 +44,12 @@ export const UnitFrame = ({
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: add pageUrl to deps
   useEffect(() => {
-    const iframe = iframeRef.current!;
-    const cleanupIFrameCallback = onIframeMounted?.(iframe);
-
-    const win = iframe.contentWindow;
-    const unitInstantiationPromise = new Promise<HsUnitInstance>((resolve) => {
-      (win as any).unitInterface = createUnitInterface(
-        hostSystem.audioContext,
-        unitId,
-        (unitInstance) => {
-          // console.log(`unit loaded for ${unitId}`);
-          onUnitInstanceLoaded?.(unitInstance);
-          unitInstanceRef.current = unitInstance;
-          resolve(unitInstance);
-        },
-      );
+    return loadIframeUnitInstance(hostSystem, unitId, iframeRef.current!, {
+      onIframeMounted,
+      onUnitInstanceLoaded,
+      unitInstanceRef,
     });
-    const unregisterUnit = hostSystem.registerPendingUnitInstancePromise(
-      unitId,
-      unitInstantiationPromise,
-    );
-    return () => {
-      unregisterUnit();
-      cleanupIFrameCallback?.();
-    };
-  }, [pageUrl, hostSystem]);
+  }, [pageUrl, hostSystem, unitId, onIframeMounted, onUnitInstanceLoaded]);
 
   useEffect(() => {
     if (hostBpm) {
