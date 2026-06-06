@@ -24,8 +24,21 @@ export function createHsUnitOutputPortImpl(
 ): HsUnitOutputPort {
   const connectedInputPorts = new Set<HsUnitInputPort>();
   const unsubscribeSubPortTypesByPort = new Map<HsUnitInputPort, () => void>();
-  let audioRelayNode: AudioNode | null;
+  let audioRelayNode: AudioNode | null = null;
   let callbacks: Parameters<UnitOutputPort["setCallbacks"]>[0] | undefined;
+
+  const ensureAudioRelayNode = () => {
+    if (audioRelayNode) {
+      return audioRelayNode;
+    }
+    audioRelayNode = audioContext.createGain();
+    connectedInputPorts.forEach((connectedInputPort) => {
+      if (connectedInputPort.audioInput) {
+        audioRelayNode?.connect(connectedInputPort.audioInput.node);
+      }
+    });
+    return audioRelayNode;
+  };
 
   const core = {
     connectTo(port: HsUnitInputPort) {
@@ -73,8 +86,7 @@ export function createHsUnitOutputPortImpl(
     },
     audioOutput: {
       get node() {
-        audioRelayNode ??= audioContext.createGain();
-        return audioRelayNode;
+        return ensureAudioRelayNode();
       },
     },
     noteOutput: {
