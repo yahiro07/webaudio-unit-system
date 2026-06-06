@@ -1,15 +1,14 @@
 import { CSSProperties, useEffect, useMemo, useRef } from "react";
-import { HostSystem } from "../host";
 import { HsUnitInstance } from "../host/host-types";
 import { createUnitInterface } from "../host/unit-interface-impl";
 import { mergeStyleWithFrameSize } from "./frame-size-helper";
+import { useHostAppContext } from "./host-app-context";
 
 export const UnitFrame = ({
   unitId,
   pageUrl,
   destSpec,
   loadedCallback,
-  hostSystem,
   className,
   style,
   frameSize,
@@ -18,14 +17,20 @@ export const UnitFrame = ({
   pageUrl: string;
   destSpec?: string;
   loadedCallback?(unitInstance: HsUnitInstance): void;
-  hostSystem: HostSystem;
-  // inputNotes?: number[];
   className?: string;
   style?: CSSProperties;
   frameSize?: { width: number; height: number };
   // onIframeMounted?(iframe: HTMLIFrameElement): (() => void) | undefined;
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const unitInstanceRef = useRef<HsUnitInstance>(null);
+
+  const { hostSystem, hostBpm } = useHostAppContext();
+
+  const mergedStyle = useMemo(
+    () => mergeStyleWithFrameSize(style, frameSize),
+    [style, frameSize],
+  );
 
   useEffect(() => {
     hostSystem.reserveConnectionChange(unitId, destSpec);
@@ -42,6 +47,7 @@ export const UnitFrame = ({
         (unitInstance) => {
           // console.log(`unit loaded for ${unitId}`);
           loadedCallback?.(unitInstance);
+          unitInstanceRef.current = unitInstance;
           resolve(unitInstance);
         },
       );
@@ -52,10 +58,11 @@ export const UnitFrame = ({
     );
   }, [pageUrl, hostSystem]);
 
-  const mergedStyle = useMemo(
-    () => mergeStyleWithFrameSize(style, frameSize),
-    [style, frameSize],
-  );
+  useEffect(() => {
+    if (hostBpm) {
+      unitInstanceRef.current?.hostCallbacks?.setHostBpm?.(hostBpm);
+    }
+  }, [hostBpm]);
 
   return (
     <iframe
