@@ -18,7 +18,17 @@ function getCrossingStepIndices(ppqFrom: number, ppqTo: number): number[] {
   return stepIndices;
 }
 
-function processAllUnits(
+function processAllUnitsStartStop(
+  hostSystem: HostSystem,
+  method: "start" | "stop",
+) {
+  const units = hostSystem.getAllUnits();
+  for (const unit of units) {
+    unit.inputPort?.clockInput?.[method]?.();
+  }
+}
+
+function processAllUnitsScheduling(
   hostSystem: HostSystem,
   startTime: number,
   ppqFrom: number,
@@ -49,10 +59,11 @@ export function createSequencerTickDriver(
   return {
     setBpm: core.setBpm,
     start() {
+      processAllUnitsStartStop(hostSystem, "start");
       core.start({
         processScheduling(startTime, ppqFrom, ppqTo, bpm) {
           const crossingStepIndices = getCrossingStepIndices(ppqFrom, ppqTo);
-          processAllUnits(
+          processAllUnitsScheduling(
             hostSystem,
             startTime,
             ppqFrom,
@@ -65,6 +76,7 @@ export function createSequencerTickDriver(
     },
     stop() {
       core.stop();
+      processAllUnitsStartStop(hostSystem, "stop");
     },
   };
 }
