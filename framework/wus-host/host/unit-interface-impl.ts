@@ -65,8 +65,8 @@ export function createUnitInterface(
       createdCallback({
         unitId,
         portsSpec: {
-          outputPortSubtypes: attrs.unitFeatures.outputs,
-          inputPortSubtypes: attrs.unitFeatures.inputs,
+          outputPortSubtypes: attrs.unitAspects.outputs,
+          inputPortSubtypes: attrs.unitAspects.inputs,
           numMultiOutputs: outputPorts?.length,
           numMultiInputs: inputPorts?.length,
         },
