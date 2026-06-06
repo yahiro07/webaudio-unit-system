@@ -7,11 +7,14 @@ type UnitLoadingJob = {
   resolvedUnitInstance?: HsUnitInstance;
 };
 
-type PendingUnitOperation = () => void;
+type PendingUnitOperationItem = {
+  type: "connection" | "state";
+  op: () => void;
+};
 
 export function createUnitsLoadingManager(bus: HostStateBus) {
   const unitLoadingJobs: UnitLoadingJob[] = [];
-  const pendingUnitOperations: PendingUnitOperation[] = [];
+  const pendingUnitOperationItems: PendingUnitOperationItem[] = [];
 
   let isProcessing = false;
 
@@ -50,14 +53,20 @@ export function createUnitsLoadingManager(bus: HostStateBus) {
         }
 
         //connect units, apply persist states
-        for (const op of pendingUnitOperations) {
-          op();
+        pendingUnitOperationItems.sort((a, b) =>
+          a.type === "connection" ? -1 : 1,
+        );
+        for (const item of pendingUnitOperationItems) {
+          item.op();
         }
-        pendingUnitOperations.length = 0;
+        pendingUnitOperationItems.length = 0;
 
         bus.eventPort.emit({ type: "loadCompleted" });
         isProcessing = false;
-        if (unitLoadingJobs.length > 0 || pendingUnitOperations.length > 0) {
+        if (
+          unitLoadingJobs.length > 0 ||
+          pendingUnitOperationItems.length > 0
+        ) {
           internal.reserveLoading();
         }
       }
@@ -80,8 +89,8 @@ export function createUnitsLoadingManager(bus: HostStateBus) {
         job.cancelled = true;
       }
     },
-    reserveUnitOperation(operation: () => void) {
-      pendingUnitOperations.push(operation);
+    reserveUnitOperation(item: PendingUnitOperationItem) {
+      pendingUnitOperationItems.push(item);
       internal.reserveLoading();
     },
   };

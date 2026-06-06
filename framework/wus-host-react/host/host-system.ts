@@ -59,7 +59,7 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
     reserveConnectionChange(srcUnitId, destSpec) {
       const op = () =>
         connectionManager.updateConnection(srcUnitId, destSpec ?? "");
-      loadingManager.reserveUnitOperation(op);
+      loadingManager.reserveUnitOperation({ type: "connection", op });
     },
     setMasterGain(gain) {
       bus.masterGainNode.gain.linearRampToValueAtTime(
@@ -72,7 +72,7 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
     },
     reserveImportUnitStates(unitStates) {
       const op = () => unitPersistenceHandlers.importUnitStates(unitStates);
-      loadingManager.reserveUnitOperation(op);
+      loadingManager.reserveUnitOperation({ type: "state", op });
     },
   };
 }
