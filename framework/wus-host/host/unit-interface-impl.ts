@@ -35,25 +35,21 @@ export function createUnitInterface(
 ): UnitInterface {
   const primaryOutputPort = createHsUnitOutputPortImpl(audioContext);
   const primaryInputPort = createHsUnitInputPortPre(audioContext);
-  let outputPorts: HsUnitOutputPort[] | undefined;
-  let inputPorts: HsUnitInputPortPre[] | undefined;
   return {
     audioContext,
     primaryOutputPort,
     primaryInputPort,
     createMultiChannelOutputPorts(numPorts: number) {
-      outputPorts = seqNumbers(numPorts).map(() =>
+      return seqNumbers(numPorts).map(() =>
         createHsUnitOutputPortImpl(audioContext),
       );
-      return outputPorts;
     },
     createMultiChannelInputPorts(numPorts: number) {
-      inputPorts = seqNumbers(numPorts).map(() =>
+      return seqNumbers(numPorts).map(() =>
         createHsUnitInputPortPre(audioContext),
       );
-      return inputPorts;
     },
-    completeSetupWithAttributes(attrs) {
+    completeSetup(attrs) {
       if (attrs.primaryInputPortHandlers) {
         primaryInputPort.setHandlers(attrs.primaryInputPortHandlers);
       }
@@ -62,6 +58,10 @@ export function createUnitInterface(
           "primaryInputPortCallbacks field is deprecated. Please set callbacks to primaryInputPortHandlers.callbacks instead.",
         );
       }
+      const outputPorts = attrs.multiChannelOutputPorts as HsUnitOutputPort[];
+      const inputPorts = attrs.multiChannelInputPorts?.map((it) =>
+        (it as HsUnitInputPortPre).emit(),
+      );
       createdCallback({
         unitId,
         portsSpec: {
@@ -73,7 +73,7 @@ export function createUnitInterface(
         outputPort: primaryOutputPort,
         inputPort: primaryInputPort.emit(),
         outputPorts,
-        inputPorts: inputPorts?.map((port) => port.emit()),
+        inputPorts,
         hostCallbacks: attrs.hostCallbacks,
       });
     },
