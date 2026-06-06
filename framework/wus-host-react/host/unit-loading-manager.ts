@@ -2,6 +2,7 @@ import { HostStateBus } from "./host-state-bus";
 import { HsUnitInstance } from "./host-types";
 
 type UnitLoadingJob = {
+  unitId: string;
   promise: Promise<HsUnitInstance>;
   cancelled?: boolean;
   resolvedUnitInstance?: HsUnitInstance;
@@ -11,6 +12,26 @@ type PendingUnitOperationItem = {
   type: "connection" | "state";
   op: () => void;
 };
+
+function awaitPromiseWithTimeout<T>(
+  promise: Promise<T>,
+  timeout: number,
+): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error("Promise timed out"));
+    }, timeout);
+    promise
+      .then((value) => {
+        clearTimeout(timer);
+        resolve(value);
+      })
+      .catch((error) => {
+        clearTimeout(timer);
+        reject(error);
+      });
+  });
+}
 
 export function createUnitsLoadingManager(bus: HostStateBus) {
   const unitLoadingJobs: UnitLoadingJob[] = [];
@@ -24,9 +45,12 @@ export function createUnitsLoadingManager(bus: HostStateBus) {
       while (i < unitLoadingJobs.length) {
         const job = unitLoadingJobs[i];
         try {
-          job.resolvedUnitInstance = await job.promise;
+          job.resolvedUnitInstance = await awaitPromiseWithTimeout(
+            job.promise,
+            1000,
+          );
         } catch (e) {
-          console.error("Failed to load unit instance", e);
+          console.error("Failed to load unit instance", job.unitId, e);
         }
         i++;
       }
@@ -53,7 +77,7 @@ export function createUnitsLoadingManager(bus: HostStateBus) {
         }
 
         //connect units, apply persist states
-        pendingUnitOperationItems.sort((a, b) =>
+        pendingUnitOperationItems.sort((a) =>
           a.type === "connection" ? -1 : 1,
         );
         for (const item of pendingUnitOperationItems) {
@@ -79,8 +103,8 @@ export function createUnitsLoadingManager(bus: HostStateBus) {
   };
 
   return {
-    reserveLoadUnit(promise: Promise<HsUnitInstance>) {
-      unitLoadingJobs.push({ promise });
+    reserveLoadUnit(unitId: string, promise: Promise<HsUnitInstance>) {
+      unitLoadingJobs.push({ unitId, promise });
       internal.reserveLoading();
     },
     cancelLoadUnit(promise: Promise<HsUnitInstance>) {

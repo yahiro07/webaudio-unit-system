@@ -36,7 +36,7 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
 
   const internal = {
     addUnitInstancePromise(unitId: string, promise: Promise<HsUnitInstance>) {
-      loadingManager.reserveLoadUnit(promise);
+      loadingManager.reserveLoadUnit(unitId, promise);
       return () => {
         loadingManager.cancelLoadUnit(promise);
         connectionManager.removeConnectionsForUnit(unitId);
