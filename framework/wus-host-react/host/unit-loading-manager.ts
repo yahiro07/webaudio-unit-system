@@ -1,6 +1,5 @@
-import { ConnectionManager } from "./connection-manager";
 import { HostStateBus } from "./host-state-bus";
-import { DestinationCode, HsUnitInstance } from "./host-types";
+import { HsUnitInstance } from "./host-types";
 
 type UnitLoadingJob = {
   promise: Promise<HsUnitInstance>;
@@ -8,12 +7,11 @@ type UnitLoadingJob = {
   resolvedUnitInstance?: HsUnitInstance;
 };
 
-export function createUnitsLoadingManager(
-  bus: HostStateBus,
-  connectionManager: ConnectionManager,
-) {
+type PendingUnitOperation = () => void;
+
+export function createUnitsLoadingManager(bus: HostStateBus) {
   const unitLoadingJobs: UnitLoadingJob[] = [];
-  const pendingConnectionCodeMap: Map<string, DestinationCode> = new Map();
+  const pendingUnitOperations: PendingUnitOperation[] = [];
 
   let isProcessing = false;
 
@@ -41,21 +39,25 @@ export function createUnitsLoadingManager(
       if (!isProcessing) {
         isProcessing = true;
         bus.eventPort.emit({ type: "loadStarted" });
+
+        //wait all unitInstances loaded in iframe
         const newUnits = await internal.waitPendingUnits();
 
         if (newUnits.length > 0) {
-          bus.addUnits(newUnits);
+          for (const unit of newUnits) {
+            bus.addUnit(unit);
+          }
         }
-        if (pendingConnectionCodeMap.size > 0) {
-          connectionManager.updateConnections(pendingConnectionCodeMap);
-          pendingConnectionCodeMap.clear();
+
+        //connect units, apply persist states
+        for (const op of pendingUnitOperations) {
+          op();
         }
-        if (newUnits.length > 0) {
-          // bus.eventPort.emit({ type: "unitsAdded", units: newUnits });
-        }
+        pendingUnitOperations.length = 0;
+
         bus.eventPort.emit({ type: "loadCompleted" });
         isProcessing = false;
-        if (unitLoadingJobs.length > 0 || pendingConnectionCodeMap.size > 0) {
+        if (unitLoadingJobs.length > 0 || pendingUnitOperations.length > 0) {
           internal.reserveLoading();
         }
       }
@@ -78,8 +80,8 @@ export function createUnitsLoadingManager(
         job.cancelled = true;
       }
     },
-    reserveConnectUnit(srcUnitId: string, destSpec: DestinationCode) {
-      pendingConnectionCodeMap.set(srcUnitId, destSpec);
+    reserveUnitOperation(operation: () => void) {
+      pendingUnitOperations.push(operation);
       internal.reserveLoading();
     },
   };

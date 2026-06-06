@@ -23,7 +23,7 @@ export type HostSystem = {
 export function createHostSystem(audioContext: AudioContext): HostSystem {
   const bus = createHostStateBus(audioContext);
   const connectionManager = createUnitConnectionsManager(bus);
-  const loadingManager = createUnitsLoadingManager(bus, connectionManager);
+  const loadingManager = createUnitsLoadingManager(bus);
 
   const internal = {
     addUnitInstancePromise(unitId: string, promise: Promise<HsUnitInstance>) {
@@ -48,7 +48,9 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
       return internal.addUnitInstancePromise(unitId, unitInstancePromise);
     },
     reserveConnectionChange(srcUnitId, destSpec) {
-      loadingManager.reserveConnectUnit(srcUnitId, destSpec ?? "");
+      const op = () =>
+        connectionManager.updateConnection(srcUnitId, destSpec ?? "");
+      loadingManager.reserveUnitOperation(op);
     },
     setMasterGain(gain) {
       bus.masterGainNode.gain.linearRampToValueAtTime(

@@ -106,21 +106,14 @@ function updateUnitConnectionForMultiOutputPorts(
 export function createUnitConnectionsManager(bus: HostStateBus) {
   const connectionCodeMap: Map<string, DestinationCode> = new Map();
   return {
-    updateConnections(newConnectionCodeMap: Map<string, DestinationCode>) {
-      for (const [unitId, code] of newConnectionCodeMap.entries()) {
-        const unit = bus.units.get(unitId);
-        if (unit) {
-          const curr = connectionCodeMap.get(unit.unitId);
-          const next = code;
-          if (next !== undefined && next !== curr) {
-            updateUnitConnectionForMultiOutputPorts(
-              bus,
-              unit,
-              curr ?? "",
-              next,
-            );
-            connectionCodeMap.set(unit.unitId, next);
-          }
+    updateConnection(unitId: string, newConnectionCode: DestinationCode) {
+      const unit = bus.units.get(unitId);
+      if (unit) {
+        const curr = connectionCodeMap.get(unit.unitId);
+        const next = newConnectionCode;
+        if (next !== undefined && next !== curr) {
+          updateUnitConnectionForMultiOutputPorts(bus, unit, curr ?? "", next);
+          connectionCodeMap.set(unit.unitId, next);
         }
       }
     },
