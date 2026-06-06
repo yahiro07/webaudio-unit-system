@@ -18,11 +18,11 @@ function getConnectionTargetPort(
     const [unitId, portName] = destSpec.split(".");
     const portIndex = parseInt(portName.replace("port", ""), 10);
     if (unitId && Number.isFinite(portIndex)) {
-      const unit = bus.units.get(unitId);
+      const unit = bus.getUnit(unitId);
       return unit?.inputPorts?.[portIndex];
     }
   } else {
-    const unit = bus.units.get(destSpec);
+    const unit = bus.getUnit(destSpec);
     return unit?.inputPort;
   }
 }
@@ -107,7 +107,7 @@ export function createUnitConnectionsManager(bus: HostStateBus) {
   const connectionCodeMap: Map<string, DestinationCode> = new Map();
   return {
     updateConnection(unitId: string, newConnectionCode: DestinationCode) {
-      const unit = bus.units.get(unitId);
+      const unit = bus.getUnit(unitId);
       if (unit) {
         const curr = connectionCodeMap.get(unit.unitId);
         const next = newConnectionCode;
@@ -118,7 +118,7 @@ export function createUnitConnectionsManager(bus: HostStateBus) {
       }
     },
     removeConnectionsForUnit(unitId: string) {
-      const unit = bus.units.get(unitId);
+      const unit = bus.getUnit(unitId);
       const curr = connectionCodeMap.get(unitId);
       if (unit && curr) {
         updateUnitConnectionForMultiOutputPorts(bus, unit, curr, "");

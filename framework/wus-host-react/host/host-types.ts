@@ -17,8 +17,14 @@ import {
 export type HostSystemEvent =
   | { type: "loadStarted" }
   | { type: "loadCompleted" };
+// | { type: "unitAdded"; unitInstance: HsUnitInstance }
+// | { type: "unitRemoved"; unitId: string };
 // | { type: "unitsAdded"; units: HsUnitInstance[] }
 // | { type: "unitsRemoved"; unitIds: string[] };
+
+export type HsUnitStateData =
+  | { unitId: string; type: "bytes"; base64: string }
+  | { unitId: string; type: "json"; json: Record<string, any> };
 
 export type HsUnitInputPortPreHandlers = {
   noteInput?: NotePort;

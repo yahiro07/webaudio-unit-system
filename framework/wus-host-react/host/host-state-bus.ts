@@ -6,8 +6,8 @@ export type HostStateBus = {
   audioContext: AudioContext;
   masterGainNode: GainNode;
   audioDestinationVirtualUnitInputPort: HsUnitInputPort;
-  units: Map<string, HsUnitInstance>;
   addUnit(unit: HsUnitInstance): void;
+  getUnit(unitId: string): HsUnitInstance | undefined;
   getAllUnits(): HsUnitInstance[];
   removeUnit(unitId: string): void;
 };
@@ -26,10 +26,12 @@ export function createHostStateBus(audioContext: AudioContext): HostStateBus {
     audioContext,
     masterGainNode,
     audioDestinationVirtualUnitInputPort,
-    units,
     addUnit(unit: HsUnitInstance) {
       units.set(unit.unitId, unit);
       // eventPort.emit({ type: "unitAdded", unitInstance: unit });
+    },
+    getUnit(unitId: string) {
+      return units.get(unitId);
     },
     getAllUnits() {
       return Array.from(units.values());

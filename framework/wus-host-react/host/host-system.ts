@@ -1,8 +1,14 @@
 import { EventPort } from "../utils/event-port";
 import { createUnitConnectionsManager } from "./connection-manager";
 import { createHostStateBus } from "./host-state-bus";
-import { DestinationCode, HostSystemEvent, HsUnitInstance } from "./host-types";
+import {
+  DestinationCode,
+  HostSystemEvent,
+  HsUnitInstance,
+  HsUnitStateData,
+} from "./host-types";
 import { createUnitsLoadingManager } from "./unit-loading-manager";
+import { createUnitPersistenceHandlers } from "./unit-persistence";
 
 export type HostSystem = {
   audioContext: AudioContext;
@@ -18,11 +24,14 @@ export type HostSystem = {
     destSpec: DestinationCode | undefined,
   ): void;
   setMasterGain(gain: number): void;
+  exportUnitStates(): HsUnitStateData[];
+  reserveImportUnitStates(unitStates: HsUnitStateData[]): void;
 };
 
 export function createHostSystem(audioContext: AudioContext): HostSystem {
   const bus = createHostStateBus(audioContext);
   const connectionManager = createUnitConnectionsManager(bus);
+  const unitPersistenceHandlers = createUnitPersistenceHandlers(bus);
   const loadingManager = createUnitsLoadingManager(bus);
 
   const internal = {
@@ -57,6 +66,13 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
         gain,
         audioContext.currentTime + 0.01,
       );
+    },
+    exportUnitStates() {
+      return unitPersistenceHandlers.exportUnitStates();
+    },
+    reserveImportUnitStates(unitStates) {
+      const op = () => unitPersistenceHandlers.importUnitStates(unitStates);
+      loadingManager.reserveUnitOperation(op);
     },
   };
 }
