@@ -2,7 +2,7 @@
   "name": "app3-react",
   "private": "true",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite dev --force",
     "build": "vite build",
     "preview": "vite preview"
   },
