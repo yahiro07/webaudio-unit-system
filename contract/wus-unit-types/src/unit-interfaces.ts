@@ -34,6 +34,7 @@ export type ClockPort = {
 };
 
 export type StatePort = {
+  subscribeChange?(fn: () => void): () => void;
   emitState?(): Record<string, any> | undefined;
   applyState?(state: Record<string, any>): void;
   emitStateBytes?(): Uint8Array | undefined;
