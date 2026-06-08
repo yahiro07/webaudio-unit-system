@@ -98,12 +98,8 @@ export type UnitInputPort = {
   setHandlers(handlers: UnitInputPortHandlers): void;
 };
 
-export type MetaAttributes = {
-  [key: string]: any;
-  //arbitrary data could be passed from host to unit.
-  //key?: string; //C, Am, ... etc
-  //dynamicPatternRootNote?: number;  //used to shift notes according to key and root note.
-};
+//arbitrary data could be passed from host to unit.
+export type MetaAttributes = Record<string, any>;
 
 export type HostCallbacks = {
   //setBpm and setPlayState are used for naive synchronization
