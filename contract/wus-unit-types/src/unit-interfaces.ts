@@ -99,7 +99,10 @@ export type UnitInputPort = {
 };
 
 export type MetaAttributes = {
-  key?: string; //C, Am, ... etc
+  [key: string]: any;
+  //arbitrary data could be passed from host to unit.
+  //key?: string; //C, Am, ... etc
+  //dynamicPatternRootNote?: number;  //used to shift notes according to key and root note.
 };
 
 export type HostCallbacks = {
