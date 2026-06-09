@@ -90,14 +90,14 @@ export function createHsUnitOutputPortImpl(
       },
     },
     noteOutput: {
-      noteOn(note: number) {
+      noteOn(note: number, timeAt?: number, velocity?: number) {
         connectedInputPorts.forEach((connectedInputPort) => {
-          connectedInputPort.noteInput?.noteOn(note);
+          connectedInputPort.noteInput?.noteOn(note, timeAt, velocity);
         });
       },
-      noteOff(note: number) {
+      noteOff(note: number, timeAt?: number) {
         connectedInputPorts.forEach((connectedInputPort) => {
-          connectedInputPort.noteInput?.noteOff(note);
+          connectedInputPort.noteInput?.noteOff(note, timeAt);
         });
       },
     },
