@@ -9,7 +9,7 @@ export const App = () => {
   const { count } = sore.useSnapshot();
   return (
     <div class="primary">
-      hello preact 1711
+      hello preact 1735
       <div class="border border-teal-500 bg-gray-200 p-4">{count}</div>
       <button type="button" onClick={() => sore.setCount((prev) => prev + 1)}>
         +

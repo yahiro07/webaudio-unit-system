@@ -1,10 +1,8 @@
 import { render } from "preact";
 import { App } from "./app";
+import { applyShadowRootAppStyleCss } from "./shadow-root-css-helper";
 
 const defaultAssetBaseUrl = import.meta.url.replace(/\/[^/]*$/, "/");
-
-const withTrailingSlash = (value: string) =>
-  value.endsWith("/") ? value : `${value}/`;
 
 export class UnitElement extends HTMLElement {
   static assetBaseUrl = defaultAssetBaseUrl;
@@ -17,20 +15,11 @@ export class UnitElement extends HTMLElement {
   }
   setupUnit(args: any) {
     console.log("setupUnit", args);
-
-    const assetBaseUrl = withTrailingSlash(
+    applyShadowRootAppStyleCss(
+      this,
       (this.constructor as typeof UnitElement).assetBaseUrl,
+      "style.css",
     );
-    const stylesheetUrl = `${assetBaseUrl}style.css`;
-
-    if (!this.shadowRoot!.querySelector("link[data-unit1-styles]")) {
-      const styleLink = document.createElement("link");
-      styleLink.dataset.unit1Styles = "true";
-      styleLink.rel = "stylesheet";
-      styleLink.href = stylesheetUrl;
-      this.shadowRoot!.appendChild(styleLink);
-    }
-
     this.reactRoot = render(<App />, this.shadowRoot!);
   }
 
