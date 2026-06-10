@@ -7,7 +7,7 @@ const sore = createStore({
 export const App = () => {
   const { count } = sore.useSnapshot();
   return (
-    <div>
+    <div class="primary">
       hello preact 1631
       <div>{count}</div>
       <button type="button" onClick={() => sore.setCount((prev) => prev + 1)}>

@@ -1,5 +1,6 @@
 import { render } from "preact";
 import { App } from "./app";
+import cssText from "./app.css?inline";
 
 export class Unit1Element extends HTMLElement {
   reactRoot: any | null;
@@ -10,6 +11,13 @@ export class Unit1Element extends HTMLElement {
   }
   setupUnit(args: any) {
     console.log("setupUnit", args);
+
+    if (!this.shadowRoot!.querySelector("style")) {
+      const style = document.createElement("style");
+      style.textContent = cssText;
+      this.shadowRoot!.appendChild(style);
+    }
+
     this.reactRoot = render(<App />, this.shadowRoot!);
   }
 
