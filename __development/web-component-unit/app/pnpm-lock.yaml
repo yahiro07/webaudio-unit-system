@@ -22,7 +22,7 @@ importers:
         version: 0.1.7(react@19.2.7)
       unit1:
         specifier: file:../unit1
-        version: file:../unit1
+        version: file:../unit1(react@19.2.7)
     devDependencies:
       '@types/react':
         specifier: ^19.2.14
@@ -609,9 +609,12 @@ snapshots:
 
   typescript@6.0.3: {}
 
-  unit1@file:../unit1:
+  unit1@file:../unit1(react@19.2.7):
     dependencies:
       preact: 10.29.2
+      snap-store: 0.1.7(react@19.2.7)
+    transitivePeerDependencies:
+      - react
 
   vite@8.0.16:
     dependencies:
