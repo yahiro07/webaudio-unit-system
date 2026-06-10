@@ -21,5 +21,6 @@ export default defineConfig({
       formats: ["es"],
       fileName: "index",
     },
+    outDir: resolve(__dirname, "../app/public/unit1"),
   },
 });
