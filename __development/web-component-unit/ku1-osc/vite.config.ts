@@ -26,7 +26,7 @@ export default defineConfig({
       formats: ["es"],
       fileName: "index",
     },
-    // outDir: resolve(__dirname, "../app/public/unit1"),
-    // emptyOutDir: true,
+    outDir: resolve(__dirname, "../dist/ku1-osc"),
+    emptyOutDir: true,
   },
 });
