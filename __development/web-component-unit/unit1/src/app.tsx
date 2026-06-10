@@ -8,7 +8,7 @@ export const App = () => {
   const { count } = sore.useSnapshot();
   return (
     <div>
-      hello preact 1610
+      hello preact 1631
       <div>{count}</div>
       <button type="button" onClick={() => sore.setCount((prev) => prev + 1)}>
         +

@@ -2,7 +2,8 @@
   "name": "app",
   "type": "module",
   "scripts": {
-    "dev": "vite dev --force"
+    "dev": "vite dev --force",
+    "build": "vite build"
   },
   "dependencies": {
     "clsx": "^2.1.1",

@@ -4,6 +4,9 @@ import { defineConfig } from "vite";
 // import { analyzer } from "vite-bundle-analyzer";
 
 export default defineConfig({
+  define: {
+    "process.env.NODE_ENV": JSON.stringify("production"),
+  },
   plugins: [
     preact(),
     //analyzer()
@@ -22,5 +25,6 @@ export default defineConfig({
       fileName: "index",
     },
     outDir: resolve(__dirname, "../app/public/unit1"),
+    emptyOutDir: true,
   },
 });
