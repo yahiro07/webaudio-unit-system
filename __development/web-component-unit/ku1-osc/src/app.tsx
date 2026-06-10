@@ -5,6 +5,8 @@ export type UnitSetupArgs = {
   unitInterface: UnitInterface;
 };
 
+console.log("ku1-osc import meta url", import.meta.url);
+
 export function createUnitApp(setupArgs: UnitSetupArgs) {
   const { unitInterface } = setupArgs;
 
@@ -46,7 +48,7 @@ export function createUnitApp(setupArgs: UnitSetupArgs) {
       const { count } = sore.useSnapshot();
       return (
         <div class="primary">
-          hello preact 1951
+          hello preact 2000
           <div class="border border-teal-500 bg-gray-200 p-4">{count}</div>
           <button
             type="button"
