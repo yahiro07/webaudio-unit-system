@@ -1,9 +1,17 @@
+// import { analyzer } from "vite-bundle-analyzer";
+import preact from "@preact/preset-vite";
 import { resolve } from "path";
 import { defineConfig } from "vite";
-import { analyzer } from "vite-bundle-analyzer";
 
 export default defineConfig({
-  plugins: 0 ? [analyzer()] : [],
+  plugins: [preact()],
+  resolve: {
+    alias: {
+      react: "preact/compat",
+      "react-dom": "preact/compat",
+      "react/jsx-runtime": "preact/jsx-runtime",
+    },
+  },
   build: {
     lib: {
       entry: resolve(__dirname, "src/index.ts"),

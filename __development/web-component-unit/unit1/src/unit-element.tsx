@@ -1,4 +1,4 @@
-import { createRoot } from "react-dom/client";
+import { render } from "preact";
 import { App } from "./app";
 
 export class Unit1Element extends HTMLElement {
@@ -10,10 +10,7 @@ export class Unit1Element extends HTMLElement {
   }
   setupUnit(args: any) {
     console.log("setupUnit", args);
-    if (!this.reactRoot) {
-      this.reactRoot = createRoot(this.shadowRoot!);
-    }
-    this.reactRoot.render(<App />);
+    this.reactRoot = render(<App />, this.shadowRoot!);
   }
 
   // connectedCallback() {
@@ -21,6 +18,7 @@ export class Unit1Element extends HTMLElement {
   //   div.textContent = "unit1";
   //   this.shadowRoot?.appendChild(div);
   // }
+
   disconnectedCallback() {
     if (this.reactRoot) {
       setTimeout(() => {
