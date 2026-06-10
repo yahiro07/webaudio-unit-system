@@ -1,7 +1,7 @@
 // import Unit1Element from "unit1";
 
 const unit1ModuleUrl = "/unit1/index.js";
-const unit1StylesheetUrl = "/unit1/style.css";
+const unit1AssetBaseUrl = "/unit1";
 
 const unit1ModuleText = await fetch(unit1ModuleUrl).then((response) => {
   if (!response.ok) {
@@ -18,7 +18,7 @@ const Unit1Element = (await import(/* @vite-ignore */ unit1ModuleBlobUrl).then(
   (module) => module.default,
 )) as any;
 
-Unit1Element.stylesheetUrl = unit1StylesheetUrl;
+Unit1Element.assetBaseUrl = unit1AssetBaseUrl;
 
 URL.revokeObjectURL(unit1ModuleBlobUrl);
 

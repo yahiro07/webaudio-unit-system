@@ -1,10 +1,13 @@
 import { render } from "preact";
 import { App } from "./app";
 
-const defaultStylesheetUrl = import.meta.url.replace(/\/[^/]*$/, "/style.css");
+const defaultAssetBaseUrl = import.meta.url.replace(/\/[^/]*$/, "/");
+
+const withTrailingSlash = (value: string) =>
+  value.endsWith("/") ? value : `${value}/`;
 
 export class UnitElement extends HTMLElement {
-  static stylesheetUrl = defaultStylesheetUrl;
+  static assetBaseUrl = defaultAssetBaseUrl;
 
   reactRoot: any | null;
   constructor() {
@@ -15,7 +18,10 @@ export class UnitElement extends HTMLElement {
   setupUnit(args: any) {
     console.log("setupUnit", args);
 
-    const stylesheetUrl = (this.constructor as typeof UnitElement).stylesheetUrl;
+    const assetBaseUrl = withTrailingSlash(
+      (this.constructor as typeof UnitElement).assetBaseUrl,
+    );
+    const stylesheetUrl = `${assetBaseUrl}style.css`;
 
     if (!this.shadowRoot!.querySelector("link[data-unit1-styles]")) {
       const styleLink = document.createElement("link");
