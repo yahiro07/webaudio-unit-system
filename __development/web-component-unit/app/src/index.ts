@@ -1,31 +1,6 @@
-// import Unit1Element from "unit1";
+import { loadUnitElement } from "./unit-element-loader";
 
-const unit1ModuleUrl = "/unit1/index.js";
-const unit1AssetBaseUrl = "/unit1";
-
-const unit1ModuleText = await fetch(unit1ModuleUrl).then((response) => {
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${unit1ModuleUrl}: ${response.status}`);
-  }
-  return response.text();
-});
-
-const unit1ModuleBlobUrl = URL.createObjectURL(
-  new Blob([unit1ModuleText], { type: "text/javascript" }),
-);
-
-const Unit1Element = (await import(/* @vite-ignore */ unit1ModuleBlobUrl).then(
-  (module) => module.default,
-)) as any;
-
-Unit1Element.assetBaseUrl = unit1AssetBaseUrl;
-
-URL.revokeObjectURL(unit1ModuleBlobUrl);
-
-console.log({ Unit1Element });
-
-customElements.define("my-unit1", Unit1Element);
-
+await loadUnitElement("my-unit1", "/unit1/index.js");
 console.log("hello");
 
 const element = document.createElement("my-unit1");
@@ -33,5 +8,3 @@ const element = document.createElement("my-unit1");
 (element as any).setupUnit({ hello: "world" });
 
 document.body.appendChild(element);
-
-export {};
