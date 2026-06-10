@@ -25,7 +25,6 @@ export default defineConfig({
       entry: resolve(__dirname, "src/index.ts"),
       formats: ["es"],
       fileName: "index",
-      cssFileName: "style",
     },
     outDir: resolve(__dirname, "../app/public/unit1"),
     emptyOutDir: true,

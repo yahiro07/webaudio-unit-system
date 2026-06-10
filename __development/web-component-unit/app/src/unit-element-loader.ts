@@ -14,8 +14,6 @@ export async function loadUnitElement(tagName: string, moduleUrl: string) {
     (module) => module.default,
   )) as any;
 
-  unitElement.assetBaseUrl = moduleUrl.replace(/\/[^/]*$/, "/");
-
   URL.revokeObjectURL(unit1ModuleBlobUrl);
 
   customElements.define(tagName, unitElement);

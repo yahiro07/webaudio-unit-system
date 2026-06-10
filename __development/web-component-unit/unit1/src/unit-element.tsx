@@ -1,12 +1,8 @@
 import { render } from "preact";
 import { App } from "./app";
-import { applyShadowRootAppStyleCss } from "./shadow-root-css-helper";
-
-const defaultAssetBaseUrl = import.meta.url.replace(/\/[^/]*$/, "/");
+import cssText from "./page.css?inline";
 
 export class UnitElement extends HTMLElement {
-  static assetBaseUrl = defaultAssetBaseUrl;
-
   reactRoot: any | null;
   constructor() {
     super();
@@ -15,11 +11,12 @@ export class UnitElement extends HTMLElement {
   }
   setupUnit(args: any) {
     console.log("setupUnit", args);
-    applyShadowRootAppStyleCss(
-      this,
-      (this.constructor as typeof UnitElement).assetBaseUrl,
-      "style.css",
-    );
+
+    const style = document.createElement("style");
+    style.dataset.unit1Styles = "true";
+    style.textContent = cssText;
+    this.shadowRoot!.appendChild(style);
+
     this.reactRoot = render(<App />, this.shadowRoot!);
   }
 
