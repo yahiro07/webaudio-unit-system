@@ -33,6 +33,9 @@ importers:
       vite-bundle-analyzer:
         specifier: ^1.3.8
         version: 1.3.8
+      wus-unit-types:
+        specifier: file://../../../contract/wus-unit-types
+        version: file:../../../contract/wus-unit-types
 
 packages:
 
@@ -747,6 +750,9 @@ packages:
       yaml:
         optional: true
 
+  wus-unit-types@file:../../../contract/wus-unit-types:
+    resolution: {directory: ../../../contract/wus-unit-types, type: directory}
+
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
 
@@ -1364,6 +1370,8 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
       jiti: 2.7.0
+
+  wus-unit-types@file:../../../contract/wus-unit-types: {}
 
   yallist@3.1.1: {}
 

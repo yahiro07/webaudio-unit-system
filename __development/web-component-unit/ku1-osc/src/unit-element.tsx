@@ -1,5 +1,5 @@
 import { render } from "preact";
-import { App, appDi } from "./app";
+import { createUnitApp, UnitSetupArgs } from "./app";
 import cssText from "./page.css?inline";
 
 export class UnitElement extends HTMLElement {
@@ -11,30 +11,31 @@ export class UnitElement extends HTMLElement {
     this.isMounted = false;
   }
 
-  mountApp() {
+  mountApp() {}
+
+  setupUnit(args: UnitSetupArgs) {
     if (this.isMounted || !this.shadowRoot) return;
+
+    // console.log("setupUnit", args);
+    const unitApp = createUnitApp(args);
 
     const style = document.createElement("style");
     style.dataset.unit1Styles = "true";
     style.textContent = cssText;
     this.shadowRoot.appendChild(style);
 
-    render(<App />, this.shadowRoot);
+    render(<unitApp.RenderUi />, this.shadowRoot);
     this.isMounted = true;
+
+    // const ac = args.audioContext;
+    // appDi.audioContext = ac;
+
+    // this.mountApp();
   }
 
-  setupUnit(args: any) {
-    console.log("setupUnit", args);
-
-    const ac = args.audioContext;
-    appDi.audioContext = ac;
-
-    this.mountApp();
-  }
-
-  connectedCallback() {
-    this.mountApp();
-  }
+  // connectedCallback() {
+  //   this.mountApp();
+  // }
 
   disconnectedCallback() {
     if (this.isMounted && this.shadowRoot) {
