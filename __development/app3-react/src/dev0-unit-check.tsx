@@ -3,7 +3,11 @@ import { setupMidiKeyboardInput } from "mofur/mx-audio";
 import { useEffect } from "react";
 import { createStore } from "snap-store";
 import { createHostSystem } from "wus-host/host";
-import { HostAppProvider, UnitFrame } from "wus-host/react";
+import {
+  CustomElementUnitFrame,
+  HostAppProvider,
+  UnitFrame,
+} from "wus-host/react";
 import { Button } from "@/components/button";
 import { NumberSliderBox } from "@/components/number-slider-box";
 import catalog from "./unit-inventories.json";
@@ -48,12 +52,20 @@ const UnitRows = () => {
         pageUrl={catalog.mu5Visualizer.loaderPageUrl}
         destSpec="$output"
       />
-      <UnitFrame
+      {/* <UnitFrame
         unitId="uf_instrument"
         pageUrl={catalog.miniSynthGe.loaderPageUrl}
         // pageUrl={catalog.mini_synth_ge.loaderPageUrl}
         // className="w-[640px] h-[320px]"
         frameSize={catalog.miniSynthGe.preferredSize}
+        destSpec="uf_effect"
+      /> */}
+      <CustomElementUnitFrame
+        unitId="uf_instrument"
+        scriptUrl="/dev-units/ku1-osc/index.js"
+        // pageUrl={catalog.mini_synth_ge.loaderPageUrl}
+        // className="w-[640px] h-[320px]"
+        frameSize={{ width: 500, height: 300 }}
         destSpec="uf_effect"
       />
       <UnitFrame
