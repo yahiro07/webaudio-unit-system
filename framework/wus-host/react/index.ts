@@ -1,3 +1,4 @@
+export * from "./custom-element-unit-frame";
 export * from "./host-app-context";
 export * from "./react-unit-frame";
 export type { ReactUnitTemplateFn } from "./react-unit-interface";
