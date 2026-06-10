@@ -3,34 +3,42 @@ import { App } from "./app";
 import cssText from "./page.css?inline";
 
 export class UnitElement extends HTMLElement {
-  reactRoot: any | null;
+  isMounted: boolean;
+
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-    this.reactRoot = null;
+    this.isMounted = false;
   }
-  setupUnit(args: any) {
-    console.log("setupUnit", args);
+
+  mountApp() {
+    if (this.isMounted || !this.shadowRoot) return;
 
     const style = document.createElement("style");
     style.dataset.unit1Styles = "true";
     style.textContent = cssText;
-    this.shadowRoot!.appendChild(style);
+    this.shadowRoot.appendChild(style);
 
-    this.reactRoot = render(<App />, this.shadowRoot!);
+    render(<App />, this.shadowRoot);
+    this.isMounted = true;
   }
 
-  // connectedCallback() {
-  //   const div = document.createElement("div");
-  //   div.textContent = "unit1";
-  //   this.shadowRoot?.appendChild(div);
-  // }
+  setupUnit(args: any) {
+    console.log("setupUnit", args);
+
+    this.mountApp();
+  }
+
+  connectedCallback() {
+    this.mountApp();
+  }
 
   disconnectedCallback() {
-    if (this.reactRoot) {
+    if (this.isMounted && this.shadowRoot) {
       setTimeout(() => {
-        this.reactRoot.unmount();
-        this.reactRoot = null;
+        if (!this.shadowRoot) return;
+        render(null, this.shadowRoot);
+        this.isMounted = false;
       }, 0);
     }
   }
