@@ -1,7 +1,8 @@
 import preact from "@preact/preset-vite";
+// import { analyzer } from "vite-bundle-analyzer";
+import tailwind from "@tailwindcss/vite";
 import { resolve } from "path";
 import { defineConfig } from "vite";
-// import { analyzer } from "vite-bundle-analyzer";
 
 export default defineConfig({
   define: {
@@ -10,6 +11,7 @@ export default defineConfig({
   plugins: [
     preact(),
     //analyzer()
+    tailwind(),
   ],
   resolve: {
     alias: {
@@ -23,6 +25,7 @@ export default defineConfig({
       entry: resolve(__dirname, "src/index.ts"),
       formats: ["es"],
       fileName: "index",
+      cssFileName: "style",
     },
     outDir: resolve(__dirname, "../app/public/unit1"),
     emptyOutDir: true,

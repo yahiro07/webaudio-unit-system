@@ -1,6 +1,8 @@
 // import Unit1Element from "unit1";
 
 const unit1ModuleUrl = "/unit1/index.js";
+const unit1StylesheetUrl = "/unit1/style.css";
+
 const unit1ModuleText = await fetch(unit1ModuleUrl).then((response) => {
   if (!response.ok) {
     throw new Error(`Failed to fetch ${unit1ModuleUrl}: ${response.status}`);
@@ -15,6 +17,8 @@ const unit1ModuleBlobUrl = URL.createObjectURL(
 const Unit1Element = (await import(/* @vite-ignore */ unit1ModuleBlobUrl).then(
   (module) => module.default,
 )) as any;
+
+Unit1Element.stylesheetUrl = unit1StylesheetUrl;
 
 URL.revokeObjectURL(unit1ModuleBlobUrl);
 

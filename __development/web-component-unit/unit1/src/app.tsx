@@ -1,4 +1,5 @@
 import { createStore } from "snap-store";
+import "./page.css";
 
 const sore = createStore({
   count: 0,
@@ -8,8 +9,8 @@ export const App = () => {
   const { count } = sore.useSnapshot();
   return (
     <div class="primary">
-      hello preact 1631
-      <div>{count}</div>
+      hello preact 1711
+      <div class="border border-teal-500 bg-gray-200 p-4">{count}</div>
       <button type="button" onClick={() => sore.setCount((prev) => prev + 1)}>
         +
       </button>
