@@ -1,5 +1,5 @@
 import { render } from "preact";
-import { App } from "./app";
+import { App, appDi } from "./app";
 import cssText from "./page.css?inline";
 
 export class UnitElement extends HTMLElement {
@@ -25,6 +25,9 @@ export class UnitElement extends HTMLElement {
 
   setupUnit(args: any) {
     console.log("setupUnit", args);
+
+    const ac = args.audioContext;
+    appDi.audioContext = ac;
 
     this.mountApp();
   }

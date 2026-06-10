@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 
+const audioContext = new AudioContext();
+
 export const WebComponentUnitBox = ({ tagName }: { tagName: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const elementRef = useRef<HTMLElement>(null);
@@ -8,7 +10,7 @@ export const WebComponentUnitBox = ({ tagName }: { tagName: string }) => {
     if (!containerRef.current) return;
     const element = document.createElement(tagName);
     console.group({ element });
-    (element as any).setupUnit({ some: "args" });
+    (element as any).setupUnit({ some: "args", audioContext });
     elementRef.current = element;
     containerRef.current.appendChild(element);
     return () => {
