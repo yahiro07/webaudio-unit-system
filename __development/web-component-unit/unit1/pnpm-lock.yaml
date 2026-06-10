@@ -11,6 +11,9 @@ importers:
       preact:
         specifier: ^10.26.0
         version: 10.29.2
+      snap-store:
+        specifier: ^0.1.7
+        version: 0.1.7(react@19.2.7)
     devDependencies:
       '@preact/preset-vite':
         specifier: ^2.9.4
@@ -21,6 +24,9 @@ importers:
       vite:
         specifier: ^8.0.16
         version: 8.0.16
+      vite-bundle-analyzer:
+        specifier: ^1.3.8
+        version: 1.3.8
 
 packages:
 
@@ -384,6 +390,9 @@ packages:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
 
+  immer@11.1.8:
+    resolution: {integrity: sha512-/tbkHMW7y10Lx6i1crLjD4/OhNkRG+Fo7byZHtah0547nIeXYcpIXaUh0IAQY6gO5459qpGGYapcEOHtFXkIuA==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -516,6 +525,10 @@ packages:
   preact@10.29.2:
     resolution: {integrity: sha512-7tNmwg/7mzzAoB/8kSg6Hl37JraAZw3Z3A0JSY7VXlZwo82Xn0G7wKbNNs2qoF4ZEEsQGTwDAroNdqKs1ofJxQ==}
 
+  react@19.2.7:
+    resolution: {integrity: sha512-HNe9WslTbXmFK8o8cmwgAeJFSBvt1bPdHCVKtaaV+WlAN36mpT4hcRpwbf3fY56ar2oIXzsBpOAiIRHAdY0OlQ==}
+    engines: {node: '>=0.10.0'}
+
   rolldown@1.0.3:
     resolution: {integrity: sha512-i00lAJ2ks1BYr7rjNjKC7BcqAS7nVfiT3QX1SI5aY+AFHblCmaUf9OE9dbdzDvW6dJxbi2ZCZiy9v3CcwOiX3g==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -527,6 +540,12 @@ packages:
 
   simple-code-frame@1.3.0:
     resolution: {integrity: sha512-MB4pQmETUBlNs62BBeRjIFGeuy/x6gGKh7+eRUemn1rCFhqo7K+4slPqsyizCbcbYLnaYqaoZ2FWsZ/jN06D8w==}
+
+  snap-store@0.1.7:
+    resolution: {integrity: sha512-mOVfteA204VB/IbithfboUv+1gge08HeUun27cdhTYwH9VNxaIKfdE3d8H4E+0QPRGtOsQDd7BThsKMspPfneg==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      react: '>=18.0.0'
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -557,6 +576,10 @@ packages:
     hasBin: true
     peerDependencies:
       browserslist: '>= 4.21.0'
+
+  vite-bundle-analyzer@1.3.8:
+    resolution: {integrity: sha512-IIk7WPhoYs7pyo75jwI+dFt7yykgjK7NY+dqnJtiZnyqP2k6NgPb3TY80FLFjtgnfk/o+OjI18+anKyeviCbRA==}
+    hasBin: true
 
   vite-prerender-plugin@0.5.13:
     resolution: {integrity: sha512-IKSpYkzDBsKAxa05naRbj7GvNVMSdww/Z/E89oO3xndz+gWnOBOKOAbEXv7qDhktY/j3vHgJmoV1pPzqU2tx9g==}
@@ -968,6 +991,8 @@ snapshots:
 
   he@1.2.0: {}
 
+  immer@11.1.8: {}
+
   js-tokens@4.0.0: {}
 
   jsesc@3.1.0: {}
@@ -1062,6 +1087,8 @@ snapshots:
 
   preact@10.29.2: {}
 
+  react@19.2.7: {}
+
   rolldown@1.0.3:
     dependencies:
       '@oxc-project/types': 0.133.0
@@ -1089,6 +1116,11 @@ snapshots:
     dependencies:
       kolorist: 1.8.0
 
+  snap-store@0.1.7(react@19.2.7):
+    dependencies:
+      immer: 11.1.8
+      react: 19.2.7
+
   source-map-js@1.2.1: {}
 
   source-map@0.7.6: {}
@@ -1110,6 +1142,8 @@ snapshots:
       browserslist: 4.28.2
       escalade: 3.2.0
       picocolors: 1.1.1
+
+  vite-bundle-analyzer@1.3.8: {}
 
   vite-prerender-plugin@0.5.13(vite@8.0.16):
     dependencies:

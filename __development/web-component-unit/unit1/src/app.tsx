@@ -1,3 +1,18 @@
+import { createStore } from "snap-store";
+
+const sore = createStore({
+  count: 0,
+});
+
 export const App = () => {
-  return <div>hello preact</div>;
+  const { count } = sore.useSnapshot();
+  return (
+    <div>
+      hello preact
+      <div>{count}</div>
+      <button type="button" onClick={() => sore.setCount((prev) => prev + 1)}>
+        +
+      </button>
+    </div>
+  );
 };

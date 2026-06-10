@@ -1,10 +1,13 @@
-// import { analyzer } from "vite-bundle-analyzer";
 import preact from "@preact/preset-vite";
 import { resolve } from "path";
 import { defineConfig } from "vite";
+// import { analyzer } from "vite-bundle-analyzer";
 
 export default defineConfig({
-  plugins: [preact()],
+  plugins: [
+    preact(),
+    //analyzer()
+  ],
   resolve: {
     alias: {
       react: "preact/compat",
