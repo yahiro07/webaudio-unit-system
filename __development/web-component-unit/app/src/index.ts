@@ -1,4 +1,4 @@
-import { Unit1Element } from "../../unit1/index";
+import { Unit1Element } from "unit1";
 
 customElements.define("my-unit1", Unit1Element);
 

@@ -2,8 +2,18 @@
   "scripts": {
     "dev": "vite dev"
   },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "snap-store": "^0.1.6",
+    "unit1": "file:../unit1"
+  },
   "devDependencies": {
     "typescript": "^6.0.3",
-    "vite": "^8.0.16"
+    "vite": "^8.0.16",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1"
   }
 }
