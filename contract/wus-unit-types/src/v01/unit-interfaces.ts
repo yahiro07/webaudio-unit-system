@@ -16,27 +16,37 @@ export type NotePort = {
   noteOff(noteNumber: number, time?: number): void;
 };
 
-export type PersistencePort = {
+export type Persistence = {
   subscribeChange?(fn: () => void): () => void;
-  emitState?(): Record<string, any>;
-  applyState?(state: Record<string, any>): void;
-  emitStateBytes?(): Uint8Array;
-  applyStateBytes?(bytes: Uint8Array): void;
-};
+} & (
+  | {
+      emitState(): Record<string, any>;
+      applyState(state: Record<string, any>): void;
+    }
+  | {
+      emitStateBytes(): Uint8Array;
+      applyStateBytes(bytes: Uint8Array): void;
+    }
+);
 
-export type ClockInputPort = {
+export type ClockHandlers = {
   start?(): void;
-  //480PPQ based tick from song start
-  processScheduling?(
-    startTime: number,
-    ppqFrom: number,
-    ppqTo: number,
-    bpm: number,
-  ): void;
-  //16th note based step from song start
-  processStep?(stepIndex: number, unitDurationSec: number): void;
   stop?(): void;
-};
+} & (
+  | {
+      //480PPQ based tick from song start
+      processScheduling(
+        startTime: number,
+        ppqFrom: number,
+        ppqTo: number,
+        bpm: number,
+      ): void;
+    }
+  | {
+      //16th note based step from song start
+      processStep(stepIndex: number, unitDurationSec: number): void;
+    }
+);
 
 export type UnitAspects = {
   unitType: UnitType;
@@ -62,9 +72,9 @@ export type UnitInterface = {
   completeSetup(attrs: {
     unitAspects: UnitAspects;
     hostCallbacks?: HostCallbacks;
-    persistence?: PersistencePort;
     noteInput?: NotePort;
-    clockInput?: ClockInputPort;
+    persistence?: Persistence;
+    clockHandlers?: ClockHandlers;
   }): void;
 };
 

@@ -1,5 +1,10 @@
 import { PortSubtype, UnitOutputPort } from "wus-unit-types/v02";
-import { HsUnitInputPort, HsUnitOutputPort } from "./host-types";
+import {
+  HsUnitInputPort,
+  HsUnitOutputPort,
+  HsWeakClockPort,
+  HsWeakStatePort,
+} from "./host-types";
 
 function getConnectedSubPortTypes(
   port: HsUnitInputPort,
@@ -121,20 +126,14 @@ export function createHsUnitOutputPortImpl(
       },
       processStep(stepIndex: number, unitDurationSec: number) {
         connectedInputPorts.forEach((connectedInputPort) => {
-          connectedInputPort.clockInput?.processStep?.(
-            stepIndex,
-            unitDurationSec,
-          );
+          const clockInput = connectedInputPort.clockInput as HsWeakClockPort;
+          clockInput?.processStep?.(stepIndex, unitDurationSec);
         });
       },
       processScheduling(startTime, ppqFrom, ppqTo, bpm) {
         connectedInputPorts.forEach((connectedInputPort) => {
-          connectedInputPort.clockInput?.processScheduling?.(
-            startTime,
-            ppqFrom,
-            ppqTo,
-            bpm,
-          );
+          const clockInput = connectedInputPort.clockInput as HsWeakClockPort;
+          clockInput?.processScheduling?.(startTime, ppqFrom, ppqTo, bpm);
         });
       },
       stop() {
@@ -146,20 +145,24 @@ export function createHsUnitOutputPortImpl(
     stateOutput: {
       emitState() {
         const connectedInputPort = connectedInputPorts.values().next().value;
-        return connectedInputPort?.stateInput?.emitState?.();
+        const stateInput = connectedInputPort?.stateInput as HsWeakStatePort;
+        return stateInput?.emitState?.();
       },
       applyState(state: Record<string, any>) {
         connectedInputPorts.forEach((connectedInputPort) => {
-          connectedInputPort.stateInput?.applyState?.(state);
+          const stateInput = connectedInputPort.stateInput as HsWeakStatePort;
+          stateInput?.applyState?.(state);
         });
       },
       emitStateBytes() {
         const connectedInputPort = connectedInputPorts.values().next().value;
-        return connectedInputPort?.stateInput?.emitStateBytes?.();
+        const stateInput = connectedInputPort?.stateInput as HsWeakStatePort;
+        return stateInput?.emitStateBytes?.();
       },
       applyStateBytes(bytes: Uint8Array) {
         connectedInputPorts.forEach((connectedInputPort) => {
-          connectedInputPort.stateInput?.applyStateBytes?.(bytes);
+          const stateInput = connectedInputPort.stateInput as HsWeakStatePort;
+          stateInput?.applyStateBytes?.(bytes);
         });
       },
     },

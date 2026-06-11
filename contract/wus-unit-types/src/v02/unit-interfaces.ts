@@ -21,25 +21,35 @@ export type CvGatePort = {
 
 export type ClockPort = {
   start?(): void;
-  processScheduling?(
-    startTime: number, //absolute time based on AudioContext.currentTime
-    ppqFrom: number, //480ppq based tick from song start
-    ppqTo: number, //480ppq based tick from song start
-    //bpm for this clock, this could vary from host's global bpm if there is a clock divider/multiplier unit in between
-    bpm: number,
-  ): void;
-  //16th note based (4ppq) integer step from song start
-  processStep?(stepIndex: number, unitDurationSec: number): void;
   stop?(): void;
-};
+} & (
+  | {
+      processScheduling(
+        startTime: number, //absolute time based on AudioContext.currentTime
+        ppqFrom: number, //480ppq based tick from song start
+        ppqTo: number, //480ppq based tick from song start
+        //bpm for this clock, this could vary from host's global bpm if there is a clock divider/multiplier unit in between
+        bpm: number,
+      ): void;
+    }
+  | {
+      //16th note based (4ppq) integer step from song start
+      processStep(stepIndex: number, unitDurationSec: number): void;
+    }
+);
 
 export type StatePort = {
   subscribeChange?(fn: () => void): () => void;
-  emitState?(): Record<string, any> | undefined;
-  applyState?(state: Record<string, any>): void;
-  emitStateBytes?(): Uint8Array | undefined;
-  applyStateBytes?(bytes: Uint8Array): void;
-};
+} & (
+  | {
+      emitState(): Record<string, any> | undefined;
+      applyState(state: Record<string, any>): void;
+    }
+  | {
+      emitStateBytes(): Uint8Array | undefined;
+      applyStateBytes(bytes: Uint8Array): void;
+    }
+);
 
 export type ParameterSpec = {
   id: string;

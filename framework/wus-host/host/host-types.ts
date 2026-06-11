@@ -78,3 +78,23 @@ export type HsUnitInstance = {
 };
 
 export type DestinationCode = string;
+
+export type HsWeakStatePort = {
+  subscribeChange?(fn: () => void): () => void;
+  emitState?(): Record<string, any> | undefined;
+  applyState?(state: Record<string, any>): void;
+  emitStateBytes?(): Uint8Array | undefined;
+  applyStateBytes?(bytes: Uint8Array): void;
+};
+
+export type HsWeakClockPort = {
+  start?(): void;
+  stop?(): void;
+  processScheduling?(
+    startTime: number,
+    ppqFrom: number,
+    ppqTo: number,
+    bpm: number,
+  ): void;
+  processStep?(stepIndex: number, unitDurationSec: number): void;
+};

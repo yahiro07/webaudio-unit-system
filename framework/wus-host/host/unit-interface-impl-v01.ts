@@ -47,7 +47,7 @@ export function createUnitInterfaceV01(
     completeSetup(attrs) {
       primaryInputPort.setHandlers({
         noteInput: attrs.noteInput,
-        clockInput: attrs.clockInput,
+        clockInput: attrs.clockHandlers,
         stateInput: attrs.persistence,
       });
       const outputs = attrs.unitAspects.outputs as PortSubtype[];
@@ -55,7 +55,7 @@ export function createUnitInterfaceV01(
       if (attrs.persistence) {
         inputs.push("state");
       }
-      if (attrs.clockInput) {
+      if (attrs.clockHandlers) {
         inputs.push("clock");
       }
       createdCallback({

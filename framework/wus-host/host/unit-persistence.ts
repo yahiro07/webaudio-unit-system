@@ -1,12 +1,11 @@
 import { base64Helper, isUint8ArrayLike } from "../utils/binary-helper";
 import { HostStateBus } from "./host-state-bus";
-import { HsUnitInstance, HsUnitStateData } from "./host-types";
+import { HsUnitInstance, HsUnitStateData, HsWeakStatePort } from "./host-types";
 
 const unitStateOperations = {
   readStateFromUnit(unit: HsUnitInstance): HsUnitStateData | undefined {
-    const state =
-      unit.inputPort.stateInput?.emitStateBytes?.() ??
-      unit.inputPort.stateInput?.emitState?.();
+    const stateInput = unit.inputPort.stateInput as HsWeakStatePort;
+    const state = stateInput?.emitStateBytes?.() ?? stateInput?.emitState?.();
     if (!state) {
       return undefined;
     }
@@ -21,7 +20,7 @@ const unitStateOperations = {
     }
   },
   applyStateToUnit(unit: HsUnitInstance, stateData: HsUnitStateData) {
-    const stateInput = unit.inputPort.stateInput;
+    const stateInput = unit.inputPort.stateInput as HsWeakStatePort;
     if (stateData.type === "bytes" && stateInput?.applyStateBytes) {
       const bytes = base64Helper.decode(stateData.base64);
       stateInput.applyStateBytes(bytes);

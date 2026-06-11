@@ -1,13 +1,13 @@
 import { UnitCategoryHint, UnitType } from "./unit-interfaces";
 
 export type UnitMetadata = {
-  targetProtocol: "wus-v01";
   name: string;
   unitType: UnitType;
   categoryHint?: UnitCategoryHint;
   preferredSize: string; //w,h
-  outputSignalTypes: string; //audio,note,state,params,pad
-  inputSignalTypes: string; //audio,note,state,params,pad
+  outputSignalTypes: string; //audio,note
+  inputSignalTypes: string; //audio,note
+  protocol: "wus-v01";
   unitTypesVersion: string;
 } & (
   | { repositoryUrl: string; author: string }
