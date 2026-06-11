@@ -1,12 +1,12 @@
 import "@wus/mo/styles";
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
-import { getUnitInterface } from "wus-unit-types";
+import { queryUnitInterface } from "wus-unit-types";
 
-const unitInterface = getUnitInterface("wus-v02");
+const unitInterface = queryUnitInterface("wus-v01");
 
 const audioContext = unitInterface?.audioContext ?? new AudioContext();
 const destinationNode =
-  unitInterface?.primaryOutputPort.audioOutput.node ?? audioContext.destination;
+  unitInterface?.audioOutputNode ?? audioContext.destination;
 
 function midiToFrequency(midiNote: number): number {
   return 440 * 2 ** ((midiNote - 69) / 12);
@@ -61,14 +61,12 @@ function setupUnitInstance() {
       outputs: ["audio"],
       inputs: ["note"],
     },
-    primaryInputPortHandlers: {
-      noteInput: {
-        noteOn(noteNumber) {
-          appModel.noteOn(noteNumber);
-        },
-        noteOff(noteNumber) {
-          appModel.noteOff(noteNumber);
-        },
+    noteInput: {
+      noteOn(noteNumber) {
+        appModel.noteOn(noteNumber);
+      },
+      noteOff(noteNumber) {
+        appModel.noteOff(noteNumber);
       },
     },
   });

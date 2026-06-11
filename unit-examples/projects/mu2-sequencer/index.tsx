@@ -7,9 +7,9 @@ import { createStore } from "solid-js/store";
 import "@wus/mo/styles";
 import { createIntervalTimer } from "@wus/ax/timer-utils";
 import { Button } from "@wus/mo-solid/components/button";
-import { getUnitInterface } from "wus-unit-types";
+import { queryUnitInterface } from "wus-unit-types";
 
-const unitInterface = getUnitInterface("wus-v02");
+const unitInterface = queryUnitInterface("wus-v01");
 
 function createAppModel() {
   const [state, setState] = createStore({
@@ -19,7 +19,7 @@ function createAppModel() {
 
   const notNumber = 36 + 9;
 
-  const noteOutput = unitInterface?.primaryOutputPort.noteOutput;
+  const noteOutput = unitInterface?.noteOutputPort;
 
   function onStep(stepPos: number) {
     if (stepPos % 4 === 2) {
@@ -48,17 +48,13 @@ function setupUnitInstance() {
       unitType: "sequencer",
       categoryHint: "stepSequencer",
       outputs: ["note"],
-      inputs: ["clock"],
     },
-    primaryInputPortHandlers: {
-      clockInput: {
-        start() {},
-        processStep(stepIndex) {
-          appModel.onStep(stepIndex);
-        },
-        stop() {
-          appModel.allNotesOff();
-        },
+    clockHandlers: {
+      processStep(stepIndex) {
+        appModel.onStep(stepIndex);
+      },
+      stop() {
+        appModel.allNotesOff();
       },
     },
   });

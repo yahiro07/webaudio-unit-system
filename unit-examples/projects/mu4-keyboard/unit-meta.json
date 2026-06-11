@@ -5,6 +5,7 @@
   "preferredSize": "300,150",
   "outputSignalTypes": "note",
   "inputSignalTypes": "note",
+  "protocol": "wus-v01",
   "unitTypesVersion": "0.2.0",
   "repositoryUrl": "https://github.com/yahiro07/webaudio-unit-system",
   "author": "yahiro",
