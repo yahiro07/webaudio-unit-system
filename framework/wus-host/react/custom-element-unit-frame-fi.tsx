@@ -23,22 +23,17 @@ async function loadUnitElementClass(
   moduleUrl: string,
   unitInterface: UnitInterface,
 ) {
-  const unitModuleText = await fetch(moduleUrl).then((response) => {
-    if (!response.ok) {
-      throw new Error(`Failed to fetch ${moduleUrl}: ${response.status}`);
-    }
-    return response.text();
-  });
-
-  const unitModuleBlobUrl = URL.createObjectURL(
-    new Blob([unitModuleText], { type: "text/javascript" }),
-  );
+  if (!moduleUrl.startsWith("http")) {
+    moduleUrl = location.origin + moduleUrl;
+  }
+  moduleUrl += `?tagName=${tagName}`;
 
   (window as any).queryUnitInterfaceForModule = (
     versionCode: string,
     requestModuleUrl: string,
   ) => {
-    if (requestModuleUrl === unitModuleBlobUrl) {
+    // console.log({ moduleUrl, requestModuleUrl });
+    if (requestModuleUrl === moduleUrl) {
       if (versionCode !== "wus-v02") {
         console.warn(
           `incompatible unit interface version: ${versionCode} for module ${moduleUrl}`,
@@ -50,11 +45,9 @@ async function loadUnitElementClass(
     return undefined;
   };
 
-  const unitElementClass = (await import(
-    /* @vite-ignore */ unitModuleBlobUrl
-  ).then((module) => module.default)) as any;
-
-  URL.revokeObjectURL(unitModuleBlobUrl);
+  const unitElementClass = (await import(moduleUrl).then(
+    (module) => module.default,
+  )) as any;
 
   customElements.define(tagName, unitElementClass);
 }

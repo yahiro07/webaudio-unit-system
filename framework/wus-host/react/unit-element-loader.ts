@@ -1,21 +1,7 @@
 async function loadUnitElementClass(tagName: string, moduleUrl: string) {
-  const unitModuleText = await fetch(moduleUrl).then((response) => {
-    if (!response.ok) {
-      throw new Error(`Failed to fetch ${moduleUrl}: ${response.status}`);
-    }
-    return response.text();
-  });
-
-  const unitModuleBlobUrl = URL.createObjectURL(
-    new Blob([unitModuleText], { type: "text/javascript" }),
-  );
-
-  const unitElement = (await import(/* @vite-ignore */ unitModuleBlobUrl).then(
+  const unitElement = (await import(moduleUrl).then(
     (module) => module.default,
   )) as any;
-
-  URL.revokeObjectURL(unitModuleBlobUrl);
-
   customElements.define(tagName, unitElement);
 }
 
