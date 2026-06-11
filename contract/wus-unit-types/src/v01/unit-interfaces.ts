@@ -67,3 +67,15 @@ export type UnitInterface = {
     clockInput?: ClockInputPort;
   }): void;
 };
+
+export type UnitInterfaceProvider = {
+  //for iframe based units
+  // checkUnitInterfaceCompatibility?(versionCode: string): void;
+  // unitInterface?: UnitInterface;
+  queryUnitInterface?(versionCode: string): UnitInterface | undefined;
+  //for web component units
+  queryUnitInterfaceForModule?(
+    versionCode: string,
+    importMetaUrl: string,
+  ): UnitInterface | undefined;
+};

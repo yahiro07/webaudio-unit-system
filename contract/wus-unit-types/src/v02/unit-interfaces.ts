@@ -132,12 +132,14 @@ export type UnitInterface = {
   }): void;
 };
 
-export type WindowWithUnitInterface = {
-  checkUnitInterfaceCompatibility?(versionCode: string): void;
-  unitInterface?: UnitInterface;
-};
-
-export type UnitInstantiateContext = {
-  checkUnitInterfaceCompatibility(versionCode: string): void;
-  unitInterface: UnitInterface | undefined;
+export type UnitInterfaceProvider = {
+  //for iframe based units
+  // checkUnitInterfaceCompatibility?(versionCode: string): void;
+  // unitInterface?: UnitInterface;
+  queryUnitInterface?(versionCode: string): UnitInterface | undefined;
+  //for web component units
+  queryUnitInterfaceForModule?(
+    versionCode: string,
+    importMetaUrl: string,
+  ): UnitInterface | undefined;
 };
