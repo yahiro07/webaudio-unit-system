@@ -22,23 +22,43 @@ export type CvGatePort = {
 export type ClockPort = {
   start?(): void;
   stop?(): void;
+  processScheduling?(
+    startTime: number, //absolute time based on AudioContext.currentTime
+    ppqFrom: number, //480ppq based tick from song start
+    ppqTo: number, //480ppq based tick from song start
+    //bpm for this clock, this could vary from host's global bpm if there is a clock divider/multiplier unit in between
+    bpm: number,
+  ): void;
+  //16th note based (4ppq) integer step from song start
+  processStep?(stepIndex: number, unitDurationSec: number): void;
+};
+
+type ClockInputPort = {
+  start?(): void;
+  stop?(): void;
 } & (
   | {
       processScheduling(
-        startTime: number, //absolute time based on AudioContext.currentTime
-        ppqFrom: number, //480ppq based tick from song start
-        ppqTo: number, //480ppq based tick from song start
-        //bpm for this clock, this could vary from host's global bpm if there is a clock divider/multiplier unit in between
+        startTime: number,
+        ppqFrom: number,
+        ppqTo: number,
         bpm: number,
       ): void;
     }
   | {
-      //16th note based (4ppq) integer step from song start
       processStep(stepIndex: number, unitDurationSec: number): void;
     }
 );
 
 export type StatePort = {
+  subscribeChange?(fn: () => void): () => void;
+  emitState?(): Record<string, any> | undefined;
+  applyState?(state: Record<string, any>): void;
+  emitStateBytes?(): Uint8Array | undefined;
+  applyStateBytes?(bytes: Uint8Array): void;
+};
+
+type StateInputPort = {
   subscribeChange?(fn: () => void): () => void;
 } & (
   | {
@@ -97,8 +117,8 @@ export type UnitInputPortHandlers = {
   callbacks?: UnitInputPortCallbacks;
   noteInput?: NotePort;
   cvGateInput?: CvGatePort;
-  clockInput?: ClockPort; //host feed clocks only for primaryInputPort, not for multi-channel ports
-  stateInput?: StatePort; //host handles states only for primaryInputPort, not for multi-channel ports
+  clockInput?: ClockInputPort; //host feed clocks only for primaryInputPort, not for multi-channel ports
+  stateInput?: StateInputPort; //host handles states only for primaryInputPort, not for multi-channel ports
   automationInput?: AutomationPort;
   samplerPadInput?: SamplerPadPort;
 };
