@@ -72,7 +72,7 @@ export function unitLoaderPlugin(options: {
   }
 
   return {
-    name: "unit-loader",
+    name: "wus-vite-unit-loader-plugin",
     configResolved(_config) {
       config = _config;
     },
