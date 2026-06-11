@@ -1,7 +1,7 @@
 import type { Plugin, ResolvedConfig } from "vite";
 import { checkDeepEquality } from "./common/common-helper";
 import { ResolvedUnitEntry } from "./common/internal-types";
-import { UnitSourceUrls } from "./common/types";
+import { UnitSourceUrls, UnitSourceUrlsInput } from "./common/types";
 import { checkUnitSourceUrlFormat } from "./common/unit-url-helpers";
 import { createResolvedUnitEntries } from "./stage1-input/unit-entry-resolver";
 import { formatUnitSourceUrlsToDictionary } from "./stage1-input/unit-source-urls-array-converter";
@@ -16,7 +16,7 @@ import { createDevServerMiddleware } from "./stage4-dev-serving/dev-server-middl
 import { writeBundleImpl } from "./stage5-build/write-bundle-impl";
 
 export function unitLoaderPlugin(options: {
-  unitSourceUrls: UnitSourceUrls | string[];
+  unitSourceUrls: UnitSourceUrlsInput;
   cacheFolderPath?: string;
   summaryOutputPath?: string;
 }): Plugin {
