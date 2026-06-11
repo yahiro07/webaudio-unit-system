@@ -1,6 +1,7 @@
 import { UnitCategoryHint, UnitType } from "./common-types";
 
 export type UnitMetadata = {
+  targetProtocol: "wus-v02";
   name: string;
   unitType: UnitType;
   categoryHint?: UnitCategoryHint;
