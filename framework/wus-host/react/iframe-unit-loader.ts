@@ -39,6 +39,7 @@ export function loadIframeUnitInstance(
     );
     win.unitInterface = unitInterface;
     win.queryUnitInterface = (versionCode: string) => {
+      // console.log("iframe queryUnitInterface", { unitId, versionCode });
       if (versionCode === "wus-v02") {
         return unitInterface;
       } else if (versionCode === "wus-v01") {
@@ -50,6 +51,10 @@ export function loadIframeUnitInstance(
       }
     };
     win.checkUnitInterfaceCompatibility = (versionCode: string) => {
+      // console.log("iframe checkUnitInterfaceCompatibility", {
+      //   unitId,
+      //   versionCode,
+      // });
       if (versionCode === "wus-v02") {
       } else if (versionCode === "wus-v01") {
         win.unitInterface = unitInterfaceV01 as any;
