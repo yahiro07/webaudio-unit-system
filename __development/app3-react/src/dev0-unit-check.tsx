@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { createStore } from "snap-store";
 import { createHostSystem } from "wus-host/host";
 import {
-  CustomElementUnitFrame,
+  CustomElementUnitFrameFI,
   HostAppProvider,
   UnitFrame,
 } from "wus-host/react";
@@ -60,9 +60,9 @@ const UnitRows = () => {
         frameSize={catalog.miniSynthGe.preferredSize}
         destSpec="uf_effect"
       /> */}
-      <CustomElementUnitFrame
+      <CustomElementUnitFrameFI
         unitId="uf_instrument"
-        scriptUrl="/dev-units/ku1-osc/index.js"
+        scriptUrl="/dev-units/ku2-osc/index.js"
         // pageUrl={catalog.mini_synth_ge.loaderPageUrl}
         // className="w-[640px] h-[320px]"
         frameSize={{ width: 500, height: 300 }}
