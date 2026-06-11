@@ -25,8 +25,15 @@ export type PersistencePort = {
 
 export type ClockInputPort = {
   start?(): void;
-  processTickRange?(startTime: number, ppqFrom: number, ppqTo: number): void; //480PPQ based tick from song start
-  processStep?(stepIndex: number): void; //16th note based step from song start
+  //480PPQ based tick from song start
+  processScheduling?(
+    startTime: number,
+    ppqFrom: number,
+    ppqTo: number,
+    bpm: number,
+  ): void;
+  //16th note based step from song start
+  processStep?(stepIndex: number, unitDurationSec: number): void;
   stop?(): void;
 };
 
