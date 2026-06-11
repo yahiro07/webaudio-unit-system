@@ -135,3 +135,8 @@ export type WindowWithUnitInterface = {
   checkUnitInterfaceCompatibility?(versionCode: string): void;
   unitInterface?: UnitInterface;
 };
+
+export type UnitInstantiateContext = {
+  checkUnitInterfaceCompatibility(versionCode: string): void;
+  unitInterface: UnitInterface | undefined;
+};

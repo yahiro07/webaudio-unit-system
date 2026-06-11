@@ -1,7 +1,7 @@
 import type { Plugin, ResolvedConfig } from "vite";
 import { checkDeepEquality } from "./common/common-helper";
 import { ResolvedUnitEntry } from "./common/internal-types";
-import { UnitSourceUrls } from "./common/types";
+import { UnitSourceUrls, UnitSourceUrlsInput } from "./common/types";
 import { checkUnitSourceUrlFormat } from "./common/unit-url-helpers";
 import { createResolvedUnitEntries } from "./stage1-input/unit-entry-resolver";
 import { formatUnitSourceUrlsToDictionary } from "./stage1-input/unit-source-urls-array-converter";
@@ -13,10 +13,11 @@ import {
   writeSummariesJsonToFile,
 } from "./stage3-generate-info/unit-inventories-generator";
 import { createDevServerMiddleware } from "./stage4-dev-serving/dev-server-middleware";
+import { startWatchEntryFiles } from "./stage4a-dev-watcher/dev-wacth-files";
 import { writeBundleImpl } from "./stage5-build/write-bundle-impl";
 
 export function unitLoaderPlugin(options: {
-  unitSourceUrls: UnitSourceUrls | string[];
+  unitSourceUrls: UnitSourceUrlsInput;
   cacheFolderPath?: string;
   summaryOutputPath?: string;
 }): Plugin {
@@ -72,30 +73,31 @@ export function unitLoaderPlugin(options: {
   }
 
   return {
-    name: "unit-loader",
+    name: "wus-vite-unit-loader-plugin",
     configResolved(_config) {
       config = _config;
     },
     async buildStart() {
-      console.log("buildStart...");
+      // console.log("buildStart...");
       await runStartingFlow();
-      console.log("buildStart...done");
+      // console.log("buildStart...done");
     },
     async configureServer(server) {
-      console.log("configureServer...");
+      // console.log("configureServer...");
       await runStartingFlow();
       const middleware = createDevServerMiddleware(resolvedUnitEntries);
       server.middlewares.use(middleware);
-      console.log("configureServer...done");
+      startWatchEntryFiles(server, resolvedUnitEntries);
+      // console.log("configureServer...done");
     },
     async writeBundle(outputOptions) {
-      console.log("writeBundle");
+      // console.log("writeBundle");
       await writeBundleImpl(
         resolvedUnitEntries,
         config.root,
         outputOptions.dir ?? "dist",
       );
-      console.log("writeBundle...done");
+      // console.log("writeBundle...done");
     },
   };
 }

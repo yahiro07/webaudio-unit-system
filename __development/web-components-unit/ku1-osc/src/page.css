@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+:host,
+:host *,
+:host *::before,
+:host *::after {
+  --tw-border-style: solid;
+}
+
+.primary {
+  color: red
+}

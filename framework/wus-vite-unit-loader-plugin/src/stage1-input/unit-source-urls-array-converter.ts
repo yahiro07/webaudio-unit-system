@@ -1,20 +1,36 @@
-import { UnitSourceUrls } from "../common/types";
+import {
+  UnitSourceUrls,
+  UnitSourceUrlsArray,
+  UnitSourceUrlsInput,
+} from "../common/types";
 import { createSegmentsDecoder } from "../common/unit-url-helpers";
 
+function getCatalogKeyFromUrl(url: string) {
+  const segDecoder = createSegmentsDecoder(url, {
+    removeHeadSlash: true,
+  });
+  if (url.startsWith("/@direct/")) {
+    return segDecoder.getSegmentAt(1);
+  } else {
+    return segDecoder.getSegmentAt(-1);
+  }
+}
+
 function createUnitSourceUrlsDictionaryFromArray(
-  unitSourceUrlsArray: string[],
+  unitSourceUrlsArray: UnitSourceUrlsArray,
 ): UnitSourceUrls {
   const items = unitSourceUrlsArray
-    .map((url) => {
-      if (url.startsWith("/@direct/")) {
-        const segDecoder = createSegmentsDecoder(url, {
-          removeHeadSlash: true,
-        });
-        const catalogKey = segDecoder.getSegmentAt(1);
-        return { catalogKey, url };
-      }
-      const segDecoder = createSegmentsDecoder(url, { removeTailSlash: true });
-      const catalogKey = segDecoder.getSegmentAt(-1);
+    .map((item) => {
+      const [url, catalogKey] = (() => {
+        if (typeof item === "string") {
+          const url = item;
+          return [url, getCatalogKeyFromUrl(url)];
+        } else {
+          const url = item.url;
+          const catalogKey = item.key ?? getCatalogKeyFromUrl(url);
+          return [url, catalogKey];
+        }
+      })();
       if (catalogKey) {
         return { catalogKey, url } as const;
       }
@@ -36,7 +52,7 @@ function createUnitSourceUrlsDictionaryFromArray(
 }
 
 export function formatUnitSourceUrlsToDictionary(
-  unitSourceUrls: UnitSourceUrls | string[],
+  unitSourceUrls: UnitSourceUrlsInput,
 ): UnitSourceUrls {
   if (Array.isArray(unitSourceUrls)) {
     return createUnitSourceUrlsDictionaryFromArray(unitSourceUrls);
