@@ -3,7 +3,7 @@ import path from "node:path";
 import { UnitMetadata } from "wus-unit-types";
 import { ResolvedUnitEntry } from "../common/internal-types";
 import { UnitInventoriesJson, UnitInventorySpec } from "../common/types";
-import { normalizeFrameSize } from "./frame-size";
+import { FrameSize, normalizeFrameSize } from "./frame-size";
 
 async function fetchUnitAssetText(
   resolvedUnitEntry: ResolvedUnitEntry,
@@ -100,19 +100,18 @@ function getUrlBaseForAssets(resolvedUnitEntry: ResolvedUnitEntry): string {
 function createUnitInventorySpec(
   resolvedUnitEntry: ResolvedUnitEntry,
   meta: UnitMetadata,
+  preferredSize: FrameSize,
+  isModuleLibraryUnit: boolean,
   hasThumbnail: boolean,
   hasLicenseText: boolean,
 ): UnitInventorySpec {
   const catalogKey = resolvedUnitEntry.catalogKey;
   const pageFolderUrl = resolvedUnitEntry.sourceUrlSpec;
-  const preferredSize = normalizeFrameSize(meta.preferredSize);
-  if (!preferredSize) {
-    console.log(meta);
-    throw new Error(`Invalid preferred size for unit ${catalogKey}`);
-  }
+
   const _meta = meta as any;
   const loaderPageUrlBase = getLoaderPageUrlBase(resolvedUnitEntry);
   const urlBaseForAssets = getUrlBaseForAssets(resolvedUnitEntry);
+  const entryFileName = isModuleLibraryUnit ? "index.js" : "index.html";
   return {
     catalogKey,
     name: meta.name,
@@ -122,8 +121,8 @@ function createUnitInventorySpec(
     outputSignalTypes: meta.outputSignalTypes,
     inputSignalTypes: meta.inputSignalTypes,
     unitTypesVersion: meta.unitTypesVersion,
-    originalPageUrl: `${pageFolderUrl}index.html`,
-    loaderPageUrl: `${loaderPageUrlBase}index.html`,
+    originalPageUrl: `${pageFolderUrl}${entryFileName}`,
+    loaderPageUrl: `${loaderPageUrlBase}${entryFileName}`,
     thumbnailUrl: hasThumbnail
       ? `${urlBaseForAssets}unit-thumbnail.png`
       : undefined,
@@ -151,9 +150,33 @@ export async function generateSummariesJson(
         resolvedUnitEntry,
         "LICENSE",
       );
+      const preferredSize = normalizeFrameSize(meta.preferredSize);
+      if (!preferredSize) {
+        console.log(meta);
+        throw new Error(
+          `Invalid preferred size for unit ${resolvedUnitEntry.catalogKey}`,
+        );
+      }
+      const hasIndexHtml = await checkUnitAssetExists(
+        resolvedUnitEntry,
+        "index.html",
+      );
+      const hasIndexJs = await checkUnitAssetExists(
+        resolvedUnitEntry,
+        "index.js",
+      );
+      if (!(hasIndexHtml || hasIndexJs)) {
+        throw new Error(
+          `both index.html and index.js are missing for unit ${resolvedUnitEntry.catalogKey}`,
+        );
+      }
+      const isModuleLibraryUnit = !hasIndexHtml && hasIndexJs;
+
       return createUnitInventorySpec(
         resolvedUnitEntry,
         meta,
+        preferredSize,
+        isModuleLibraryUnit,
         hasThumbnail,
         hasLicenseText,
       );
