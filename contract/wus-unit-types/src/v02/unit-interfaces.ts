@@ -33,7 +33,7 @@ export type ClockPort = {
   processStep?(stepIndex: number, unitDurationSec: number): void;
 };
 
-type ClockInputPort = {
+export type ClockInputPort = {
   start?(): void;
   stop?(): void;
 } & (
@@ -58,7 +58,7 @@ export type StatePort = {
   applyStateBytes?(bytes: Uint8Array): void;
 };
 
-type StateInputPort = {
+export type StateInputPort = {
   subscribeChange?(fn: () => void): () => void;
 } & (
   | {
