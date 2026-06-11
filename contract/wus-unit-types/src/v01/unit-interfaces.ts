@@ -37,10 +37,12 @@ export type UnitAspects = {
   inputs?: PortSubtype[];
 };
 
+export type MetaAttributes = Record<string, any>;
+
 export type HostCallbacks = {
   setBpm?(bpm: number): void;
   setPlayState?(playing: boolean): void;
-  setMetaAttributes?(metaAttrs: Record<string, any>): void;
+  setMetaAttributes?(metaAttrs: MetaAttributes): void;
 };
 
 export type UnitInterface = {
@@ -48,6 +50,7 @@ export type UnitInterface = {
   audioOutputNode: AudioNode;
   audioInputNode: AudioNode;
   noteOutputPort: NotePort;
+  emitMetaAttributes(metaAttrs: MetaAttributes): void;
   completeSetup(attrs: {
     unitAspects: UnitAspects;
     hostCallbacks?: HostCallbacks;

@@ -122,6 +122,7 @@ export type UnitInterface = {
   primaryInputPort: UnitInputPort;
   createMultiChannelOutputPorts(numPorts: number): UnitOutputPort[];
   createMultiChannelInputPorts(numPorts: number): UnitInputPort[];
+  emitMetaAttributes(metaAttrs: MetaAttributes): void;
   completeSetup(attrs: {
     unitAspects: UnitAspects;
     hostCallbacks?: HostCallbacks;
