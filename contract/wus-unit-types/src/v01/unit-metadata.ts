@@ -4,14 +4,19 @@ export type UnitMetadata = {
   targetProtocol: "wus-v01";
   name: string;
   unitType: UnitType;
-  category?: UnitCategoryHint;
-  preferredSize: string;
-  unitTypesVersion?: string;
-  inputSignalTypes?: string; //audio,note,cvgate,state,params,pad
-  outputSignalTypes?: string; //audio,note,cvgate,state,params,pad
-  repositoryUrl: string;
-  author: string;
-  forkedRepositoryUrl?: string;
-  forkedAuthor?: string;
-  license: string;
-};
+  categoryHint?: UnitCategoryHint;
+  preferredSize: string; //w,h
+  outputSignalTypes: string; //audio,note,state,params,pad
+  inputSignalTypes: string; //audio,note,state,params,pad
+  unitTypesVersion: string;
+} & (
+  | { repositoryUrl: string; author: string }
+  | {
+      originalRepositoryUrl: string;
+      originalAuthor: string;
+      forkedRepositoryUrl: string;
+      forkedAuthor: string;
+    }
+) & {
+    license: string;
+  };
