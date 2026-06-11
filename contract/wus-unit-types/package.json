@@ -6,13 +6,8 @@
   "author": "yahiro",
   "license": "MIT",
   "sideEffects": false,
-  "main": "./src/v01/index.ts",
-  "types": "./src/v01/index.ts",
   "exports": {
-    ".": {
-      "types": "./src/v01/index.ts",
-      "import": "./src/v01/index.ts"
-    },
+    ".": "./src/v01/index.ts",
     "./v02": "./src/v02/index.ts"
   },
   "files": [
