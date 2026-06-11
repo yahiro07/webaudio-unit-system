@@ -1,14 +1,16 @@
 import { UnitInterface, UnitInterfaceProvider } from "./unit-interfaces";
 
-export function getUnitInterface(
-  versionCode: string,
+type VersionCode = "wus-v02";
+
+export function queryUnitInterface(
+  versionCode: VersionCode,
 ): UnitInterface | undefined {
   const win = window as UnitInterfaceProvider;
   return win.queryUnitInterface?.(versionCode);
 }
 
 export function queryUnitInterfaceForModule(
-  versionCode: string,
+  versionCode: VersionCode,
   importMetaUrl: string,
 ): UnitInterface | undefined {
   const win = window as UnitInterfaceProvider;
