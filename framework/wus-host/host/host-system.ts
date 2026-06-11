@@ -1,3 +1,4 @@
+import { MetaAttributes } from "wus-unit-types";
 import { EventPort } from "../utils/event-port";
 import { createUnitConnectionsManager } from "./connection-manager";
 import { createHostStateBus } from "./host-state-bus";
@@ -26,6 +27,7 @@ export type HostSystem = {
   setMasterGain(gain: number): void;
   exportUnitStates(): HsUnitStateData[];
   reserveImportUnitStates(unitStates: HsUnitStateData[]): void;
+  emitMetaAttributes(attributes: MetaAttributes): void;
 };
 
 export function createHostSystem(audioContext: AudioContext): HostSystem {
@@ -73,6 +75,11 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
     reserveImportUnitStates(unitStates) {
       const op = () => unitPersistenceHandlers.importUnitStates(unitStates);
       loadingManager.reserveUnitOperation({ type: "state", op });
+    },
+    emitMetaAttributes(attributes) {
+      for (const unit of bus.getAllUnits()) {
+        unit.hostCallbacks?.setMetaAttributes?.(attributes);
+      }
     },
   };
 }
