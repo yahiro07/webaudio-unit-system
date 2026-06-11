@@ -1,4 +1,5 @@
 import { UnitInterface } from "wus-unit-types";
+import { PortSubtype } from "wus-unit-types/v02";
 import { HostSystem } from "./host-system";
 import {
   HsUnitInputPort,
@@ -49,11 +50,19 @@ export function createUnitInterfaceV01(
         clockInput: attrs.clockInput,
         stateInput: attrs.persistence,
       });
+      const outputs = attrs.unitAspects.outputs as PortSubtype[];
+      const inputs = attrs.unitAspects.inputs ?? ([] as PortSubtype[]);
+      if (attrs.persistence) {
+        inputs.push("state");
+      }
+      if (attrs.clockInput) {
+        inputs.push("clock");
+      }
       createdCallback({
         unitId,
         portsSpec: {
-          outputPortSubtypes: attrs.unitAspects.outputs,
-          inputPortSubtypes: attrs.unitAspects.inputs,
+          outputPortSubtypes: outputs,
+          inputPortSubtypes: inputs.length > 0 ? inputs : undefined,
         },
         outputPort: primaryOutputPort,
         inputPort: primaryInputPort.emit(),
