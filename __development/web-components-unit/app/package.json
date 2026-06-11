@@ -3,7 +3,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --force",
-    "build": "vite build"
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "clsx": "^2.1.1",
