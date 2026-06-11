@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
-import { UnitInterface } from "wus-unit-types";
+import { UnitInterface } from "wus-unit-types/v02";
+import { HostSystem } from "../host";
 import { HsUnitInstance } from "../host/host-types";
 import { createUnitInterface } from "../host/unit-interface-impl";
 
@@ -14,18 +15,14 @@ type ReactUnitInstance = HsUnitInstance & {
 };
 
 export function instantiateReactUnit(
-  audioContext: AudioContext,
+  hostSystem: HostSystem,
   templateFn: ReactUnitTemplateFn,
   unitId: string,
 ): ReactUnitInstance {
   let unitInstance: HsUnitInstance | undefined;
-  const unitInterface = createUnitInterface(
-    audioContext,
-    unitId,
-    (instance) => {
-      unitInstance = instance;
-    },
-  );
+  const unitInterface = createUnitInterface(hostSystem, unitId, (instance) => {
+    unitInstance = instance;
+  });
   const { RenderUi } = templateFn(unitInterface);
   if (!unitInstance) {
     throw new Error("Unit instance was not created");

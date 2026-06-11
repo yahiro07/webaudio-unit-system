@@ -1,5 +1,5 @@
 import { CSSProperties, useEffect, useMemo, useRef } from "react";
-import { UnitInterface } from "wus-unit-types";
+import { UnitInterface } from "wus-unit-types/v02";
 import { HostSystem } from "../host";
 import { HsUnitInstance } from "../host/host-types";
 import { createUnitInterface } from "../host/unit-interface-impl";
@@ -67,7 +67,7 @@ function createUnitInstantiationPromise(
       const tagName = `unit-${Math.random().toString().slice(2, 8)}`;
 
       const unitInterface: UnitInterface = createUnitInterface(
-        hostSystem.audioContext,
+        hostSystem,
         unitId,
         (unitInstance) => {
           callbacks.onInstanceLoaded(unitInstance);

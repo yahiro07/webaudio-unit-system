@@ -1,5 +1,6 @@
-import { UnitInterface } from "wus-unit-types";
+import { UnitInterface } from "wus-unit-types/v02";
 import { seqNumbers } from "../utils/array-utils";
+import { HostSystem } from "./host-system";
 import {
   HsUnitInputPort,
   HsUnitInputPortPre,
@@ -29,10 +30,11 @@ export function createHsUnitInputPortPre(
 }
 
 export function createUnitInterface(
-  audioContext: AudioContext,
+  hostSystem: HostSystem,
   unitId: string,
   createdCallback: (unitInstance: HsUnitInstance) => void,
 ): UnitInterface {
+  const { audioContext } = hostSystem;
   const primaryOutputPort = createHsUnitOutputPortImpl(audioContext);
   const primaryInputPort = createHsUnitInputPortPre(audioContext);
   return {
@@ -48,6 +50,9 @@ export function createUnitInterface(
       return seqNumbers(numPorts).map(() =>
         createHsUnitInputPortPre(audioContext),
       );
+    },
+    emitMetaAttributes(metaAttrs) {
+      hostSystem.emitMetaAttributes(metaAttrs);
     },
     completeSetup(attrs) {
       if (attrs.primaryInputPortHandlers) {

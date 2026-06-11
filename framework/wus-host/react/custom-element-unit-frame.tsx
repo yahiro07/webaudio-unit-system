@@ -1,5 +1,5 @@
 import { CSSProperties, useEffect, useMemo, useRef } from "react";
-import { UnitInstantiateContext, UnitInterface } from "wus-unit-types";
+import { UnitInterface, UnitInterfaceProvider } from "wus-unit-types/v02";
 import { HostSystem } from "../host";
 import { HsUnitInstance } from "../host/host-types";
 import { createUnitInterface } from "../host/unit-interface-impl";
@@ -37,24 +37,22 @@ function createUnitInstantiationPromise(
 
       const element = document.createElement(tagName);
 
-      let unitInterface: UnitInterface | undefined = createUnitInterface(
-        hostSystem.audioContext,
+      const unitInterface: UnitInterface | undefined = createUnitInterface(
+        hostSystem,
         unitId,
         (unitInstance) => {
           callbacks.onInstanceLoaded(unitInstance);
           resolve(unitInstance);
         },
       );
-      const unitInstantiateContext: UnitInstantiateContext = {
-        checkUnitInterfaceCompatibility(versionCode: string) {
+      const unitInstantiateContext: UnitInterfaceProvider = {
+        queryUnitInterface(versionCode: string) {
           if (versionCode !== "wus-v02") {
             console.warn(
               `incompatible unit interface version: ${versionCode} for ${unitId}`,
             );
-            unitInterface = undefined;
+            return undefined;
           }
-        },
-        get unitInterface() {
           return unitInterface;
         },
       };
@@ -64,7 +62,7 @@ function createUnitInstantiationPromise(
   );
 }
 
-export const CustomElementUnitFrame = ({
+export const CustomElementUnitFrame__untestedYet = ({
   unitId,
   scriptUrl,
   destSpec,

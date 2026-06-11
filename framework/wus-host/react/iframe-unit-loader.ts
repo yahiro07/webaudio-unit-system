@@ -1,4 +1,4 @@
-import { WindowWithUnitInterface } from "wus-unit-types";
+import { UnitInterface, UnitInterfaceProvider } from "wus-unit-types/v02";
 import { HostSystem, HsUnitInstance } from "../host";
 import { createUnitInterface } from "../host/unit-interface-impl";
 export function loadIframeUnitInstance(
@@ -12,8 +12,23 @@ export function loadIframeUnitInstance(
   },
 ) {
   const cleanupIFrameCallback = sideEffects.onIframeMounted?.(iframe);
-  const win = iframe.contentWindow as WindowWithUnitInterface;
+  const win = iframe.contentWindow as unknown as UnitInterfaceProvider & {
+    checkUnitInterfaceCompatibility: (versionCode: string) => void;
+    unitInterface?: UnitInterface;
+  };
+
   const unitInstantiationPromise = new Promise<HsUnitInstance>((resolve) => {
+    const unitInterface = createUnitInterface(
+      hostSystem,
+      unitId,
+      (unitInstance) => {
+        sideEffects.unitInstanceRef.current = unitInstance;
+        sideEffects.onUnitInstanceLoaded?.(unitInstance);
+        resolve(unitInstance);
+      },
+    );
+    win.unitInterface = unitInterface;
+    win.queryUnitInterface = () => unitInterface;
     win.checkUnitInterfaceCompatibility = (versionCode: string) => {
       if (versionCode !== "wus-v02") {
         console.warn(
@@ -22,15 +37,6 @@ export function loadIframeUnitInstance(
         win.unitInterface = undefined;
       }
     };
-    win.unitInterface = createUnitInterface(
-      hostSystem.audioContext,
-      unitId,
-      (unitInstance) => {
-        sideEffects.unitInstanceRef.current = unitInstance;
-        sideEffects.onUnitInstanceLoaded?.(unitInstance);
-        resolve(unitInstance);
-      },
-    );
   });
   const unregisterUnit = hostSystem.registerPendingUnitInstancePromise(
     unitId,
