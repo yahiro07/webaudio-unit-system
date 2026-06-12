@@ -5,6 +5,7 @@ import {
   HsWeakClockPort,
   HsWeakStatePort,
 } from "./host-types";
+import { WebAudioActionScheduler } from "./webaudio-action-scheduler";
 
 function getConnectedSubPortTypes(
   port: HsUnitInputPort,
@@ -26,6 +27,7 @@ function getConnectedSubPortTypes(
 
 export function createHsUnitOutputPortImpl(
   audioContext: AudioContext,
+  actionScheduler: WebAudioActionScheduler,
 ): HsUnitOutputPort {
   const connectedInputPorts = new Set<HsUnitInputPort>();
   const unsubscribeSubPortTypesByPort = new Map<HsUnitInputPort, () => void>();
@@ -95,15 +97,19 @@ export function createHsUnitOutputPortImpl(
       },
     },
     noteOutput: {
-      noteOn(note: number, timeAt?: number, velocity?: number) {
-        connectedInputPorts.forEach((connectedInputPort) => {
-          connectedInputPort.noteInput?.noteOn(note, timeAt, velocity);
-        });
+      noteOn(note: number, time?: number, velocity?: number) {
+        actionScheduler.pushAction(() => {
+          connectedInputPorts.forEach((connectedInputPort) => {
+            connectedInputPort.noteInput?.noteOn(note, time, velocity);
+          });
+        }, time);
       },
-      noteOff(note: number, timeAt?: number) {
-        connectedInputPorts.forEach((connectedInputPort) => {
-          connectedInputPort.noteInput?.noteOff(note, timeAt);
-        });
+      noteOff(note: number, time?: number) {
+        actionScheduler.pushAction(() => {
+          connectedInputPorts.forEach((connectedInputPort) => {
+            connectedInputPort.noteInput?.noteOff(note, time);
+          });
+        }, time);
       },
     },
     cvGateOutput: {

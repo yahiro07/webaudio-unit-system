@@ -10,9 +10,14 @@ import {
 } from "./host-types";
 import { createUnitsLoadingManager } from "./unit-loading-manager";
 import { createUnitPersistenceHandlers } from "./unit-persistence";
+import {
+  createWebAudioActionScheduler,
+  WebAudioActionScheduler,
+} from "./webaudio-action-scheduler";
 
 export type HostSystem = {
   audioContext: AudioContext;
+  actionScheduler: WebAudioActionScheduler;
   getAllUnits(): HsUnitInstance[];
   eventPort: EventPort<HostSystemEvent>;
   registerUnitInstance(unit: HsUnitInstance): () => void;
@@ -35,6 +40,7 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
   const connectionManager = createUnitConnectionsManager(bus);
   const unitPersistenceHandlers = createUnitPersistenceHandlers(bus);
   const loadingManager = createUnitsLoadingManager(bus);
+  const actionScheduler = createWebAudioActionScheduler(audioContext);
 
   const internal = {
     addUnitInstancePromise(unitId: string, promise: Promise<HsUnitInstance>) {
@@ -49,6 +55,7 @@ export function createHostSystem(audioContext: AudioContext): HostSystem {
 
   return {
     audioContext,
+    actionScheduler,
     getAllUnits: bus.getAllUnits,
     eventPort: bus.eventPort,
     registerUnitInstance(unit: HsUnitInstance) {

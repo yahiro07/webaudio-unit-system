@@ -34,7 +34,10 @@ export function createUnitInterfaceV01(
   createdCallback: (unitInstance: HsUnitInstance) => void,
 ): UnitInterface {
   const { audioContext } = hostSystem;
-  const primaryOutputPort = createHsUnitOutputPortImpl(audioContext);
+  const primaryOutputPort = createHsUnitOutputPortImpl(
+    audioContext,
+    hostSystem.actionScheduler,
+  );
   const primaryInputPort = createHsUnitInputPortPre(audioContext);
   return {
     audioContext,

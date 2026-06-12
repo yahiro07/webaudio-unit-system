@@ -35,7 +35,10 @@ export function createUnitInterface(
   createdCallback: (unitInstance: HsUnitInstance) => void,
 ): UnitInterface {
   const { audioContext } = hostSystem;
-  const primaryOutputPort = createHsUnitOutputPortImpl(audioContext);
+  const primaryOutputPort = createHsUnitOutputPortImpl(
+    audioContext,
+    hostSystem.actionScheduler,
+  );
   const primaryInputPort = createHsUnitInputPortPre(audioContext);
   return {
     audioContext,
@@ -43,7 +46,7 @@ export function createUnitInterface(
     primaryInputPort,
     createMultiChannelOutputPorts(numPorts: number) {
       return seqNumbers(numPorts).map(() =>
-        createHsUnitOutputPortImpl(audioContext),
+        createHsUnitOutputPortImpl(audioContext, hostSystem.actionScheduler),
       );
     },
     createMultiChannelInputPorts(numPorts: number) {
