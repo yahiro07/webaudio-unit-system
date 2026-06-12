@@ -1,7 +1,7 @@
 {
   "name": "wus-unit-types",
   "type": "module",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "unit interface types for webaudio-unit-system",
   "author": "yahiro",
   "license": "MIT",
@@ -15,6 +15,10 @@
     "./v02": {
       "types": "./dist/v02/index.d.ts",
       "default": "./dist/v02/index.js"
+    },
+    "./unit-helper": {
+      "types": "./dist/unit-helper/index.d.ts",
+      "default": "./dist/unit-helper/index.js"
     }
   },
   "scripts": {
