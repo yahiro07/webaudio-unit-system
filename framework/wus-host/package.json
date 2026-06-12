@@ -24,6 +24,7 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "typescript": "~6.0.3",
-    "wus-unit-types": "file:../../contract/wus-unit-types"
+    "wus-unit-types": "file:../../contract/wus-unit-types-v02-beta",
+    "wus-unit-types-v01": "file:../../contract/wus-unit-types-v01"
   }
 }

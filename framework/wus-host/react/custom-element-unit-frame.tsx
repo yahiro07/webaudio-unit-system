@@ -1,5 +1,5 @@
 import { CSSProperties, useEffect, useMemo, useRef } from "react";
-import { UnitInterface, UnitInterfaceProvider } from "wus-unit-types/v02";
+import { UnitInterface, UnitInterfaceProvider } from "wus-unit-types";
 import { HostSystem } from "../host";
 import { HsUnitInstance } from "../host/host-types";
 import { createUnitInterface } from "../host/unit-interface-impl";

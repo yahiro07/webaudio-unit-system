@@ -1,4 +1,4 @@
-import { PortSubtype, UnitOutputPort } from "wus-unit-types/v02";
+import { PortSubtype, UnitOutputPort } from "wus-unit-types";
 import {
   HsUnitInputPort,
   HsUnitOutputPort,

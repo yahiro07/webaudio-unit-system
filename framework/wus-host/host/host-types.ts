@@ -12,7 +12,7 @@ import {
   UnitInputPort,
   UnitInputPortCallbacks,
   UnitOutputPort,
-} from "wus-unit-types/v02";
+} from "wus-unit-types";
 
 export type HostSystemEvent =
   | { type: "loadStarted" }

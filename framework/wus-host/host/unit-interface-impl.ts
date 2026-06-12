@@ -1,4 +1,4 @@
-import { UnitInterface } from "wus-unit-types/v02";
+import { UnitInterface } from "wus-unit-types";
 import { seqNumbers } from "../utils/array-utils";
 import { HostSystem } from "./host-system";
 import {

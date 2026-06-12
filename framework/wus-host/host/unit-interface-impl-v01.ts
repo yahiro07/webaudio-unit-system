@@ -1,5 +1,5 @@
-import { UnitInterface } from "wus-unit-types";
-import { PortSubtype } from "wus-unit-types/v02";
+import { PortSubtype } from "wus-unit-types";
+import { UnitInterface } from "wus-unit-types-v01";
 import { HostSystem } from "./host-system";
 import {
   HsUnitInputPort,

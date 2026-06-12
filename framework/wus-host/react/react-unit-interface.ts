@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { UnitInterface } from "wus-unit-types/v02";
+import { UnitInterface } from "wus-unit-types";
 import { HostSystem } from "../host";
 import { HsUnitInstance } from "../host/host-types";
 import { createUnitInterface } from "../host/unit-interface-impl";

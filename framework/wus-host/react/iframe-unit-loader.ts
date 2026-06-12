@@ -1,4 +1,4 @@
-import { UnitInterface, UnitInterfaceProvider } from "wus-unit-types/v02";
+import { UnitInterface, UnitInterfaceProvider } from "wus-unit-types";
 import { HostSystem, HsUnitInstance } from "../host";
 import { createUnitInterface } from "../host/unit-interface-impl";
 import { createUnitInterfaceV01 } from "../host/unit-interface-impl-v01";
