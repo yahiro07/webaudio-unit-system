@@ -45,8 +45,8 @@ export type ClockHandlers = {
   | {
       processStep(
         stepIndex: number, //16th note based step from song start, not wrapped
-        unitDurationSec: number, //length of 16th note in seconds
         time: number, //audio context time for actual step position
+        unitDuration: number, //length of 16th note in seconds
       ): void;
     }
 );

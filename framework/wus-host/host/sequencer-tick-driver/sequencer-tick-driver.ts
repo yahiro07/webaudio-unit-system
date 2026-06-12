@@ -61,8 +61,8 @@ function processAllUnitsScheduling(
     for (const unit of units) {
       unit.inputPort?.clockInput?.processStep?.(
         crossingStepIndex.stepIndex,
-        unitStepDurationSec,
         crossingStepIndex.time,
+        unitStepDurationSec,
       );
     }
   }
