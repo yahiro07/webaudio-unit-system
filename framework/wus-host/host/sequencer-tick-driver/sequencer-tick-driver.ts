@@ -7,15 +7,29 @@ type SequencerTickDriver = {
   stop(): void;
 };
 
-function getCrossingStepIndices(ppqFrom: number, ppqTo: number): number[] {
+type CrossingStepInfo = {
+  stepIndex: number;
+  time: number;
+};
+
+function getCrossingStepIndices(
+  startTime: number,
+  ppqFrom: number,
+  ppqTo: number,
+  bpm: number,
+): CrossingStepInfo[] {
   const ppqPerStep = 120;
   const stepFrom = Math.floor(ppqFrom / ppqPerStep);
   const stepTo = Math.floor(ppqTo / ppqPerStep);
-  const stepIndices: number[] = [];
+  const crossingStepInfos: CrossingStepInfo[] = [];
+  const stepDurationSec = ppqPerStep / ((480 * bpm) / 60);
   for (let stepIndex = stepFrom + 1; stepIndex <= stepTo; stepIndex++) {
-    stepIndices.push(stepIndex);
+    crossingStepInfos.push({
+      stepIndex,
+      time: startTime + stepIndex * stepDurationSec,
+    });
   }
-  return stepIndices;
+  return crossingStepInfos;
 }
 
 function processAllUnitsStartStop(
@@ -34,15 +48,21 @@ function processAllUnitsScheduling(
   ppqFrom: number,
   ppqTo: number,
   bpm: number,
-  crossingStepIndices: number[],
 ) {
+  const crossingStepInfos = getCrossingStepIndices(
+    startTime,
+    ppqFrom,
+    ppqTo,
+    bpm,
+  );
   const units = hostSystem.getAllUnits();
   const unitStepDurationSec = 60 / bpm / 4;
-  for (const crossingStepIndex of crossingStepIndices) {
+  for (const crossingStepIndex of crossingStepInfos) {
     for (const unit of units) {
       unit.inputPort?.clockInput?.processStep?.(
-        crossingStepIndex,
+        crossingStepIndex.stepIndex,
         unitStepDurationSec,
+        crossingStepIndex.time,
       );
     }
   }
@@ -66,15 +86,7 @@ export function createSequencerTickDriver(
       processAllUnitsStartStop(hostSystem, "start");
       core.start({
         processScheduling(startTime, ppqFrom, ppqTo, bpm) {
-          const crossingStepIndices = getCrossingStepIndices(ppqFrom, ppqTo);
-          processAllUnitsScheduling(
-            hostSystem,
-            startTime,
-            ppqFrom,
-            ppqTo,
-            bpm,
-            crossingStepIndices,
-          );
+          processAllUnitsScheduling(hostSystem, startTime, ppqFrom, ppqTo, bpm);
         },
       });
     },
