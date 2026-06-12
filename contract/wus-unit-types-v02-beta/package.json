@@ -1,20 +1,16 @@
 {
   "name": "wus-unit-types",
   "type": "module",
-  "version": "0.2.7",
+  "version": "0.2.8-beta",
   "description": "unit interface types for webaudio-unit-system",
   "author": "yahiro",
   "license": "MIT",
-  "main": "./dist/v01/index.js",
-  "types": "./dist/v01/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/v01/index.d.ts",
-      "default": "./dist/v01/index.js"
-    },
-    "./v02": {
-      "types": "./dist/v02/index.d.ts",
-      "default": "./dist/v02/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./unit-helper": {
       "types": "./dist/unit-helper/index.d.ts",
@@ -23,7 +19,8 @@
   },
   "scripts": {
     "build": "tsdown",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "release": "npm publish --tag=v02-beta"
   },
   "files": [
     "dist",

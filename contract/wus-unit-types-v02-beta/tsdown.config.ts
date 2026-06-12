@@ -6,8 +6,7 @@ export default defineConfig({
   clean: true,
   outDir: "dist",
   entry: {
-    "v01/index": "src/v01/index.ts",
-    "v02/index": "src/v02/index.ts",
+    index: "src/index.ts",
     "unit-helper/index": "src/unit-helper/index.ts",
   },
 });
