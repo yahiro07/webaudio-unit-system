@@ -23,6 +23,12 @@ function getCrossingStepIndices(
   const stepTo = Math.floor(ppqTo / ppqPerStep);
   const crossingStepInfos: CrossingStepInfo[] = [];
   const stepDurationSec = ppqPerStep / ((480 * bpm) / 60);
+  if (ppqFrom === 0) {
+    crossingStepInfos.push({
+      stepIndex: 0,
+      time: startTime,
+    });
+  }
   for (let stepIndex = stepFrom + 1; stepIndex <= stepTo; stepIndex++) {
     crossingStepInfos.push({
       stepIndex,
