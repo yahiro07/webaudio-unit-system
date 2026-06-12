@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useMemo, useRef } from "react";
-import type { UnitInterface as UnitInterfaceV01 } from "wus-unit-types-v01";
 import { UnitInterface } from "wus-unit-types";
+import type { UnitInterface as UnitInterfaceV01 } from "wus-unit-types-v01";
 
 import { HostSystem } from "../host";
 import { HsUnitInstance } from "../host/host-types";
@@ -21,6 +21,13 @@ type Props = {
   onUnitInstanceLoaded?(unitInstance: HsUnitInstance): void;
 };
 
+type UnitSetupContextItem = {
+  unitInterface: UnitInterface;
+  unitInterfaceV01: UnitInterfaceV01;
+};
+
+const setupContextMap = new Map<string, UnitSetupContextItem>();
+
 async function loadUnitElementClass(
   tagName: string,
   moduleUrl: string,
@@ -32,20 +39,26 @@ async function loadUnitElementClass(
   }
   moduleUrl += `?tagName=${tagName}`;
 
+  setupContextMap.set(moduleUrl, {
+    unitInterface,
+    unitInterfaceV01,
+  });
+
   (window as any).queryUnitInterfaceForModule = (
     versionCode: string,
     requestModuleUrl: string,
   ) => {
-    if (requestModuleUrl === moduleUrl) {
-      // console.log("CE queryUnitInterfaceForModule", {
-      //   moduleUrl,
-      //   requestModuleUrl,
-      //   versionCode,
-      // });
+    // console.log("CE queryUnitInterfaceForModule", {
+    //   moduleUrl,
+    //   requestModuleUrl,
+    //   versionCode,
+    // });
+    const item = setupContextMap.get(requestModuleUrl);
+    if (item) {
       if (versionCode === "wus-v01") {
-        return unitInterfaceV01;
+        return item.unitInterfaceV01;
       } else if (versionCode === "wus-v02") {
-        return unitInterface;
+        return item.unitInterface;
       } else {
         console.warn(
           `incompatible unit interface version: ${versionCode} for module ${moduleUrl}`,
