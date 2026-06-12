@@ -20,7 +20,7 @@
   "scripts": {
     "build": "tsdown",
     "prepare": "npm run build",
-    "release": "npm publish --tag=v01"
+    "release": "npm publish --tag=latest"
   },
   "files": [
     "dist",
