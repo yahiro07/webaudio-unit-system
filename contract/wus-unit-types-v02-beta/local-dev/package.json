@@ -1,8 +1,0 @@
-{
-  "name": "wus-unit-types",
-  "type": "module",
-  "exports": {
-    ".": "./src/v01/index.ts",
-    "./v02": "./src/v02/index.ts"
-  }
-}
