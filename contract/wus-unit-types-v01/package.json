@@ -1,0 +1,46 @@
+{
+  "name": "wus-unit-types",
+  "type": "module",
+  "version": "0.1.5",
+  "description": "unit interface types for webaudio-unit-system",
+  "author": "yahiro",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./unit-helper": {
+      "types": "./dist/unit-helper/index.d.ts",
+      "default": "./dist/unit-helper/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepare": "npm run build"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yahiro07/webaudio-unit-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yahiro07/webaudio-unit-system/issues"
+  },
+  "homepage": "https://github.com/yahiro07/webaudio-unit-system#readme",
+  "keywords": [
+    "webaudio",
+    "plugin",
+    "framework",
+    "wus"
+  ],
+  "devDependencies": {
+    "tsdown": "^0.22.2",
+    "typescript": "^6.0.2"
+  }
+}
