@@ -1,14 +1,14 @@
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
-import { getUnitInterface } from "wus-unit-types";
+import { queryUnitInterface } from "wus-unit-types";
 import "@wus/mo/styles";
 import { seqNumbers } from "@wus/ax/array-utils";
 import { createStore } from "snap-store";
 
-const unitInterface = getUnitInterface("wus-v02");
+const unitInterface = queryUnitInterface("wus-v01");
 
 const store = createStore<{ notes: number[] }>({ notes: [] });
 
-const noteOutput = unitInterface?.primaryOutputPort.noteOutput;
+const noteOutput = unitInterface?.noteOutputPort;
 
 const actions = {
   noteOn(noteNumber: number, velocity: number) {
@@ -27,12 +27,11 @@ function setupUnitInstance() {
       unitType: "sequencer",
       categoryHint: "keyboard",
       outputs: ["note"],
+      inputs: ["note"],
     },
-    primaryInputPortHandlers: {
-      noteInput: {
-        noteOn: actions.noteOn,
-        noteOff: actions.noteOff,
-      },
+    noteInput: {
+      noteOn: actions.noteOn,
+      noteOff: actions.noteOff,
     },
   });
 }

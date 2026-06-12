@@ -7,6 +7,7 @@ export type UnitMetadata = {
   preferredSize: string; //w,h
   outputSignalTypes: string; //audio,note,cvGate,clock,state,automation,samplerPad
   inputSignalTypes: string; //audio,note,cvGate,clock,state,automation,samplerPad
+  protocol: "wus-v02";
   unitTypesVersion: string;
 } & (
   | { repositoryUrl: string; author: string }

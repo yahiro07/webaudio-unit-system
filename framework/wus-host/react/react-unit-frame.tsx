@@ -25,7 +25,7 @@ export const ReactUnitFrame = ({
   const { hostSystem, hostBpm, hostPlaying } = useHostAppContext();
 
   const unit = useMemo(
-    () => instantiateReactUnit(hostSystem.audioContext, unitTemplateFn, unitId),
+    () => instantiateReactUnit(hostSystem, unitTemplateFn, unitId),
     [unitTemplateFn, unitId, hostSystem],
   );
   useEffect(() => {

@@ -119,7 +119,7 @@ const App = () => {
       bpm={state.bpm}
       playing={state.playing}
     >
-      <PageRoot />{" "}
+      <PageRoot />
     </HostAppProvider>
   );
 };

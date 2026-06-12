@@ -1,6 +1,7 @@
-import { WindowWithUnitInterface } from "wus-unit-types";
+import { UnitInterface, UnitInterfaceProvider } from "wus-unit-types/v02";
 import { HostSystem, HsUnitInstance } from "../host";
 import { createUnitInterface } from "../host/unit-interface-impl";
+import { createUnitInterfaceV01 } from "../host/unit-interface-impl-v01";
 export function loadIframeUnitInstance(
   hostSystem: HostSystem,
   unitId: string,
@@ -12,18 +13,14 @@ export function loadIframeUnitInstance(
   },
 ) {
   const cleanupIFrameCallback = sideEffects.onIframeMounted?.(iframe);
-  const win = iframe.contentWindow as WindowWithUnitInterface;
+  const win = iframe.contentWindow as unknown as UnitInterfaceProvider & {
+    checkUnitInterfaceCompatibility: (versionCode: string) => void;
+    unitInterface?: UnitInterface;
+  };
+
   const unitInstantiationPromise = new Promise<HsUnitInstance>((resolve) => {
-    win.checkUnitInterfaceCompatibility = (versionCode: string) => {
-      if (versionCode !== "wus-v02") {
-        console.warn(
-          `incompatible unit interface version: ${versionCode} for ${unitId}`,
-        );
-        win.unitInterface = undefined;
-      }
-    };
-    win.unitInterface = createUnitInterface(
-      hostSystem.audioContext,
+    const unitInterface = createUnitInterface(
+      hostSystem,
       unitId,
       (unitInstance) => {
         sideEffects.unitInstanceRef.current = unitInstance;
@@ -31,6 +28,43 @@ export function loadIframeUnitInstance(
         resolve(unitInstance);
       },
     );
+    const unitInterfaceV01 = createUnitInterfaceV01(
+      hostSystem,
+      unitId,
+      (unitInstance) => {
+        sideEffects.unitInstanceRef.current = unitInstance;
+        sideEffects.onUnitInstanceLoaded?.(unitInstance);
+        resolve(unitInstance);
+      },
+    );
+    win.unitInterface = unitInterface;
+    win.queryUnitInterface = (versionCode: string) => {
+      // console.log("iframe queryUnitInterface", { unitId, versionCode });
+      if (versionCode === "wus-v02") {
+        return unitInterface;
+      } else if (versionCode === "wus-v01") {
+        return unitInterfaceV01 as any;
+      } else {
+        throw new Error(
+          `incompatible unit interface version: ${versionCode} for ${unitId}`,
+        );
+      }
+    };
+    win.checkUnitInterfaceCompatibility = (versionCode: string) => {
+      // console.log("iframe checkUnitInterfaceCompatibility", {
+      //   unitId,
+      //   versionCode,
+      // });
+      if (versionCode === "wus-v02") {
+      } else if (versionCode === "wus-v01") {
+        win.unitInterface = unitInterfaceV01 as any;
+      } else {
+        console.warn(
+          `incompatible unit interface version: ${versionCode} for ${unitId}`,
+        );
+        win.unitInterface = undefined;
+      }
+    };
   });
   const unregisterUnit = hostSystem.registerPendingUnitInstancePromise(
     unitId,

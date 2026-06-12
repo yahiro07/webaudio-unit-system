@@ -1,8 +1,11 @@
 import { CSSProperties, useEffect, useMemo, useRef } from "react";
-import { UnitInterface } from "wus-unit-types";
+import type { UnitInterface as UnitInterfaceV01 } from "wus-unit-types";
+import { UnitInterface } from "wus-unit-types/v02";
+
 import { HostSystem } from "../host";
 import { HsUnitInstance } from "../host/host-types";
 import { createUnitInterface } from "../host/unit-interface-impl";
+import { createUnitInterfaceV01 } from "../host/unit-interface-impl-v01";
 import { mergeStyleWithFrameSize } from "../utils/frame-size-helper";
 import { useHostAppContext } from "./host-app-context";
 import { useUnitInputNotesAffecter } from "./use-unit-input-notes-affecter";
@@ -22,6 +25,7 @@ async function loadUnitElementClass(
   tagName: string,
   moduleUrl: string,
   unitInterface: UnitInterface,
+  unitInterfaceV01: UnitInterfaceV01,
 ) {
   if (!moduleUrl.startsWith("http")) {
     moduleUrl = location.origin + moduleUrl;
@@ -32,15 +36,22 @@ async function loadUnitElementClass(
     versionCode: string,
     requestModuleUrl: string,
   ) => {
-    // console.log({ moduleUrl, requestModuleUrl });
     if (requestModuleUrl === moduleUrl) {
-      if (versionCode !== "wus-v02") {
+      // console.log("CE queryUnitInterfaceForModule", {
+      //   moduleUrl,
+      //   requestModuleUrl,
+      //   versionCode,
+      // });
+      if (versionCode === "wus-v01") {
+        return unitInterfaceV01;
+      } else if (versionCode === "wus-v02") {
+        return unitInterface;
+      } else {
         console.warn(
           `incompatible unit interface version: ${versionCode} for module ${moduleUrl}`,
         );
         return undefined;
       }
-      return unitInterface;
     }
     return undefined;
   };
@@ -66,15 +77,28 @@ function createUnitInstantiationPromise(
     async (resolve) => {
       const tagName = `unit-${Math.random().toString().slice(2, 8)}`;
 
-      const unitInterface: UnitInterface = createUnitInterface(
-        hostSystem.audioContext,
+      const unitInterface = createUnitInterface(
+        hostSystem,
         unitId,
         (unitInstance) => {
           callbacks.onInstanceLoaded(unitInstance);
           resolve(unitInstance);
         },
       );
-      await loadUnitElementClass(tagName, scriptUrl, unitInterface);
+      const unitInterfaceV01 = createUnitInterfaceV01(
+        hostSystem,
+        unitId,
+        (unitInstance) => {
+          callbacks.onInstanceLoaded(unitInstance);
+          resolve(unitInstance);
+        },
+      );
+      await loadUnitElementClass(
+        tagName,
+        scriptUrl,
+        unitInterface,
+        unitInterfaceV01,
+      );
 
       const element = document.createElement(tagName);
       callbacks.onElementCreated(element);

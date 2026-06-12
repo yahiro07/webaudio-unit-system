@@ -10,17 +10,18 @@ export type PortSubtype =
   | "samplerPad";
 
 export type NotePort = {
-  noteOn(note: number, timeAt?: number, velocity?: number): void; //midi note number, velocity 0~1
-  noteOff(note: number, timeAt?: number): void;
+  noteOn(note: number, time?: number, velocity?: number): void; //midi note number, velocity 0~1
+  noteOff(note: number, time?: number): void;
 };
 
 export type CvGatePort = {
-  setCv(cv: number, timeAt?: number): void; //0~1, 0.1cv/octave
-  setGate(gate: boolean, timeAt?: number): void;
+  setCv(cv: number, time?: number): void; //0~1, 0.1cv/octave
+  setGate(gate: boolean, time?: number): void;
 };
 
 export type ClockPort = {
   start?(): void;
+  stop?(): void;
   processScheduling?(
     startTime: number, //absolute time based on AudioContext.currentTime
     ppqFrom: number, //480ppq based tick from song start
@@ -30,8 +31,24 @@ export type ClockPort = {
   ): void;
   //16th note based (4ppq) integer step from song start
   processStep?(stepIndex: number, unitDurationSec: number): void;
-  stop?(): void;
 };
+
+export type ClockInputPort = {
+  start?(): void;
+  stop?(): void;
+} & (
+  | {
+      processScheduling(
+        startTime: number,
+        ppqFrom: number,
+        ppqTo: number,
+        bpm: number,
+      ): void;
+    }
+  | {
+      processStep(stepIndex: number, unitDurationSec: number): void;
+    }
+);
 
 export type StatePort = {
   subscribeChange?(fn: () => void): () => void;
@@ -40,6 +57,19 @@ export type StatePort = {
   emitStateBytes?(): Uint8Array | undefined;
   applyStateBytes?(bytes: Uint8Array): void;
 };
+
+export type StateInputPort = {
+  subscribeChange?(fn: () => void): () => void;
+} & (
+  | {
+      emitState(): Record<string, any> | undefined;
+      applyState(state: Record<string, any>): void;
+    }
+  | {
+      emitStateBytes(): Uint8Array | undefined;
+      applyStateBytes(bytes: Uint8Array): void;
+    }
+);
 
 export type ParameterSpec = {
   id: string;
@@ -50,12 +80,12 @@ export type ParameterSpec = {
 export type AutomationPort = {
   getParameterSpecs(): ParameterSpec[];
   getParameter(id: string): number;
-  setParameter(id: string, value: number, timeAt?: number): void;
+  setParameter(id: string, value: number, time?: number): void;
 };
 
 export type SamplerPadPort = {
   getToneIds(): string[];
-  playTone(toneId: string, timeAt?: number): void;
+  playTone(toneId: string, time?: number): void;
 };
 
 export type AudioPort = {
@@ -87,8 +117,8 @@ export type UnitInputPortHandlers = {
   callbacks?: UnitInputPortCallbacks;
   noteInput?: NotePort;
   cvGateInput?: CvGatePort;
-  clockInput?: ClockPort; //host feed clocks only for primaryInputPort, not for multi-channel ports
-  stateInput?: StatePort; //host handles states only for primaryInputPort, not for multi-channel ports
+  clockInput?: ClockInputPort; //host feed clocks only for primaryInputPort, not for multi-channel ports
+  stateInput?: StateInputPort; //host handles states only for primaryInputPort, not for multi-channel ports
   automationInput?: AutomationPort;
   samplerPadInput?: SamplerPadPort;
 };
@@ -122,6 +152,7 @@ export type UnitInterface = {
   primaryInputPort: UnitInputPort;
   createMultiChannelOutputPorts(numPorts: number): UnitOutputPort[];
   createMultiChannelInputPorts(numPorts: number): UnitInputPort[];
+  emitMetaAttributes(metaAttrs: MetaAttributes): void;
   completeSetup(attrs: {
     unitAspects: UnitAspects;
     hostCallbacks?: HostCallbacks;
@@ -131,12 +162,15 @@ export type UnitInterface = {
   }): void;
 };
 
-export type WindowWithUnitInterface = {
+export type UnitInterfaceProvider = {
+  //for iframe based units, legacy js
   checkUnitInterfaceCompatibility?(versionCode: string): void;
   unitInterface?: UnitInterface;
-};
-
-export type UnitInstantiateContext = {
-  checkUnitInterfaceCompatibility(versionCode: string): void;
-  unitInterface: UnitInterface | undefined;
+  //for iframe based units, typescript
+  queryUnitInterface?(versionCode: string): UnitInterface | undefined;
+  //for web component units
+  queryUnitInterfaceForModule?(
+    versionCode: string,
+    importMetaUrl: string,
+  ): UnitInterface | undefined;
 };
