@@ -30,7 +30,11 @@ export type ClockPort = {
     bpm: number,
   ): void;
   //16th note based (4ppq) integer step from song start
-  processStep?(stepIndex: number, unitDurationSec: number): void;
+  processStep?(
+    stepIndex: number, //16th note based step from song start, not wrapped
+    unitDurationSec: number, //length of 16th note in seconds
+    time: number, //audio context time for actual step position
+  ): void;
 };
 
 export type ClockInputPort = {
@@ -46,7 +50,11 @@ export type ClockInputPort = {
       ): void;
     }
   | {
-      processStep(stepIndex: number, unitDurationSec: number): void;
+      processStep(
+        stepIndex: number,
+        unitDurationSec: number,
+        time: number,
+      ): void;
     }
 );
 
