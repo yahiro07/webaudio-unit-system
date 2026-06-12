@@ -9,6 +9,7 @@ export type UnitMetadata = {
   inputSignalTypes: string; //audio,note
   protocol: "wus-v01";
   unitTypesVersion: string;
+  integrationFormat: "iframe" | "webComponents";
 } & (
   | { repositoryUrl: string; author: string }
   | {

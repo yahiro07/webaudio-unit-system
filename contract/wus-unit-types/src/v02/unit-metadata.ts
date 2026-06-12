@@ -9,6 +9,7 @@ export type UnitMetadata = {
   inputSignalTypes: string; //audio,note,cvGate,clock,state,automation,samplerPad
   protocol: "wus-v02";
   unitTypesVersion: string;
+  integrationFormat: "iframe" | "webComponents";
 } & (
   | { repositoryUrl: string; author: string }
   | {
