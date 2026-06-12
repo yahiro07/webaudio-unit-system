@@ -15,6 +15,10 @@
     "./v02": {
       "types": "./dist/v02/index.d.ts",
       "default": "./dist/v02/index.js"
+    },
+    "./unit-helper": {
+      "types": "./dist/unit-helper/index.d.ts",
+      "default": "./dist/unit-helper/index.js"
     }
   },
   "scripts": {
