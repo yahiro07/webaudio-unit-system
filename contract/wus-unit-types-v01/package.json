@@ -19,7 +19,8 @@
   },
   "scripts": {
     "build": "tsdown",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "release": "npm publish --tag=v01"
   },
   "files": [
     "dist",
