@@ -17,6 +17,6 @@
     "tsup": "^8.5.1",
     "typescript": "^6.0.2",
     "vite": "^8.0.16",
-    "wus-unit-types": "file:../../contract/wus-unit-types"
+    "wus-unit-types": "file:../../contract/wus-unit-types-v01"
   }
 }
