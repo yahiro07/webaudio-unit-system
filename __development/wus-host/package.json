@@ -1,17 +1,63 @@
 {
   "name": "wus-host",
-  "private": "true",
   "type": "module",
-  "dependencies": {
-    "clsx": "^2.1.1",
+  "version": "0.1.0-unpublished",
+  "private": "true",
+  "description": "WebAudio host framework for the browser based DAW.",
+  "author": "yahiro",
+  "license": "MIT",
+  "main": "./dist/host/index.js",
+  "types": "./dist/host/index.d.ts",
+  "exports": {
+    "./host": {
+      "types": "./dist/host/index.d.ts",
+      "default": "./dist/host/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "default": "./dist/react/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yahiro07/webaudio-unit-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yahiro07/webaudio-unit-system/issues"
+  },
+  "homepage": "https://github.com/yahiro07/webaudio-unit-system#readme",
+  "keywords": [
+    "webaudio",
+    "plugin",
+    "framework",
+    "wus"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "prepare": "npm run build"
+  },
+  "peerDependencies": {
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/node": "^25.7.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "typescript": "~6.0.3",
-    "wus-unit-types": "^0.1.4"
+    "tsdown": "^0.22.2",
+    "typescript": "^6.0.2",
+    "wus-unit-types": "0.1.4"
   }
 }
