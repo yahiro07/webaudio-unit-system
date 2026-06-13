@@ -1,4 +1,5 @@
 import { HostSystem } from "../host-system";
+import { HsUnitInstance } from "../host-types";
 import { createSequencerTickDriverCore } from "./sequencer-tick-driver-core";
 
 type SequencerTickDriver = {
@@ -48,20 +49,14 @@ function processAllUnitsStartStop(
   }
 }
 
-function processAllUnitsScheduling(
-  hostSystem: HostSystem,
+function processUnitsScheduling(
+  units: HsUnitInstance[],
   startTime: number,
   ppqFrom: number,
   ppqTo: number,
   bpm: number,
+  crossingStepInfos: CrossingStepInfo[],
 ) {
-  const crossingStepInfos = getCrossingStepIndices(
-    startTime,
-    ppqFrom,
-    ppqTo,
-    bpm,
-  );
-  const units = hostSystem.getAllUnits();
   const unitStepDurationSec = 60 / bpm / 4;
   for (const crossingStepIndex of crossingStepInfos) {
     for (const unit of units) {
@@ -82,17 +77,63 @@ function processAllUnitsScheduling(
   }
 }
 
+function processAllUnitsScheduling(
+  hostSystem: HostSystem,
+  startTime: number,
+  ppqFrom: number,
+  ppqTo: number,
+  bpm: number,
+) {
+  const crossingStepInfos = getCrossingStepIndices(
+    startTime,
+    ppqFrom,
+    ppqTo,
+    bpm,
+  );
+  const units = hostSystem.getAllUnits();
+
+  const priorityUnits = units.filter(
+    (unit) => unit.inputPort?.clockInput?.preferSchedulingOrderInPriority,
+  );
+  const normalUnits = units.filter(
+    (unit) => !unit.inputPort?.clockInput?.preferSchedulingOrderInPriority,
+  );
+  processUnitsScheduling(
+    priorityUnits,
+    startTime,
+    ppqFrom,
+    ppqTo,
+    bpm,
+    crossingStepInfos,
+  );
+  processUnitsScheduling(
+    normalUnits,
+    startTime,
+    ppqFrom,
+    ppqTo,
+    bpm,
+    crossingStepInfos,
+  );
+}
+
 export function createSequencerTickDriver(
   hostSystem: HostSystem,
 ): SequencerTickDriver {
   const core = createSequencerTickDriverCore(hostSystem.audioContext, 25, 100);
+  let tickFrameIndex = 0;
+
   return {
     setBpm: core.setBpm,
     start() {
+      tickFrameIndex = 0;
       processAllUnitsStartStop(hostSystem, "start");
       core.start({
         processScheduling(startTime, ppqFrom, ppqTo, bpm) {
+          if (0) {
+            console.log("host tick", tickFrameIndex);
+          }
           processAllUnitsScheduling(hostSystem, startTime, ppqFrom, ppqTo, bpm);
+          tickFrameIndex++;
         },
       });
     },

@@ -20,6 +20,7 @@ export type CvGatePort = {
 };
 
 export type ClockPort = {
+  preferSchedulingOrderInPriority?: boolean;
   start?(): void;
   stop?(): void;
   processScheduling?(
@@ -38,6 +39,7 @@ export type ClockPort = {
 };
 
 export type ClockInputPort = {
+  preferSchedulingOrderInPriority?: boolean;
   start?(): void;
   stop?(): void;
 } & (
