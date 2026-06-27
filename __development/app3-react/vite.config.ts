@@ -1,7 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import { unitLoaderPlugin } from "wus-vite-unit-loader-plugin";
+import { unitLoaderPlugin } from "wafer-host/vite-plugin";
 import { unitSourceUrls } from "./src/unit-source-urls";
 
 export default defineConfig({

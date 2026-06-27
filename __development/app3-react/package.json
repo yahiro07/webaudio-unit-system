@@ -22,8 +22,7 @@
     "tailwindcss": "^4.3.0",
     "typescript": "~6.0.3",
     "vite": "^8.0.12",
-    "wus-vite-unit-loader-plugin": "file:../../framework/wus-vite-unit-loader-plugin",
     "mofur": "^0.1.0",
-    "wus-host": "file:../../framework/wus-host"
+    "wafer-host": "file:../../../wafer/wafer"
   }
 }

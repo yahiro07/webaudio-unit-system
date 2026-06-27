@@ -2,12 +2,12 @@ import { mountAppRoot } from "mofur/ax-react";
 import { setupMidiKeyboardInput } from "mofur/mx-audio";
 import { useEffect } from "react";
 import { createStore } from "snap-store";
-import { createHostSystem } from "wus-host/host";
+import { createHostSystem } from "wafer-host/core";
 import {
-  CustomElementUnitFrameFI,
+  CustomElementUnitFrame,
   HostAppProvider,
   UnitFrame,
-} from "wus-host/react";
+} from "wafer-host/react";
 import { Button } from "@/components/button";
 import { NumberSliderBox } from "@/components/number-slider-box";
 import catalog from "./unit-inventories.json";
@@ -60,7 +60,7 @@ const UnitRows = () => {
         frameSize={catalog.miniSynthGe.preferredSize}
         destSpec="uf_effect"
       /> */}
-      <CustomElementUnitFrameFI
+      <CustomElementUnitFrame
         unitId="uf_instrument"
         scriptUrl="/dev-units/ku2-osc/index.js"
         // pageUrl={catalog.mini_synth_ge.loaderPageUrl}
