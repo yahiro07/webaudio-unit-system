@@ -1,8 +1,12 @@
 import { mountAppRoot } from "mofur/ax-react";
 import { ScalerBox } from "mofur/mo-react";
 import { createStore } from "snap-store";
-import { createHostSystem } from "wus-host/host";
-import { HostAppProvider, UnitFrame } from "wus-host/react";
+import { createHostSystem } from "wafer-host/core";
+import {
+  CustomElementUnitFrame,
+  HostAppProvider,
+  UnitFrame,
+} from "wafer-host/react";
 import catalog from "./unit-inventories.json";
 
 type CatalogKey = keyof typeof catalog;
@@ -19,7 +23,9 @@ const store = createStore<StoreState>({
 
 const PageRoot = () => {
   const { catalogKey } = store.useSnapshot();
-  const frameSize = catalog[catalogKey].preferredSize!;
+  const catalogItem = catalog[catalogKey];
+  const { loaderPageUrl, preferredSize } = catalogItem;
+  const frameSize = preferredSize!;
   const dpr = window.devicePixelRatio;
   const captureSizeWidth = 400 / dpr;
   const captureSizeHeight = 270 / dpr;
@@ -49,11 +55,19 @@ const PageRoot = () => {
               contentHeight={frameSize.height}
               scale={scaling}
             >
-              <UnitFrame
-                unitId="uf_instrument"
-                pageUrl={catalog[catalogKey].loaderPageUrl}
-                frameSize={frameSize}
-              />
+              {catalogItem.loaderPageUrl.includes("index.js") ? (
+                <CustomElementUnitFrame
+                  unitId="uf_instrument"
+                  scriptUrl={catalogItem.loaderPageUrl}
+                  frameSize={frameSize}
+                />
+              ) : (
+                <UnitFrame
+                  unitId="uf_instrument"
+                  pageUrl={catalogItem.loaderPageUrl}
+                  frameSize={frameSize}
+                />
+              )}
             </ScalerBox>
           </div>
         </div>
