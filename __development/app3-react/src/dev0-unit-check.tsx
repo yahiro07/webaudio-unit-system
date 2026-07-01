@@ -52,22 +52,25 @@ const UnitRows = () => {
         pageUrl={catalog.mu5Visualizer.loaderPageUrl}
         destSpec="$output"
       />
-      {/* <UnitFrame
-        unitId="uf_instrument"
-        pageUrl={catalog.miniSynthGe.loaderPageUrl}
-        // pageUrl={catalog.mini_synth_ge.loaderPageUrl}
-        // className="w-[640px] h-[320px]"
-        frameSize={catalog.miniSynthGe.preferredSize}
-        destSpec="uf_effect"
-      /> */}
-      <CustomElementUnitFrame
-        unitId="uf_instrument"
-        scriptUrl="/dev-units/ku2-osc/index.js"
-        // pageUrl={catalog.mini_synth_ge.loaderPageUrl}
-        // className="w-[640px] h-[320px]"
-        frameSize={{ width: 500, height: 300 }}
-        destSpec="uf_effect"
-      />
+      {1 ? (
+        <CustomElementUnitFrame
+          unitId="uf_instrument"
+          scriptUrl={catalog.miniSynthGe.loaderPageUrl}
+          // pageUrl={catalog.mini_synth_ge.loaderPageUrl}
+          // className="w-[640px] h-[320px]"
+          frameSize={catalog.miniSynthGe.preferredSize}
+          destSpec="uf_effect"
+        />
+      ) : (
+        <UnitFrame
+          unitId="uf_instrument"
+          pageUrl={catalog.wavicle.loaderPageUrl}
+          // pageUrl={catalog.mini_synth_ge.loaderPageUrl}
+          // className="w-[640px] h-[320px]"
+          frameSize={catalog.wavicle.preferredSize}
+          destSpec="uf_effect"
+        />
+      )}
       <UnitFrame
         unitId="uf_keyboard"
         pageUrl={catalog.mu4Keyboard.loaderPageUrl}
