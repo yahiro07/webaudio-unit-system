@@ -3,16 +3,10 @@ import { setupMidiKeyboardInput } from "mofur/mx-audio";
 import { useEffect } from "react";
 import { createStore } from "snap-store";
 import { createHostSystem } from "wafer-host/core";
-import {
-  CustomElementUnitFrame,
-  HostAppProvider,
-  UnitFrame,
-} from "wafer-host/react";
+import { HostAppProvider, UnitFrame } from "wafer-host/react";
 import { Button } from "@/components/button";
 import { NumberSliderBox } from "@/components/number-slider-box";
 import catalog from "./unit-inventories.json";
-
-catalog;
 
 type StoreState = {
   bpm: number;
@@ -48,31 +42,19 @@ const UnitRows = () => {
   return (
     <>
       <UnitFrame
-        unitId="uf_effect"
-        pageUrl={catalog.mu5Visualizer.loaderPageUrl}
         destSpec="$output"
+        unitId="uf_effect"
+        unitUrl={catalog.mu5Visualizer.loaderPageUrl}
       />
-      {1 ? (
-        <CustomElementUnitFrame
-          unitId="uf_instrument"
-          scriptUrl={catalog.miniSynthGe.loaderPageUrl}
-          // pageUrl={catalog.mini_synth_ge.loaderPageUrl}
-          // className="w-[640px] h-[320px]"
-          destSpec="uf_effect"
-        />
-      ) : (
-        <UnitFrame
-          unitId="uf_instrument"
-          pageUrl={catalog.wavicle.loaderPageUrl}
-          // pageUrl={catalog.mini_synth_ge.loaderPageUrl}
-          // className="w-[640px] h-[320px]"
-          destSpec="uf_effect"
-        />
-      )}
       <UnitFrame
-        unitId="uf_keyboard"
-        pageUrl={catalog.mu4Keyboard.loaderPageUrl}
+        unitId="uf_instrument"
+        unitUrl={catalog.miniSynthGe.loaderPageUrl}
+        destSpec="uf_effect"
+      />
+      <UnitFrame
         destSpec="uf_instrument"
+        unitId="uf_keyboard"
+        unitUrl={catalog.mu4Keyboard.loaderPageUrl}
         inputNotes={state.notes}
       />
     </>

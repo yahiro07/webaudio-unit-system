@@ -22,7 +22,7 @@
     "tailwindcss": "^4.3.0",
     "typescript": "~6.0.3",
     "vite": "^8.0.12",
-    "mofur": "^0.1.0",
+    "mofur": "file:../../../beam/mofur",
     "wafer-host": "file:../../../wafer/wafer"
   }
 }

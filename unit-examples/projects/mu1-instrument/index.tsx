@@ -1,8 +1,8 @@
 import "@wus/mo/styles";
 import { mountAppRoot } from "@wus/mo-react/mount-app-root";
-import { queryUnitInterface } from "wus-unit-types";
+import { queryUnitInterface } from "wafer-host/unit-types";
 
-const unitInterface = queryUnitInterface("wus-v01");
+const unitInterface = queryUnitInterface("wafer-v01");
 
 const audioContext = unitInterface?.audioContext ?? new AudioContext();
 const destinationNode =
@@ -60,6 +60,7 @@ function setupUnitInstance() {
       categoryHint: "synthesizer",
       outputs: ["audio"],
       inputs: ["note"],
+      viewSize: [640, 480],
     },
     noteInput: {
       noteOn(noteNumber) {

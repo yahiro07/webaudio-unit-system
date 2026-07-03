@@ -2,11 +2,7 @@ import { mountAppRoot } from "mofur/ax-react";
 import { useRef, useState } from "react";
 import { createStore } from "snap-store";
 import { createHostSystem } from "wafer-host/core";
-import {
-  CustomElementUnitFrame,
-  HostAppProvider,
-  UnitFrame,
-} from "wafer-host/react";
+import { HostAppProvider, UnitFrame } from "wafer-host/react";
 import catalog from "./unit-inventories.json";
 
 type CatalogKey = keyof typeof catalog;
@@ -77,17 +73,10 @@ const PageRoot = () => {
               }}
             >
               <div style={{ width: frameSize.width, height: frameSize.height }}>
-                {catalogItem.loaderPageUrl.includes("index.js") ? (
-                  <CustomElementUnitFrame
-                    unitId="uf_instrument"
-                    scriptUrl={catalogItem.loaderPageUrl}
-                  />
-                ) : (
-                  <UnitFrame
-                    unitId="uf_instrument"
-                    pageUrl={catalogItem.loaderPageUrl}
-                  />
-                )}
+                <UnitFrame
+                  unitId="uf_instrument"
+                  unitUrl={catalogItem.loaderPageUrl}
+                />
               </div>
             </div>
           </div>
@@ -101,19 +90,11 @@ const PageRoot = () => {
       </div>
 
       <div ref={divRef}>
-        {catalogItem.loaderPageUrl.includes("index.js") ? (
-          <CustomElementUnitFrame
-            unitId="uf_instrument"
-            scriptUrl={catalogItem.loaderPageUrl}
-            onUnitInstanceLoaded={onUnitLoaded}
-          />
-        ) : (
-          <UnitFrame
-            unitId="uf_instrument"
-            pageUrl={catalogItem.loaderPageUrl}
-            onUnitInstanceLoaded={onUnitLoaded}
-          />
-        )}
+        <UnitFrame
+          unitId="uf_instrument"
+          unitUrl={catalogItem.loaderPageUrl}
+          onUnitInstanceLoaded={onUnitLoaded}
+        />
       </div>
     </div>
   );
