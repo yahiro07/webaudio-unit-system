@@ -58,7 +58,6 @@ const UnitRows = () => {
           scriptUrl={catalog.miniSynthGe.loaderPageUrl}
           // pageUrl={catalog.mini_synth_ge.loaderPageUrl}
           // className="w-[640px] h-[320px]"
-          frameSize={catalog.miniSynthGe.preferredSize}
           destSpec="uf_effect"
         />
       ) : (
@@ -67,7 +66,6 @@ const UnitRows = () => {
           pageUrl={catalog.wavicle.loaderPageUrl}
           // pageUrl={catalog.mini_synth_ge.loaderPageUrl}
           // className="w-[640px] h-[320px]"
-          frameSize={catalog.wavicle.preferredSize}
           destSpec="uf_effect"
         />
       )}

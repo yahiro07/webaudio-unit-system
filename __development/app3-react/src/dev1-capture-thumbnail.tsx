@@ -1,5 +1,5 @@
 import { mountAppRoot } from "mofur/ax-react";
-import { ScalerBox } from "mofur/mo-react";
+import { useRef, useState } from "react";
 import { createStore } from "snap-store";
 import { createHostSystem } from "wafer-host/core";
 import {
@@ -22,17 +22,31 @@ const store = createStore<StoreState>({
 });
 
 const PageRoot = () => {
+  const divRef = useRef<HTMLDivElement>(null);
+
   const { catalogKey } = store.useSnapshot();
   const catalogItem = catalog[catalogKey];
-  const { loaderPageUrl, preferredSize } = catalogItem;
-  const frameSize = preferredSize!;
   const dpr = window.devicePixelRatio;
   const captureSizeWidth = 400 / dpr;
   const captureSizeHeight = 270 / dpr;
+
+  const [frameSize, setFrameSize] = useState<{ width: number; height: number }>(
+    { width: captureSizeWidth, height: captureSizeHeight },
+  );
+
   const scaling = Math.min(
     captureSizeWidth / frameSize.width,
     captureSizeHeight / frameSize.height,
   );
+
+  const onUnitLoaded = () => {
+    const el = divRef.current;
+    if (!el) return;
+    setTimeout(() => {
+      const size = el.getBoundingClientRect();
+      setFrameSize({ width: size.width, height: size.height });
+    }, 1);
+  };
 
   return (
     <div className="w-dvw h-dvh flex-c">
@@ -49,33 +63,57 @@ const PageRoot = () => {
           ))}
         </select>
         <div className="border border-gray-400 flex-c h-[400px]">
-          <div id="screenshot-target-container">
-            <ScalerBox
-              contentWidth={frameSize.width}
-              contentHeight={frameSize.height}
-              scale={scaling}
+          <div
+            id="screenshot-target-container"
+            style={{
+              width: `${frameSize.width * scaling}px`,
+              height: `${frameSize.height * scaling}px`,
+            }}
+          >
+            <div
+              style={{
+                transform: `scale(${scaling})`,
+                transformOrigin: "top left",
+              }}
             >
-              {catalogItem.loaderPageUrl.includes("index.js") ? (
-                <CustomElementUnitFrame
-                  unitId="uf_instrument"
-                  scriptUrl={catalogItem.loaderPageUrl}
-                  frameSize={frameSize}
-                />
-              ) : (
-                <UnitFrame
-                  unitId="uf_instrument"
-                  pageUrl={catalogItem.loaderPageUrl}
-                  frameSize={frameSize}
-                />
-              )}
-            </ScalerBox>
+              <div style={{ width: frameSize.width, height: frameSize.height }}>
+                {catalogItem.loaderPageUrl.includes("index.js") ? (
+                  <CustomElementUnitFrame
+                    unitId="uf_instrument"
+                    scriptUrl={catalogItem.loaderPageUrl}
+                  />
+                ) : (
+                  <UnitFrame
+                    unitId="uf_instrument"
+                    pageUrl={catalogItem.loaderPageUrl}
+                  />
+                )}
+              </div>
+            </div>
           </div>
         </div>
+
         <div className="text-gray-500">
           To capture thumbnail screenshot of the unit, open devtool and select
           div with id "screenshot-target-container" element (not the inner
           iframe itself), then right click and choose "Capture node screenshot".
         </div>
+      </div>
+
+      <div ref={divRef}>
+        {catalogItem.loaderPageUrl.includes("index.js") ? (
+          <CustomElementUnitFrame
+            unitId="uf_instrument"
+            scriptUrl={catalogItem.loaderPageUrl}
+            onUnitInstanceLoaded={onUnitLoaded}
+          />
+        ) : (
+          <UnitFrame
+            unitId="uf_instrument"
+            pageUrl={catalogItem.loaderPageUrl}
+            onUnitInstanceLoaded={onUnitLoaded}
+          />
+        )}
       </div>
     </div>
   );
