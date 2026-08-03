@@ -9,9 +9,9 @@ function getUnitSourceUrls() {
     const unitsDevDistDir = toAbsolutePath(
       "../../../../webaudio-unit-system/unit-examples/dist",
     );
-    const wusUnitsLocalDistDir = toAbsolutePath("../../../../wus-units/dist");
+    const wusUnitsLocalDistDir = toAbsolutePath("../../../../wafer-units/dist");
     const wusCustomUnitsLocalDir = toAbsolutePath(
-      "../../../../wus-custom-units",
+      "../../../../wafer-custom-units",
     );
     return [
       `file://${wusUnitsLocalDistDir}/graphite-drum-machine/`,
@@ -50,6 +50,7 @@ function getUnitSourceUrls() {
       `file://${wusCustomUnitsLocalDir}/ts/dist/threejs-audio-reactive-visual/`,
 
       `file://${wusCustomUnitsLocalDir}/ts/dist/beatmaker/`,
+      `file://${wusUnitsLocalDistDir}/techno-beat-machine/`,
 
       `file://${wusUnitsLocalDistDir}/rtfr/`,
       `file://${wusUnitsLocalDistDir}/rtfs1/`,
@@ -58,7 +59,7 @@ function getUnitSourceUrls() {
       // `file://${wusUnitsLocalDistDir}/piano-roll/`,
       `file://${wusUnitsLocalDistDir}/fluorite-piano-roll/`,
       `file://${wusUnitsLocalDistDir}/recoru/`,
-      `file://${wusUnitsLocalDistDir}/loop-player/`,
+      `file://${wusUnitsLocalDistDir}/drum-loop-player/`,
       `file://${wusUnitsLocalDistDir}/timing-checker/`,
 
       // `file:///Users/ore/Documents/projects/oss/web_synth/_work/shiny-drum-machine/`,
